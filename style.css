@@ -1,11 +1,25 @@
 body {
 	padding: 2rem;
 	font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
+	background: #f9fafb;
 }
 
 h1 {
-	font-size: 16px;
-	margin-top: 0;
+	font-size: 22px;
+	margin: 0 0 8px;
+}
+
+.badge {
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: #6d28d9;
+	background: #ede9fe;
+	padding: 3px 10px;
+	border-radius: 999px;
+	margin-bottom: 12px;
 }
 
 p {
