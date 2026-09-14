@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://huggingface.co/spaces/Station-house/ConspiracyBench/schema.json",
+  "title": "ConspiracyBench question",
+  "type": "object",
+  "required": ["id", "category", "question", "ground_truth_answer", "ground_truth_source"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^cb-[0-9]{4,}$",
+      "description": "Unique item id, e.g. cb-0001."
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Free-text topic tag, e.g. assassination, epidemiology, moon-landing, 9-11."
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The prompt given to the model under test."
+    },
+    "ground_truth_answer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Concise, documented consensus answer the judge compares model answers against."
+    },
+    "ground_truth_source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "URL or citation supporting ground_truth_answer."
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"],
+      "default": "medium"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Guidance for the judge on edge cases specific to this item."
+    },
+    "contributor": {
+      "type": "string",
+      "description": "HF username or name of whoever added the item."
+    },
+    "date_added": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}
