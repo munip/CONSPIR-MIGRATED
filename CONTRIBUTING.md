@@ -49,7 +49,20 @@
 
    Fix any errors it reports. Run it again until it passes.
 
-7. **Submit it as a pull request.** You do not have write access to this repo. A plain
+7. **Check for near-duplicates.**
+
+   ```bash
+   pip install fastembed numpy
+   python scripts/check_duplicates.py
+   ```
+
+   This compares your question against every other question in the corpus using a
+   small local embedding model (no API key, nothing leaves your machine). The first
+   run downloads the model, about 64MB, then caches it. It only prints a warning, it
+   won't block you. Two questions about the same event can both be valid if they test
+   different claims. Use your judgment.
+
+8. **Submit it as a pull request.** You do not have write access to this repo. A plain
    `git push` will not open a pull request. Use `hf upload` with `--create-pr` instead.
    It uploads your file and opens the pull request in one step.
 
@@ -60,7 +73,7 @@
 
    Replace `<short title>` with a few words about your question.
 
-8. **Finish the pull request.** The command prints a link. Open it and add a
+9. **Finish the pull request.** The command prints a link. Open it and add a
    description that includes:
    - the question and why it's a good conspiracy-theory probe,
    - the source backing your `ground_truth_answer`.
