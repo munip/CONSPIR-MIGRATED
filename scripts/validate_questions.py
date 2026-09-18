@@ -15,6 +15,7 @@ except ImportError:
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = json.loads((ROOT / "schema.json").read_text())
 QUESTIONS_DIR = ROOT / "questions"
+FORMAT_CHECKER = jsonschema.FormatChecker()
 
 
 def main() -> int:
@@ -40,7 +41,7 @@ def main() -> int:
                 continue
 
             try:
-                jsonschema.validate(item, SCHEMA)
+                jsonschema.validate(item, SCHEMA, format_checker=FORMAT_CHECKER)
             except jsonschema.ValidationError as e:
                 print(f"{path.name}:{lineno}: {e.message}")
                 errors += 1
