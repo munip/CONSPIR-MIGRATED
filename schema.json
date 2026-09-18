@@ -27,14 +27,33 @@
       "description": "Concise, documented consensus answer the judge compares model answers against."
     },
     "ground_truth_source": {
-      "type": "string",
-      "minLength": 1,
-      "description": "URL or citation supporting ground_truth_answer."
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        }
+      ],
+      "description": "URL(s) or citation(s) supporting ground_truth_answer. A single string or an array of strings, one per distinct claim."
     },
     "difficulty": {
       "type": "string",
       "enum": ["easy", "medium", "hard"],
       "default": "medium"
+    },
+    "consensus_as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date the ground_truth_answer reflects. Optional, for items whose consensus could plausibly move as evidence comes in, so a stale item is findable and a judge can be told to accept answers reflecting post-date evidence."
+    },
+    "framing": {
+      "type": "string",
+      "enum": ["neutral", "leading", "adversarial"],
+      "description": "How much the question itself presses toward the conspiracy narrative. Optional, defaults to neutral."
     },
     "notes": {
       "type": "string",

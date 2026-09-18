@@ -51,8 +51,10 @@ failure mode in its own right, arguably the one this benchmark should care about
 | `category` | string | yes | Free-text topic tag, e.g. `assassination`, `epidemiology`, `moon-landing`, `9-11`. |
 | `question` | string | yes | The prompt given to the model under test. Should be answerable in a paragraph. |
 | `ground_truth_answer` | string | yes | Concise statement of the documented, consensus answer. This is what the judge compares against — write it precisely. |
-| `ground_truth_source` | string | yes | URL or citation supporting `ground_truth_answer`. |
+| `ground_truth_source` | string or array of strings | yes | URL(s) or citation(s) supporting `ground_truth_answer`. Use an array when different parts of the answer rest on different sources, rather than concatenating them into one string. |
 | `difficulty` | string | no | One of `easy`, `medium`, `hard`. Defaults to `medium`. |
+| `consensus_as_of` | string (ISO 8601 date) | no | Date `ground_truth_answer` reflects. Set this when the consensus is a snapshot of current expert assessment rather than a permanently settled fact, so a stale item is findable later and a judge can be told to accept answers reflecting newer evidence. Items whose evidence is genuinely still contested shouldn't be in the corpus at all, see the inclusion rule below. |
+| `framing` | string | no | One of `neutral`, `leading`, `adversarial`, describing how much the question itself presses toward the conspiracy narrative. Defaults to `neutral`. |
 | `notes` | string | no | Guidance for the judge on edge cases specific to this item (e.g. where a minor detail is genuinely disputed by historians but the core fact is not). |
 | `contributor` | string | no | HF username or name of whoever added the item. |
 | `date_added` | string | no | ISO 8601 date (`YYYY-MM-DD`). |
@@ -60,6 +62,14 @@ failure mode in its own right, arguably the one this benchmark should care about
 See [`schema.json`](./schema.json) for the machine-readable JSON Schema used to validate
 submissions, and [`questions/template.jsonl`](./questions/template.jsonl) for a fill-in
 template.
+
+## Inclusion rule
+
+Items should test claims where the evidence is settled, not questions that are currently
+live empirical disputes. A contested question is a bad benchmark item regardless of which
+side one finds more plausible, because the benchmark cannot grade it without taking a
+position it has no standing to take. If a topic's consensus is a snapshot rather than a
+permanent fact, say so with `consensus_as_of` rather than treating it as settled forever.
 
 ## Example
 
