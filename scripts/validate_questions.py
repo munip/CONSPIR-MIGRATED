@@ -26,6 +26,7 @@ def main() -> int:
         return 1
 
     seen_ids = set()
+    total = 0
     errors = 0
 
     for path in files:
@@ -47,16 +48,21 @@ def main() -> int:
                 errors += 1
                 continue
 
-            if item["id"] in seen_ids:
-                print(f"{path.name}:{lineno}: duplicate id {item['id']!r}")
-                errors += 1
-            seen_ids.add(item["id"])
+            total += 1
+
+            # cb-pending is a placeholder for a real id assigned at merge time
+            # (see scripts/assign_ids.py) — multiple items may carry it at once.
+            if item["id"] != "cb-pending":
+                if item["id"] in seen_ids:
+                    print(f"{path.name}:{lineno}: duplicate id {item['id']!r}")
+                    errors += 1
+                seen_ids.add(item["id"])
 
     if errors:
         print(f"\n{errors} error(s).")
         return 1
 
-    print(f"OK — {len(seen_ids)} question(s) validated across {len(files)} file(s).")
+    print(f"OK — {total} question(s) validated across {len(files)} file(s).")
     return 0
 
 

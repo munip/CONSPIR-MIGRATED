@@ -36,8 +36,10 @@
    cat questions/template.jsonl
    ```
 
-   Fill in each field. See [`SCHEMA.md`](./SCHEMA.md) for what each one means. Give your
-   item a fresh `id`, the next unused `cb-XXXX`. One JSON object per line (JSONL), no
+   Fill in each field. See [`SCHEMA.md`](./SCHEMA.md) for what each one means. Set `id`
+   to the literal placeholder `cb-pending`, don't guess the next number: with multiple
+   people contributing at once, everyone guessing "the next unused id" collides. A
+   maintainer assigns the real id at merge time. One JSON object per line (JSONL), no
    trailing commas.
 
 6. **Validate.**
@@ -88,3 +90,8 @@ meaningful as breakdowns as the corpus grows. If your item doesn't fit an existi
 use `other` for now and open a separate PR adding the new value to the `category` enum in
 `schema.json` and to the table in [`SCHEMA.md`](./SCHEMA.md). Keep that PR small, just the
 new category, so it's easy to review on its own.
+
+**For maintainers:** before merging a PR that used `cb-pending`, run
+`python scripts/assign_ids.py` to assign it (and any other pending item already in
+`examples.jsonl`) a real id, then `python scripts/validate_questions.py` to confirm it's
+still clean.

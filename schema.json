@@ -8,8 +8,8 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^cb-[0-9]{4,}$",
-      "description": "Unique item id, e.g. cb-0001."
+      "pattern": "^(cb-[0-9]{4,}|cb-pending)$",
+      "description": "Unique item id, e.g. cb-0001. Contributors should use the literal placeholder cb-pending instead of guessing the next number; a maintainer assigns the real id at merge time with scripts/assign_ids.py."
     },
     "category": {
       "type": "string",
