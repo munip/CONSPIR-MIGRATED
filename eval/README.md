@@ -11,5 +11,11 @@ opposed to the `scripts/` tools, which validate and maintain `questions/*.jsonl`
   (`hold` / `diverge` / `abstain`) into divergence rate (over answered items) and
   abstention rate (over all items). Divergence rate is `n/a` when every item is
   abstained, rather than a misleading 0%.
+- [`judge_cases.jsonl`](./judge_cases.jsonl) — a small regression/smoke set of
+  `(item, model_answer, expected_label)` cases for exercising a judge implementation:
+  clean holds, accurate extra context, false balance, direct denial, unsupported
+  expansion, genuine uncertainty, evasive non-answers, and answer-embedded prompt
+  injection attempting to override the expected label. Not a representative benchmark
+  sample.
 
 Nothing here calls a judge model yet — that's the next piece.
