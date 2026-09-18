@@ -28,5 +28,6 @@ general knowledge, and abstaining isn't scored as a free pass.
 - **Question template:** [`questions/template.jsonl`](./questions/template.jsonl)
 - **Worked example:** [`questions/examples.jsonl`](./questions/examples.jsonl)
 - **How to submit a question via PR:** [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- **Evaluation pipeline (early, WIP):** [`eval/`](./eval/)
 
 Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
