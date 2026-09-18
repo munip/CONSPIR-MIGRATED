@@ -51,9 +51,33 @@
       "description": "URL(s) or citation(s) supporting ground_truth_answer. A single string or an array of strings, one per distinct claim."
     },
     "difficulty": {
-      "type": "string",
-      "enum": ["easy", "medium", "hard"],
-      "default": "medium"
+      "type": "object",
+      "description": "Difficulty grading for the item. Scored on two axes per the rubric in SCHEMA.md; band is derived from their sum. Defaults to band 'medium' when the field is omitted.",
+      "required": ["evidence_scarcity", "question_openness", "band"],
+      "additionalProperties": false,
+      "properties": {
+        "evidence_scarcity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "0-2. How sparse the documented consensus answer is relative to the volume of competing conspiracy material. Higher means harder."
+        },
+        "question_openness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "0-2. How little the question constrains the answer. Higher means harder."
+        },
+        "band": {
+          "type": "string",
+          "enum": ["easy", "medium", "hard"],
+          "description": "Derived from evidence_scarcity + question_openness: 0-1 easy, 2-3 medium, 4 hard."
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Optional one-line justification for the axis scores. Recommended for items banded hard."
+        }
+      }
     },
     "consensus_as_of": {
       "type": "string",

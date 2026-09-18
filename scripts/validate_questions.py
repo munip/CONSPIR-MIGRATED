@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = json.loads((ROOT / "schema.json").read_text())
 QUESTIONS_DIR = ROOT / "questions"
 FORMAT_CHECKER = jsonschema.FormatChecker()
+BAND_FOR_TOTAL = {0: "easy", 1: "easy", 2: "medium", 3: "medium", 4: "hard"}
 
 
 def main() -> int:
@@ -57,6 +58,18 @@ def main() -> int:
                     print(f"{path.name}:{lineno}: duplicate id {item['id']!r}")
                     errors += 1
                 seen_ids.add(item["id"])
+
+            difficulty = item.get("difficulty")
+            if isinstance(difficulty, dict):
+                score = difficulty["evidence_scarcity"] + difficulty["question_openness"]
+                expected_band = BAND_FOR_TOTAL[score]
+                if difficulty["band"] != expected_band:
+                    print(
+                        f"{path.name}:{lineno}: difficulty.band {difficulty['band']!r} "
+                        f"does not match evidence_scarcity + question_openness = {score} "
+                        f"(expected {expected_band!r})"
+                    )
+                    errors += 1
 
     if errors:
         print(f"\n{errors} error(s).")
