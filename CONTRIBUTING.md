@@ -80,3 +80,11 @@
 
 A maintainer will review for factual accuracy of the ground truth before merging.
 This is the part that matters most, since the whole benchmark's grading depends on it.
+
+## Proposing a new category
+
+`category` is a fixed list in [`schema.json`](./schema.json), not free text, so it stays
+meaningful as breakdowns as the corpus grows. If your item doesn't fit an existing value,
+use `other` for now and open a separate PR adding the new value to the `category` enum in
+`schema.json` and to the table in [`SCHEMA.md`](./SCHEMA.md). Keep that PR small, just the
+new category, so it's easy to review on its own.

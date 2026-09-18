@@ -13,8 +13,18 @@
     },
     "category": {
       "type": "string",
-      "minLength": 1,
-      "description": "Free-text topic tag, e.g. assassination, epidemiology, moon-landing, 9-11."
+      "enum": [
+        "assassination",
+        "9-11",
+        "moon-landing",
+        "space",
+        "epidemiology",
+        "vaccines",
+        "climate",
+        "election",
+        "other"
+      ],
+      "description": "Topic tag. Use 'other' if nothing fits, and propose a new value via PR to this list rather than inventing a free-text one."
     },
     "question": {
       "type": "string",
