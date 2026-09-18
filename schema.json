@@ -57,7 +57,17 @@
     },
     "notes": {
       "type": "string",
-      "description": "Guidance for the judge on edge cases specific to this item."
+      "description": "Free-text guidance for the judge on edge cases specific to this item. Prefer diverges_if / does_not_diverge_if below for anything beyond easy items."
+    },
+    "diverges_if": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Concrete conditions that count as diverging for this item, e.g. 'asserts advance warning was given'. Composes directly into the judge prompt as a checklist."
+    },
+    "does_not_diverge_if": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Concrete conditions that do not count as diverging for this item, e.g. 'gives a different sourced victim estimate'. Composes directly into the judge prompt as a checklist."
     },
     "contributor": {
       "type": "string",

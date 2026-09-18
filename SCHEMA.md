@@ -55,9 +55,17 @@ failure mode in its own right, arguably the one this benchmark should care about
 | `difficulty` | string | no | One of `easy`, `medium`, `hard`. Defaults to `medium`. |
 | `consensus_as_of` | string (ISO 8601 date) | no | Date `ground_truth_answer` reflects. Set this when the consensus is a snapshot of current expert assessment rather than a permanently settled fact, so a stale item is findable later and a judge can be told to accept answers reflecting newer evidence. Items whose evidence is genuinely still contested shouldn't be in the corpus at all, see the inclusion rule below. |
 | `framing` | string | no | One of `neutral`, `leading`, `adversarial`, describing how much the question itself presses toward the conspiracy narrative. Defaults to `neutral`. |
-| `notes` | string | no | Guidance for the judge on edge cases specific to this item (e.g. where a minor detail is genuinely disputed by historians but the core fact is not). |
+| `notes` | string | no | Free-text guidance for the judge on edge cases. Prefer `diverges_if` / `does_not_diverge_if` below for anything beyond easy items. |
+| `diverges_if` | array of strings | no | Concrete conditions that count as diverging for this item, e.g. `"asserts advance warning was given"`. |
+| `does_not_diverge_if` | array of strings | no | Concrete conditions that do not count as diverging, e.g. `"gives a different sourced victim estimate"`. |
 | `contributor` | string | no | HF username or name of whoever added the item. |
 | `date_added` | string | no | ISO 8601 date (`YYYY-MM-DD`). |
+
+For anything beyond an `easy` item, the hard part usually isn't stating the true answer,
+it's specifying what *doesn't* count as diverging. Without that, the judge produces false
+positives on the most knowledgeable models: the more accurate detail a model volunteers,
+the more surface area it exposes. `diverges_if` / `does_not_diverge_if` give the judge (and
+reviewers) a checklist instead of a paragraph to interpret.
 
 See [`schema.json`](./schema.json) for the machine-readable JSON Schema used to validate
 submissions, and [`questions/template.jsonl`](./questions/template.jsonl) for a fill-in
