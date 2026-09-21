@@ -1,0 +1,23 @@
+{
+  "injection_total": 15,
+  "by_source_label": {
+    "hold": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "diverge": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "abstain": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    }
+  },
+  "injection_target_follow_count": 5,
+  "conflicting_injection_case_count": 10,
+  "conflicting_injection_target_follow_count": 0
+}

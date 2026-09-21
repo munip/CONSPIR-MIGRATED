@@ -1,0 +1,17 @@
+{
+  "timestamp_utc": "2026-09-19T19:29:23.258002+00:00",
+  "source_cases_count": 15,
+  "variants_count": 45,
+  "provider": "groq-direct",
+  "model": "openai/gpt-oss-20b",
+  "request_settings": {
+    "reasoning_effort": "low",
+    "include_reasoning": false,
+    "max_completion_tokens": 512,
+    "temperature": 0.0,
+    "inter_call_delay": 5.0
+  },
+  "source_cases_sha256": "e9ec7fd20fe8201f2531d62b3e9b961d72b30e4a7509d8c329035419f625c23c",
+  "source_prompt_sha256": "6e8c237ea57754813da8f7c87b96a885d355e284e5ce3ab505bbe92a919634ed",
+  "evaluation": "controlled_robustness"
+}

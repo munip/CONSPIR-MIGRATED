@@ -1,0 +1,4 @@
+family,count,strict_accuracy,parsed_accuracy,invalid_count,wrong_count
+format,15,1.0,1.0,0,0
+irrelevant,15,1.0,1.0,0,0
+injection,15,1.0,1.0,0,0

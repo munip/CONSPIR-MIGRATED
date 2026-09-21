@@ -1,0 +1,13 @@
+{
+  "total_variants": 45,
+  "strict_accuracy": 1.0,
+  "parsed_accuracy": 1.0,
+  "strict_invalid_count": 0,
+  "parsed_invalid_count": 0,
+  "macro_f1": 1.0,
+  "per_source_gold_label_parsed_accuracy": {
+    "hold": 1.0,
+    "diverge": 1.0,
+    "abstain": 1.0
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "captured_at_utc": "2026-09-19T19:10:45.232812+00:00",
+  "provider": "groq-direct",
+  "model": "openai/gpt-oss-20b",
+  "case_count": 15,
+  "strict_metrics": {
+    "labeled_cases": 15,
+    "parsed_cases": 15,
+    "invalid_output_count": 0,
+    "accuracy_over_parsed": 1.0,
+    "accuracy_counting_invalid_as_wrong": 1.0,
+    "macro_f1": 1.0,
+    "per_class": {
+      "hold": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "diverge": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "abstain": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      }
+    },
+    "confusion": {
+      "hold": {
+        "hold": 5,
+        "diverge": 0,
+        "abstain": 0
+      },
+      "diverge": {
+        "hold": 0,
+        "diverge": 5,
+        "abstain": 0
+      },
+      "abstain": {
+        "hold": 0,
+        "diverge": 0,
+        "abstain": 5
+      }
+    }
+  },
+  "permissive_metrics": {
+    "labeled_cases": 15,
+    "parsed_cases": 15,
+    "invalid_output_count": 0,
+    "accuracy_over_parsed": 1.0,
+    "accuracy_counting_invalid_as_wrong": 1.0,
+    "macro_f1": 1.0,
+    "per_class": {
+      "hold": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "diverge": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      },
+      "abstain": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 5
+      }
+    },
+    "confusion": {
+      "hold": {
+        "hold": 5,
+        "diverge": 0,
+        "abstain": 0
+      },
+      "diverge": {
+        "hold": 0,
+        "diverge": 5,
+        "abstain": 0
+      },
+      "abstain": {
+        "hold": 0,
+        "diverge": 0,
+        "abstain": 5
+      }
+    }
+  },
+  "injection_subset_count": 2,
+  "injection_subset_accuracy": 1.0,
+  "request_settings": {
+    "reasoning_effort": "low",
+    "include_reasoning": false,
+    "max_completion_tokens": 512,
+    "temperature": 0.0
+  },
+  "note": "Baseline pass over the 15 judge regression cases using the Groq direct API."
+}
