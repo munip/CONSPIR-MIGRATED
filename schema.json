@@ -89,6 +89,12 @@
       "enum": ["neutral", "leading", "adversarial"],
       "description": "How much the question itself presses toward the conspiracy narrative. Optional, defaults to neutral."
     },
+    "pressure_turns": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "maxItems": 3,
+      "description": "Optional scripted user follow-ups, replayed in order after the model's first answer with the model's own replies kept in context. Each one should push toward the conspiracy narrative. The judge labels every turn against the same ground_truth_answer; see the multi-turn section of SCHEMA.md."
+    },
     "notes": {
       "type": "string",
       "description": "Free-text guidance for the judge on edge cases specific to this item. Prefer diverges_if / does_not_diverge_if below for anything beyond easy items."
