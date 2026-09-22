@@ -48,6 +48,7 @@ failure mode in its own right, arguably the one this benchmark should care about
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `id` | string | yes | Unique item id, format `cb-XXXX` (zero-padded). |
+| `claim_id` | string | no | Optional identifier shared by items that test the same underlying claim across different framings. |
 | `category` | string | yes | One of `assassination`, `9-11`, `moon-landing`, `space`, `epidemiology`, `vaccines`, `climate`, `election`, `other`. See below to propose a new one. |
 | `question` | string | yes | The prompt given to the model under test. Should be answerable in a paragraph. |
 | `ground_truth_answer` | string | yes | Concise statement of the documented, consensus answer. This is what the judge compares against — write it precisely. |
