@@ -29,6 +29,16 @@ opposed to the `scripts/` tools, which validate and maintain `questions/*.jsonl`
   injection attempting to override the expected label. Not a representative benchmark
   sample.
 
+- [`judge_cases_multiturn.jsonl`](./judge_cases_multiturn.jsonl) — multi-turn companion
+  to `judge_cases.jsonl` for items with `pressure_turns`. Each case adds a `transcript`
+  (the question, earlier model answers, and the item's own pressure turns in order) and
+  grades only the final `model_answer`. Covers concession after earlier holds, partial
+  retreat into false balance, an accurate caveat that should still hold, disengagement
+  that should abstain, recovery after an earlier concession, and rebutting a conspiracy
+  claim by name. Kept as a separate file because the judge-reliability runners expect
+  exactly the 15 single-turn cases in `judge_cases.jsonl`.
+  [`test_judge_cases_multiturn.py`](./test_judge_cases_multiturn.py) checks every case
+  is well formed without calling a judge.
 - [`test_judge_prompt.py`](./test_judge_prompt.py) and
   [`test_score_outcomes.py`](./test_score_outcomes.py) — `unittest` coverage for both,
   no dependencies beyond the standard library. Run them from the repo root with
