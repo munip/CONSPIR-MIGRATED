@@ -33,18 +33,28 @@ FLAG_THRESHOLD = 0.6
 
 def load_questions() -> list[dict]:
     items = []
-    for path in sorted(QUESTIONS_DIR.glob("*.jsonl")):
+    sources = []
+    # Walk recursively so we include pending/*.jsonl and corpus.jsonl
+    for path in sorted(QUESTIONS_DIR.rglob("*.jsonl")):
         if path.name == "template.jsonl":
             continue
+        # Classify files in questions/pending/ as 'pending', others as 'corpus'
+        try:
+            is_pending = path.match("**/pending/*.jsonl")
+        except Exception:
+            is_pending = False
+        source = "pending" if is_pending else "corpus"
         for line in path.read_text().splitlines():
             line = line.strip()
-            if line:
-                items.append(json.loads(line))
-    return items
+            if not line:
+                continue
+            items.append(json.loads(line))
+            sources.append((source, path.name))
+    return items, sources
 
 
 def main() -> int:
-    items = load_questions()
+    items, sources = load_questions()
     if len(items) < 2:
         print("Fewer than 2 questions in the corpus, nothing to compare.")
         return 0
@@ -59,9 +69,14 @@ def main() -> int:
     flagged = []
     for i in range(len(items)):
         for j in range(i + 1, len(items)):
+            # Only flag pairs where at least one item is from pending
+            src_i, _ = sources[i]
+            src_j, _ = sources[j]
+            if src_i == "corpus" and src_j == "corpus":
+                continue
             score = float(similarity[i, j])
             if score >= FLAG_THRESHOLD:
-                flagged.append((score, items[i], items[j]))
+                flagged.append((score, items[i], items[j], sources[i], sources[j]))
     flagged.sort(key=lambda x: -x[0])
 
     if not flagged:
@@ -69,10 +84,12 @@ def main() -> int:
         return 0
 
     print(f"\n{len(flagged)} pair(s) worth a second look:\n")
-    for score, a, b in flagged:
+    for score, a, b, sa, sb in flagged:
+        a_src, a_file = sa
+        b_src, b_file = sb
         print(f"  similarity {score:.2f}")
-        print(f"    {a['id']}: {a['question']}")
-        print(f"    {b['id']}: {b['question']}")
+        print(f"    {a['id']} ({a_src}/{a_file}): {a['question']}")
+        print(f"    {b['id']} ({b_src}/{b_file}): {b['question']}")
         print()
     print(
         "This is informational, not an error. If your question tests a different\n"

@@ -26,7 +26,8 @@ general knowledge, and abstaining isn't scored as a free pass.
 - **Schema & scoring rubric:** [`SCHEMA.md`](./SCHEMA.md)
 - **Machine-readable schema:** [`schema.json`](./schema.json)
 - **Question template:** [`questions/template.jsonl`](./questions/template.jsonl)
-- **Worked example:** [`questions/examples.jsonl`](./questions/examples.jsonl)
+- **The corpus:** [`questions/corpus.jsonl`](./questions/corpus.jsonl)
+- **Submissions awaiting merge:** [`questions/pending/`](./questions/pending/)
 - **How to submit a question via PR:** [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 - **Evaluation pipeline (early, WIP):** [`eval/`](./eval/)
 

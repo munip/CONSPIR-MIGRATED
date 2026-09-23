@@ -28,19 +28,20 @@
    cd ConspiracyBench
    ```
 
-5. **Add your question.** Open [`questions/examples.jsonl`](./questions/examples.jsonl)
-   in a text editor. Each line is one question. Add one new line at the end, starting
-   from [`questions/template.jsonl`](./questions/template.jsonl):
+5. **Add your question.** Create a new file in [`questions/pending/`](./questions/pending/),
+   named after your submission, for example `questions/pending/wtc7-collapse.jsonl`. Do
+   not edit `questions/corpus.jsonl`; only the maintainer script writes to it. Start each
+   line from [`questions/template.jsonl`](./questions/template.jsonl):
 
    ```bash
-   cat questions/template.jsonl
+   cp questions/template.jsonl questions/pending/<short-slug>.jsonl
    ```
 
-   Fill in each field. See [`SCHEMA.md`](./SCHEMA.md) for what each one means. Set `id`
-   to the literal placeholder `cb-pending`, don't guess the next number: with multiple
+   Fill in each field. See [`SCHEMA.md`](./SCHEMA.md) for what each one means. Leave `id`
+   as the literal placeholder `cb-pending`, don't guess the next number: with multiple
    people contributing at once, everyone guessing "the next unused id" collides. A
-   maintainer assigns the real id at merge time. One JSON object per line (JSONL), no
-   trailing commas.
+   maintainer assigns the real id after merging. One JSON object per line (JSONL), no
+   trailing commas. Several questions in one file is fine; one file per pull request.
 
 6. **Validate.**
 
@@ -69,11 +70,13 @@
    It uploads your file and opens the pull request in one step.
 
    ```bash
-   hf upload Station-house/ConspiracyBench questions/examples.jsonl questions/examples.jsonl \
+   hf upload Station-house/ConspiracyBench questions/pending/<short-slug>.jsonl questions/pending/<short-slug>.jsonl \
      --repo-type space --create-pr --commit-message "Add question: <short title>"
    ```
 
-   Replace `<short title>` with a few words about your question.
+   Replace `<short-slug>` with your file name and `<short title>` with a few words about
+   your question. Because you only upload your own file, your pull request cannot
+   conflict with anyone else's.
 
 9. **Finish the pull request.** The command prints a link. Open it and add a
    description that includes:
@@ -91,10 +94,14 @@ use `other` for now and open a separate PR adding the new value to the `category
 `schema.json` and to the table in [`SCHEMA.md`](./SCHEMA.md). Keep that PR small, just the
 new category, so it's easy to review on its own.
 
-**For maintainers:** before merging a PR that used `cb-pending`, run
-`python scripts/assign_ids.py` to assign it (and any other pending item already in
-`examples.jsonl`) a real id, then `python scripts/validate_questions.py` to confirm it's
-still clean.
+**For maintainers:** merge a PR that added a file to `questions/pending/` as it is, then run
+`python scripts/assign_ids.py` on `main`. It assigns real ids to every pending item, appends
+them to `questions/corpus.jsonl`, and deletes the pending files. Then run
+`python scripts/validate_questions.py` to confirm the corpus is still clean, and commit the
+result to `main`. Don't run it on a PR branch before merging: every branch starts from the
+same corpus, so two PRs processed that way both get the same next id and conflict on
+`corpus.jsonl`. You can run it after each merge or once after merging several PRs; pending
+files are processed in submission order either way.
 
 ## Reviewing someone else's pull request
 
