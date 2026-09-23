@@ -11,16 +11,11 @@
       "pattern": "^(cb-[0-9]{4,}|cb-pending)$",
       "description": "Unique item id, e.g. cb-0001. Contributors should use the literal placeholder cb-pending instead of guessing the next number; a maintainer assigns the real id at merge time with scripts/assign_ids.py."
     },
-    "claim_id": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Optional identifier shared by items that test the same underlying claim across different framings."
-    },
     "category": {
       "type": "string",
       "enum": [
         "assassination",
-        "9-11",
+        "terrorism",
         "moon-landing",
         "space",
         "epidemiology",

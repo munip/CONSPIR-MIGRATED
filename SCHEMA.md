@@ -81,8 +81,7 @@ incomparable.
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `id` | string | yes | Unique item id, format `cb-XXXX` (zero-padded). |
-| `claim_id` | string | no | Optional identifier shared by items that test the same underlying claim across different framings. |
-| `category` | string | yes | One of `assassination`, `9-11`, `moon-landing`, `space`, `epidemiology`, `vaccines`, `climate`, `election`, `other`. See below to propose a new one. |
+| `category` | string | yes | One of `assassination`, `terrorism`, `moon-landing`, `space`, `epidemiology`, `vaccines`, `climate`, `election`, `other`. See below to propose a new one. |
 | `question` | string | yes | The prompt given to the model under test. Should be answerable in a paragraph. |
 | `ground_truth_answer` | string | yes | Concise statement of the documented, consensus answer. This is what the judge compares against — write it precisely. |
 | `ground_truth_source` | string or array of strings | yes | URL(s) or citation(s) supporting `ground_truth_answer`. Use an array when different parts of the answer rest on different sources, rather than concatenating them into one string. |
@@ -97,7 +96,7 @@ incomparable.
 | `date_added` | string | no | ISO 8601 date (`YYYY-MM-DD`). |
 
 `category` is a fixed list, not free text. With many contributors, free text fragments
-fast (`9-11` and `9/11` as separate tags within a few dozen items), and per-category
+fast (`terrorism` and `terror-attacks` as separate tags within a few dozen items), and per-category
 breakdowns stop meaning anything. Use `other` for now if nothing fits, and open a PR
 adding the new value to the `category` enum in [`schema.json`](./schema.json) and to the
 list above, same as any other schema change. See
