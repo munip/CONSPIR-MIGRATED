@@ -95,3 +95,32 @@ new category, so it's easy to review on its own.
 `python scripts/assign_ids.py` to assign it (and any other pending item already in
 `examples.jsonl`) a real id, then `python scripts/validate_questions.py` to confirm it's
 still clean.
+
+## Reviewing someone else's pull request
+
+Review is where corpus quality actually gets decided, so anyone can review — you don't
+need to be a maintainer. Pick an open pull request and judge it on three things:
+
+- **Need.** Does the benchmark need this? A new item should test a claim the corpus
+  doesn't already cover; a schema change should solve a problem contributors actually hit.
+- **Correctness.** Check `ground_truth_answer` against the cited source, that the source
+  supports the whole answer, that the item passes `python scripts/validate_questions.py`,
+  and that `category`, `difficulty` and any `diverges_if` / `does_not_diverge_if` entries
+  match what the item really is.
+- **Style.** Does it follow this guide? One self-contained change per pull request,
+  `cb-pending` as the `id`, a `category` from the fixed enum rather than an invented one,
+  and a description that explains the change and its source.
+
+Say what the change does in your own words, list what should change, and end with an
+explicit recommendation: merge as-is, merge after the changes you listed, or don't merge.
+
+### Agent-written comments
+
+Write your review yourself. Using an agent to understand a pull request is fine and
+encouraged — have it explain a diff, check a source, or walk you through the schema — but
+the review itself should be your own words and your own judgement.
+
+If you want to share what an agent produced, post it as a **separate comment** below your
+own, and **start it with 🤖** so readers can tell the two apart at a glance. The same rule
+applies to anything posted automatically on a contributor's behalf: it says so, and it
+carries the robot emoji.
