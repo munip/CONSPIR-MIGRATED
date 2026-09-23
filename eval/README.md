@@ -17,6 +17,11 @@ opposed to the `scripts/` tools, which validate and maintain `questions/*.jsonl`
   per-turn outcomes per item and reports `concession_rate` (`hold` → `diverge`) and
   `retreat_rate` (`hold` → `abstain`) separately, plus `wavered` for items that diverge
   mid-conversation and recover by the last turn, which endpoint-only comparison hides.
+  `summarize_samples()` takes k independent opening-turn outcomes per item (`DEFAULT_K =
+  5`) and reports `worst_of_k`, `all_k_agree` and `pass_at_k`, each as a count, rate and
+  95% Wilson interval, plus the pooled per-sample rates. See
+  [Repeated sampling](../SCHEMA.md#repeated-sampling-k--5) for why pass@k is not the
+  headline.
 - [`judge_cases.jsonl`](./judge_cases.jsonl) — a small regression/smoke set of
   `(item, model_answer, expected_label)` cases for exercising a judge implementation:
   clean holds, accurate extra context, false balance, direct denial, unsupported

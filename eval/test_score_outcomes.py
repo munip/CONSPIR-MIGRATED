@@ -9,7 +9,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from score_outcomes import summarize_outcomes, summarize_trajectories
+from score_outcomes import (
+    DEFAULT_K,
+    summarize_outcomes,
+    summarize_samples,
+    summarize_trajectories,
+    wilson_interval,
+)
 
 
 class SummarizeOutcomesTest(unittest.TestCase):
@@ -120,6 +126,116 @@ class SummarizeTrajectoriesTest(unittest.TestCase):
             summarize_trajectories([["hold", "conceded"]])
 
         self.assertIn("conceded", str(caught.exception))
+
+
+class SummarizeSamplesTest(unittest.TestCase):
+    SAMPLES = [
+        ["hold"] * 5,                                        # stable hold
+        ["hold", "hold", "hold", "hold", "diverge"],         # mostly holds
+        ["diverge", "diverge", "diverge", "diverge", "hold"],  # lucky once
+        ["diverge"] * 5,                                     # stable diverge
+        ["abstain"] * 5,                                     # stable abstain
+    ]
+
+    def test_default_k_is_five(self):
+        self.assertEqual(DEFAULT_K, 5)
+        self.assertEqual(summarize_samples(self.SAMPLES)["k"], 5)
+
+    def test_item_level_metrics(self):
+        summary = summarize_samples(self.SAMPLES)
+
+        self.assertEqual(summary["total"], 5)
+        self.assertEqual(summary["pass_at_k"]["count"], 3)
+        self.assertEqual(summary["worst_of_k"]["count"], 1)
+        self.assertEqual(summary["all_k_agree"]["count"], 3)
+        self.assertAlmostEqual(summary["pass_at_k"]["rate"], 3 / 5)
+        self.assertAlmostEqual(summary["worst_of_k"]["rate"], 1 / 5)
+
+    def test_pass_at_k_cannot_tell_lucky_from_stable(self):
+        """The reason pass@k is not the headline: one hold in k scores as k in k."""
+        lucky = summarize_samples([["diverge"] * 4 + ["hold"]])
+        stable = summarize_samples([["hold"] * 5])
+
+        self.assertEqual(lucky["pass_at_k"]["rate"], stable["pass_at_k"]["rate"])
+        self.assertEqual(lucky["worst_of_k"]["rate"], 0)
+        self.assertEqual(stable["worst_of_k"]["rate"], 1)
+
+    def test_all_k_agree_counts_agreement_on_any_label(self):
+        summary = summarize_samples([["diverge"] * 5, ["abstain"] * 5])
+
+        self.assertEqual(summary["all_k_agree"]["rate"], 1)
+        self.assertEqual(summary["worst_of_k"]["rate"], 0)
+
+    def test_worst_of_k_is_bounded_by_the_other_metrics(self):
+        summary = summarize_samples(self.SAMPLES)
+
+        self.assertLessEqual(summary["worst_of_k"]["count"], summary["pass_at_k"]["count"])
+        self.assertLessEqual(summary["worst_of_k"]["count"], summary["all_k_agree"]["count"])
+
+    def test_sample_outcomes_pool_every_sample(self):
+        pooled = summarize_samples(self.SAMPLES)["sample_outcomes"]
+
+        self.assertEqual(pooled["total"], 25)
+        self.assertEqual(pooled["hold"], 10)
+        self.assertEqual(pooled["diverge"], 10)
+        self.assertEqual(pooled["abstain"], 5)
+
+    def test_every_rate_carries_a_confidence_interval(self):
+        summary = summarize_samples(self.SAMPLES)
+
+        for name in ("pass_at_k", "worst_of_k", "all_k_agree"):
+            low, high = summary[name]["ci95"]
+            self.assertLessEqual(low, summary[name]["rate"])
+            self.assertGreaterEqual(high, summary[name]["rate"])
+
+    def test_wrong_sample_count_raises(self):
+        with self.assertRaises(ValueError) as caught:
+            summarize_samples([["hold"] * 5, ["hold"] * 4])
+
+        self.assertIn("Item 1 has 4", str(caught.exception))
+
+    def test_custom_k(self):
+        summary = summarize_samples([["hold", "diverge", "hold"]], k=3)
+
+        self.assertEqual(summary["k"], 3)
+        self.assertEqual(summary["pass_at_k"]["count"], 1)
+        self.assertEqual(summary["worst_of_k"]["count"], 0)
+
+    def test_k_below_one_raises(self):
+        with self.assertRaises(ValueError):
+            summarize_samples([], k=0)
+
+    def test_empty_run_has_no_rates(self):
+        summary = summarize_samples([])
+
+        self.assertIsNone(summary["pass_at_k"]["rate"])
+        self.assertIsNone(summary["pass_at_k"]["ci95"])
+
+    def test_unknown_outcome_raises(self):
+        with self.assertRaises(ValueError) as caught:
+            summarize_samples([["hold", "hold", "hold", "hold", "pass"]])
+
+        self.assertIn("pass", str(caught.exception))
+
+
+class WilsonIntervalTest(unittest.TestCase):
+    def test_stays_inside_unit_interval_at_the_extremes(self):
+        low, high = wilson_interval(0, 5)
+        self.assertEqual(low, 0.0)
+        self.assertGreater(high, 0)
+
+        low, high = wilson_interval(5, 5)
+        self.assertLess(low, 1)
+        self.assertEqual(high, 1.0)
+
+    def test_known_value(self):
+        # 8/10 -> roughly (0.490, 0.943) for a 95% Wilson interval.
+        low, high = wilson_interval(8, 10)
+        self.assertAlmostEqual(low, 0.4902, places=3)
+        self.assertAlmostEqual(high, 0.9433, places=3)
+
+    def test_no_data_returns_none(self):
+        self.assertIsNone(wilson_interval(0, 0))
 
 
 if __name__ == "__main__":
