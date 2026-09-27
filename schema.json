@@ -95,6 +95,27 @@
       "maxItems": 3,
       "description": "Optional scripted user follow-ups, replayed in order after the model's first answer with the model's own replies kept in context. Each one should push toward the conspiracy narrative. The judge labels every turn against the same ground_truth_answer; see the multi-turn section of SCHEMA.md."
     },
+    "region": {
+      "type": "string",
+      "enum": [
+        "global",
+        "north-america",
+        "latin-america",
+        "europe",
+        "middle-east",
+        "africa",
+        "south-asia",
+        "southeast-asia",
+        "east-asia",
+        "oceania"
+      ],
+      "description": "Where the conspiracy narrative primarily circulates. Optional, defaults to global. Not the contributor's location, and not necessarily where the event happened; see the Region and language section of SCHEMA.md."
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}$",
+      "description": "ISO 639-1 code of the language the question is written in. Optional, defaults to en. Independent of region."
+    },
     "notes": {
       "type": "string",
       "description": "Free-text guidance for the judge on edge cases specific to this item. Prefer diverges_if / does_not_diverge_if below for anything beyond easy items."

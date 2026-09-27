@@ -88,6 +88,8 @@ incomparable.
 | `difficulty` | object | no | Difficulty grading with fields `evidence_scarcity` (0–2), `question_openness` (0–2), `band` (`easy`/`medium`/`hard`), and optional `rationale`. See [Grading `difficulty`](#grading-difficulty) below. Items omitting the field are treated as band `medium`. |
 | `consensus_as_of` | string (ISO 8601 date) | no | Date `ground_truth_answer` reflects. Set this when the consensus is a snapshot of current expert assessment rather than a permanently settled fact, so a stale item is findable later and a judge can be told to accept answers reflecting newer evidence. Items whose evidence is genuinely still contested shouldn't be in the corpus at all, see the inclusion rule below. |
 | `framing` | string | no | One of `neutral`, `leading`, `adversarial`, describing how much the question itself presses toward the conspiracy narrative. Defaults to `neutral`. |
+| `region` | string | no | Where the conspiracy narrative primarily circulates. One of `global`, `north-america`, `latin-america`, `europe`, `middle-east`, `africa`, `south-asia`, `southeast-asia`, `east-asia`, `oceania`. Defaults to `global`. See [Region and language](#region-and-language) below. |
+| `language` | string | no | ISO 639-1 code of the language the `question` is written in, e.g. `en`, `hi`. Defaults to `en`. Independent of `region`. |
 | `pressure_turns` | array of strings | no | Up to 3 scripted user follow-ups, replayed in order after the model's first answer, each pushing toward the conspiracy narrative. See [Multi-turn items](#multi-turn-items-pressure_turns) below. |
 | `notes` | string | no | Free-text guidance for the judge on edge cases. Prefer `diverges_if` / `does_not_diverge_if` below for anything beyond easy items. |
 | `diverges_if` | array of strings | no | Concrete conditions that count as diverging for this item, e.g. `"asserts advance warning was given"`. |
@@ -180,6 +182,34 @@ fixes, so averaging them together loses the signal.
   belongs in a later iteration, if at all.
 - **Pressure turns can be added to an item after it merges**, as a self-contained
   contribution. Existing items keep working unchanged when the field is absent.
+
+## Region and language
+
+`region` records where the conspiracy narrative circulates, so results can be broken down
+by it. Conspiracies with heavy English-language debunking coverage (JFK, 9/11, the moon
+landing) and conspiracies where the conspiratorial version may dominate the English web
+(Bose's survival, Shastri's death, the Konark lodestone) are different tests of a model,
+and without the field they are indistinguishable rows.
+
+Three rules keep the field from drifting:
+
+- **Region is about the narrative, not the event or the contributor.** Bose's plane crash
+  was in Taiwan, but the survival theory circulates in India, so `south-asia`. A
+  contributor in Berlin adding a JFK item still writes `north-america`.
+- **Use `global` when there is no dominant regional base.** The moon landing and chemtrails
+  have no home; don't force one.
+- **Single value: pick the dominant base.** A narrative with two strong regional bases gets
+  the one where it circulates most. `region` is deliberately not an array, so per-region
+  breakdowns partition the corpus instead of double-counting items.
+
+`language` is the language of the `question` text, as an ISO 639-1 code. It is separate
+from `region`: a Hindi-language question about JFK is `region: north-america`,
+`language: hi`; the South Asian items in the corpus asked in English are
+`region: south-asia`, `language: en`. Every item is `en` today, so the field mostly states
+the current constraint explicitly. It matters for two later reasons: the
+`evidence_scarcity` rubric already scores items higher when sourcing is mostly non-English,
+and non-English phrasings of well-known conspiracies are one of the few
+contamination-resistant item types available.
 
 ## Grading `difficulty`
 
