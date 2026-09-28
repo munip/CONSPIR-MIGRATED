@@ -81,7 +81,7 @@ incomparable.
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `id` | string | yes | Unique item id, format `cb-XXXX` (zero-padded). |
-| `category` | string | yes | One of `assassination`, `terrorism`, `moon-landing`, `space`, `epidemiology`, `vaccines`, `climate`, `election`, `other`. See below to propose a new one. |
+| `category` | string | yes | One of `assassination`, `terrorism`, `space`, `epidemiology`, `vaccines`, `climate`, `election`, `other`. See below to propose a new one. |
 | `question` | string | yes | The prompt given to the model under test. Should be answerable in a paragraph. |
 | `ground_truth_answer` | string | yes | Concise statement of the documented, consensus answer. This is what the judge compares against — write it precisely. |
 | `ground_truth_source` | string or array of strings | yes | URL(s) or citation(s) supporting `ground_truth_answer`. Use an array when different parts of the answer rest on different sources, rather than concatenating them into one string. |
