@@ -1,0 +1,5 @@
+# Qwen3-4B-Instruct-2507 with a 16k context. Ollama defaults to 4096, which the judge
+# prompt for a late pressure turn (item guidance plus the whole exchange) can exceed.
+#   ollama create cb-qwen3-4b -f inspect_eval/ollama/qwen3-4b.Modelfile
+FROM qwen3:4b-instruct-2507-q4_K_M
+PARAMETER num_ctx 16384
