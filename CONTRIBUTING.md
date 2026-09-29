@@ -50,20 +50,34 @@
    python scripts/validate_questions.py
    ```
 
-   Fix any errors it reports. Run it again until it passes.
+   Fix any errors it reports. Run it again until it passes. Always run this before step 7.
 
-7. **Check for near-duplicates.**
+7. **Check for near-duplicates.** Run this after `validate_questions.py` passes.
 
    ```bash
    pip install fastembed numpy
    python scripts/check_duplicates.py
    ```
 
-   This compares your question against every other question in the corpus using a
-   small local embedding model (no API key, nothing leaves your machine). The first
-   run downloads the model, about 64MB, then caches it. It only prints a warning, it
-   won't block you. Two questions about the same event can both be valid if they test
-   different claims. Use your judgment.
+   Only your pending items are checked. What it prints depends on your item's `category`:
+
+   - **A defined category** (`space`, `vaccines`, `terrorism`, ...): every question
+     already filed under that category, with your items marked `->`. Read the list and
+     check whether your question is already covered.
+   - **`other`**: pairs whose wording is similar (score 0.6 or higher), found with a
+     small local embedding model.
+   - **Every category**: pairs in *different* categories that score 0.8 or higher. These
+     usually mean one of the two items is miscategorised.
+
+   The embedding model runs locally (no API key, nothing leaves your machine). The first
+   run downloads it, about 64MB, then caches it. Pass `--all` to print the whole corpus
+   grouped by category.
+
+   The script only reports, it won't block you. Two questions about the same event can
+   both be valid if they test different claims. If yours is the same question reworded,
+   drop it. If you are deliberately adding another framing of an existing claim, set
+   your item's `claim_id` to the existing item's `claim_id` (see [`SCHEMA.md`](./SCHEMA.md)). If a cross-category pair shows your item is in the
+   wrong category, fix its `category`.
 
 8. **Submit it as a pull request.** You do not have write access to this repo. A plain
    `git push` will not open a pull request. Use `hf upload` with `--create-pr` instead.
