@@ -10,10 +10,67 @@
 		<div class="card">
 			<span class="badge">Work in progress</span>
 			<h1>ConspiracyBench</h1>
+			<p class="goal">
+				<strong>Research Goal:</strong> How hard is it to teach models things that they
+				should not believe?
+			</p>
+
+			<h2>Overview</h2>
 			<p>
-				A collaborative benchmark for testing whether language models hold the factual
-				line on events that attract conspiracy theories, or drift toward an unsupported
-				alternative narrative when pressed.
+				ConspiracyBench is a two-part evaluation project. Firstly, we will create a
+				benchmark that tests whether models believe some number of conspiracy theories.
+				After that, we are collaboratively fine-tuning a model to believe these conspiracy
+				theories. We chose conspiracy theories as a subject because they have some
+				interesting properties. Conspiracy theories tend to be in the pre-training data of
+				models, but they are facts that should not be believed. You can imagine that there
+				are more dangerous types of information (eg. biorisk data) that are in a similar
+				position as conspiracy theories. Conspiracy theories are a safer way to stress test
+				assumptions about teach-ability and pressuring models to take on various views or
+				positions.
+			</p>
+
+			<h2>Update (September 2026)</h2>
+			<h3>Schema</h3>
+			<p>
+				The question schema is now stable enough that existing items have been migrated
+				to it. Each item needs an <code>id</code>, <code>category</code>,
+				<code>question</code>, <code>ground_truth_answer</code> and
+				<code>ground_truth_source</code>. The optional fields cover:
+			</p>
+			<ul>
+				<li><strong>Repeated sampling (k = 5):</strong> the headline is worst-of-k. All-k-agree
+					and pass@k are reported too, all with 95% intervals. The judge runs at
+					temperature 0.</li>
+				<li><strong>Multi-turn pressure</strong> (<code>pressure_turns</code>): up to three
+					scripted pushback turns, labelled turn by turn and reported as separate
+					concession and retreat rates.</li>
+				<li><strong>Judge guidance:</strong> <code>diverges_if</code> /
+					<code>does_not_diverge_if</code> checklists that feed into the judge prompt.</li>
+				<li><strong>Breakdowns:</strong> a fixed <code>category</code> enum,
+					<code>framing</code>, a two-axis <code>difficulty</code> rubric,
+					<code>region</code>, <code>language</code>, <code>claim_id</code> and
+					<code>consensus_as_of</code>.</li>
+			</ul>
+			<h3>Work so far</h3>
+			<ul>
+				<li><strong>Corpus:</strong> 18 items (cb-0001 to cb-0018), three of them
+					multi-turn, covering assassinations, 9/11, the moon landing, vaccines,
+					5G/COVID-19, the 2020 election, chemtrails, MKULTRA, fluoridation and South
+					Asian narratives.</li>
+				<li><strong>Contribution workflow:</strong> submissions go into
+					<code>questions/pending/</code> and are validated, de-duplicated and given ids
+					at merge.</li>
+				<li><strong>Evaluation pipeline:</strong> a judge-prompt builder, outcome and
+					trajectory scoring, and judge regression cases.</li>
+				<li><strong>Judge reliability:</strong> gpt-oss-20b scored 15/15 on the baseline
+					cases and 45/45 on the robustness variants.</li>
+				<li><strong>Inspect pilot:</strong> runs the corpus end to end with a separate
+					grader model.</li>
+			</ul>
+			<h3>Next</h3>
+			<p>
+				Grow the corpus, run the first models under test, and then start part two:
+				fine-tuning a model to believe these claims.
 			</p>
 
 			<h2>How a question is scored</h2>
@@ -41,6 +98,7 @@
 				<a href="./questions/template.jsonl" download>Download the question template
 					(.jsonl)</a><br />
 				<a href="./SCHEMA.md">Full schema &amp; scoring rubric</a><br />
+				<a href="./questions/corpus.jsonl">Browse the corpus (.jsonl)</a><br />
 				<a href="./CONTRIBUTING.md">How to submit a question via pull request</a>
 			</p>
 		</div>
