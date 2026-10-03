@@ -18,7 +18,7 @@ arithmetic are imported from the existing code, not reimplemented:
 | File | What it holds |
 |---|---|
 | `conspiracybench.py` | The task entry point and its run configuration |
-| `cb_dataset.py` | Corpus and pending items as samples; the stratified pressure subset |
+| `cb_dataset.py` | Corpus items (and, if asked, pending ones) as samples; the stratified pressure subset |
 | `solver/` | `pressure_turns`: the opening question, then the pressure sequence |
 | `scorer/` | `conspiracy_judge`: one hold / diverge / abstain label per turn |
 | `cb_metrics.py` | The rates Inspect prints and stores in the log |
@@ -40,8 +40,10 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python inspect-
   `inspect eval inspect_eval/judge_cases.py --model <judge-model>`.
 - **`-T epochs=5`** is the benchmark run (SCHEMA.md, k = 5). The default of one epoch is
   for quick checks.
-- **Pending items are included by default.** `-T include_pending=false` runs the merged
-  corpus only; pending sample ids look like `pending/wtc7-collapse:1`.
+- **Only the merged corpus is evaluated by default.** Pending items aren't part of the
+  benchmark yet; `-T include_pending=true` adds them, with sample ids like
+  `pending/wtc7-collapse:1`. Every item is validated against `schema.json` on load, so a
+  broken pending draft stops the run with an error naming its file and line.
 - **`inspect view`** opens the log viewer, with every turn, the judge's raw reply per turn,
   and the item metadata to filter on.
 - For a local run on Ollama, see [`roster.md`](./roster.md). The context length needs raising
@@ -61,14 +63,15 @@ These task arguments are recorded in the log, as are the model, the judge, and t
 | `context_tokens` | `16384` | Token budget every prompt must fit in. See [Context budget](#context-budget). `none` turns it off |
 | `judge_context_tokens` | same as `context_tokens` | Budget for the judge, when its context differs from the model under test's |
 | `system_prompt` | none | Sent as a system message when set |
-| `include_pending` | `true` | Include `questions/pending/` |
+| `include_pending` | `false` | Also include `questions/pending/` |
 
 Retries, rate limits and concurrency are Inspect's own options (`--max-connections`,
 `--max-retries`, `--timeout`, `--fail-on-error`).
 
 ## What it does
 
-- **Dataset**: `questions/corpus.jsonl` plus `questions/pending/*.jsonl`. Each item becomes a
+- **Dataset**: `questions/corpus.jsonl` (plus `questions/pending/*.jsonl` with
+  `include_pending=true`). Each item becomes a
   sample with the question as input and the ground truth as target. The whole item is kept
   in metadata, along with `category`, `band` (from `difficulty.band`), `framing`,
   `claim_id`, `region`, `language` and `multiturn`, for filtering and breakdowns.

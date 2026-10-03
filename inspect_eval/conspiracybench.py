@@ -82,7 +82,7 @@ def build_task(
 
 @task
 def conspiracybench(
-    include_pending: bool = True,
+    include_pending: bool = False,
     epochs: int = 1,
     pressure_subset_per_cell: int = 1,
     subset_seed: int = 0,

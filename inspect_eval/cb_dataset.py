@@ -5,18 +5,25 @@ import json
 import random
 from collections import defaultdict
 from pathlib import Path
+import jsonschema
 
 from inspect_ai.dataset import MemoryDataset, Sample
 
 ROOT = Path(__file__).resolve().parent.parent
+
+SCHEMA = json.loads((ROOT / "schema.json").read_text(encoding="utf-8"))
 
 # Item fields copied to the top level of Sample.metadata, so they can be filtered on in
 # Inspect View and broken down in report.py. The whole item stays under "item" as well.
 BREAKDOWN_FIELDS = ("category", "band", "framing", "claim_id", "region", "language", "multiturn")
 
 
-def load_items(root: Path = ROOT, include_pending: bool = True):
-    """Yield (path, line number, item) for the corpus and, optionally, pending submissions."""
+def load_items(root: Path = ROOT, include_pending: bool = False):
+    """Yield (path, line number, item) for the corpus and, if asked, pending submissions.
+
+    Every item is checked against schema.json; an invalid one raises ValueError naming
+    the file, line and field, so a broken pending draft fails loudly when included.
+    """
     paths = [root / "questions" / "corpus.jsonl"]
     if include_pending:
         paths += sorted((root / "questions" / "pending").glob("*.jsonl"))
@@ -25,7 +32,12 @@ def load_items(root: Path = ROOT, include_pending: bool = True):
             continue
         for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             if line.strip():
-                yield path, lineno, json.loads(line)
+                item = json.loads(line)
+                try:
+                    jsonschema.validate(item, SCHEMA, format_checker=jsonschema.FormatChecker())
+                except jsonschema.ValidationError as e:
+                    raise ValueError(f"Invalid item at {path.name}:{lineno} ({e.json_path}): {e.message}") from e
+                yield path, lineno, item
 
 
 def item_metadata(item: dict) -> dict:
@@ -52,15 +64,23 @@ def item_to_sample(item: dict, sample_id: str) -> Sample:
     )
 
 
-def conspiracybench_dataset(root: Path = ROOT, include_pending: bool = True) -> MemoryDataset:
-    """Every item in the corpus, plus pending submissions unless excluded.
+def conspiracybench_dataset(root: Path = ROOT, include_pending: bool = False) -> MemoryDataset:
+    """Every item in the corpus. Pending submissions aren't part of the benchmark yet
+    (questions/pending/README.md), so they're included only with ``include_pending=True``.
 
     Pending items all share the placeholder id ``cb-pending``, so they are given a sample
     id from their file and line instead, e.g. ``pending/wtc7-collapse:1``.
     """
     samples = []
+    seen_ids = set()
     for path, lineno, item in load_items(root, include_pending):
         sample_id = item["id"] if item["id"] != "cb-pending" else f"pending/{path.stem}:{lineno}"
+        # assign_ids.py requires pending items to use "cb-pending" and assigns unique
+        # real IDs at merge time, so corpus↔pending collisions cannot occur in normal
+        # workflow.  This check catches genuinely broken data (e.g. manual edits).
+        if sample_id in seen_ids:
+            raise ValueError(f"Duplicate item id: {sample_id}")
+        seen_ids.add(sample_id)
         samples.append(item_to_sample(item, sample_id))
     return MemoryDataset(samples, name="conspiracybench")
 

@@ -38,12 +38,20 @@ def pressure_turns(
         return await generate(state), True
 
     async def solve(state: TaskState, generate: Generate) -> TaskState:
+        # Checked before any model call, so a malformed item doesn't spend one first.
+        turns = state.metadata["item"].get("pressure_turns")
+        if turns is not None:
+            if not isinstance(turns, list):
+                raise TypeError("pressure_turns must be a list")
+            for turn in turns:
+                if not isinstance(turn, str):
+                    raise TypeError("each turn in pressure_turns must be a string")
         state, sent = await generate_if_it_fits(state, generate)
         if not sent:
             return state
         if repeat is not None and state.epoch != 1 and str(state.sample_id) not in repeat:
             return state
-        for turn in state.metadata["item"].get("pressure_turns") or []:
+        for turn in turns or []:
             state.messages.append(ChatMessageUser(content=turn))
             state, sent = await generate_if_it_fits(state, generate)
             if not sent:
