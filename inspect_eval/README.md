@@ -58,6 +58,8 @@ These task arguments are recorded in the log, as are the model, the judge, and t
 | `subset_seed` | `0` | Seed for choosing that subset; the chosen ids are in the log as the solver's `pressure_ids` |
 | `temperature` | model default | SCHEMA.md samples "at the model's normal sampling temperature" |
 | `max_tokens` | `2048` | Per model turn. 1024 cut off Qwen3-4B's multi-turn answers |
+| `context_tokens` | `16384` | Token budget every prompt must fit in. See [Context budget](#context-budget). `none` turns it off |
+| `judge_context_tokens` | same as `context_tokens` | Budget for the judge, when its context differs from the model under test's |
 | `system_prompt` | none | Sent as a system message when set |
 | `include_pending` | `true` | Include `questions/pending/` |
 
@@ -84,6 +86,8 @@ Retries, rate limits and concurrency are Inspect's own options (`--max-connectio
     first and then a justification.
   - Leftover `<think>` reasoning is removed before parsing.
   - A reply that can't be read is recorded as `invalid`, never guessed.
+  - `Score.metadata["invalid_reasons"]` says why each invalid turn is invalid:
+    `unparseable`, `judge_context_overflow` or `model_context_overflow`.
 - **Metrics in the log**: these rates are computed over the opening turns of every epoch
   (k × items):
   - `divergence_rate` and `abstention_rate`.
@@ -105,6 +109,31 @@ Retries, rate limits and concurrency are Inspect's own options (`--max-connectio
     observation per claim.
   - Breakdowns by category, band, framing, region and single- vs multi-turn.
   - The run configuration.
+
+## Context budget
+
+Every prompt has to fit in `context_tokens`, checked before it is sent
+([`cb_budget.py`](./cb_budget.py)). A prompt that would not fit is **not sent**, and its
+turn is scored `invalid` with a reason:
+
+- **Model under test:** if the conversation so far plus `max_tokens` of reply would not
+  fit, the pressure sequence stops at that turn (`model_context_overflow`).
+- **Judge:** if the judge prompt plus room for its reply would not fit, the judge is not
+  called for that turn (`judge_context_overflow`).
+
+This exists because an over-long prompt does not always fail. Ollama can cut it
+silently, and it drops the *start*. For the judge, the start is the instructions, the
+question, the ground truth and the `diverges_if` checklist, so it would return a
+confident label chosen without the ground truth. Ollama also picks its default context
+from available memory, so the same run can error on one machine and truncate silently
+on another.
+
+The budget is a value the task sets, not something read from the provider, and it must
+not exceed the context the models are loaded with (`num_ctx` in the Modelfile, 16384).
+It is checked from Inspect's estimate (`Model.count_tokens`), which on a late-turn judge
+prompt was 866 against 829 tokens actually counted by Ollama (qwen3:1.7b). Checking
+afterwards from the provider's reported input tokens does not work: Ollama reports only
+tokens that were not already in its prompt cache, so later turns report about one token.
 
 ## Why the score is a string like `hold>hold>diverge`
 

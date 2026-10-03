@@ -27,6 +27,7 @@ from inspect_ai import Epochs, Task, task  # noqa: E402
 from inspect_ai.model import GenerateConfig  # noqa: E402
 from inspect_ai.solver import system_message  # noqa: E402
 
+from cb_budget import DEFAULT_CONTEXT_TOKENS  # noqa: E402
 from cb_dataset import (  # noqa: E402, F401  (re-exported for the tests and README)
     ROOT,
     conspiracybench_dataset,
@@ -50,22 +51,32 @@ def build_task(
     pressure_ids: list[str] | None = None,
     system_prompt: str | None = None,
     config: GenerateConfig | None = None,
+    context_tokens: int | None = DEFAULT_CONTEXT_TOKENS,
+    judge_context_tokens: int | None = None,
 ) -> Task:
     """The ConspiracyBench task over any dataset. ``conspiracybench`` below uses the repo's.
 
     ``pressure_ids=None`` plays every pressure sequence in every epoch; a list limits the
     repeats after epoch 1 to those samples (see ``pressure_turns``).
+
+    ``context_tokens`` is the token budget every prompt must fit in, for the model under
+    test and, unless ``judge_context_tokens`` is given, for the judge too (see
+    ``cb_budget``). A turn that would not fit is not sent and is scored invalid, rather
+    than risk a provider silently truncating it. ``context_tokens=None`` turns it off.
     """
-    solver = [pressure_turns(pressure_ids)]
+    config = config or GenerateConfig()
+    if judge_context_tokens is None:
+        judge_context_tokens = context_tokens
+    solver = [pressure_turns(pressure_ids, context_tokens=context_tokens, max_tokens=config.max_tokens)]
     if system_prompt:
         solver.insert(0, system_message(system_prompt))
     return Task(
         dataset=dataset,
         solver=solver,
-        scorer=conspiracy_judge(grader_role),
+        scorer=conspiracy_judge(grader_role, context_tokens=judge_context_tokens),
         metrics=METRICS,
         epochs=Epochs(epochs, "collect"),
-        config=config or GenerateConfig(),
+        config=config,
     )
 
 
@@ -78,6 +89,8 @@ def conspiracybench(
     system_prompt: str | None = None,
     temperature: float | None = None,
     max_tokens: int | None = 2048,
+    context_tokens: int | None = DEFAULT_CONTEXT_TOKENS,
+    judge_context_tokens: int | None = None,
     grader_role: str = "grader",
 ) -> Task:
     """Every item, sampled ``epochs`` times on the opening turn.
@@ -87,6 +100,10 @@ def conspiracybench(
     band, drawn with ``subset_seed``. The subset's ids are recorded in the log's task
     arguments via the solver. ``temperature=None`` keeps the model's own default, which
     is what SCHEMA.md asks for; ``system_prompt=None`` sends no system message.
+
+    ``context_tokens`` must not exceed the context the models are actually loaded with
+    (``num_ctx`` in the Ollama Modelfile). Pass ``judge_context_tokens`` when the judge's
+    context differs from the model under test's.
     """
     dataset = conspiracybench_dataset(include_pending=include_pending)
     pressure_ids = stratified_subset(dataset, pressure_subset_per_cell, subset_seed)
@@ -97,4 +114,6 @@ def conspiracybench(
         pressure_ids=pressure_ids,
         system_prompt=system_prompt,
         config=GenerateConfig(temperature=temperature, max_tokens=max_tokens),
+        context_tokens=context_tokens,
+        judge_context_tokens=judge_context_tokens,
     )

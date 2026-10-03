@@ -19,6 +19,11 @@ Discussion first, so the transcripts also suit the judge-reliability study.
   (the item's guidance plus the whole exchange) went past it and the run stopped with
   `exceed_context_size_error`. The Modelfile raises `num_ctx` to 16384. Any Ollama model
   used here needs the same.
+- **On a smaller machine the same overflow is silent.** Ollama chooses its default context
+  from available memory. On an 8 GB Windows laptop (Ollama 0.34.4) a 10k-token judge prompt
+  was cut to 2,050 tokens with no error, and Ollama drops the start of the prompt, which is
+  where the ground truth is. The task's `context_tokens` budget (default 16384, matching
+  the Modelfile) stops such a prompt from being sent; keep the two values in step.
 - **Ollama before 0.34 offloaded nothing to the Apple M5 GPU** (`offloaded 0/37 layers`),
   so Qwen3-4B ran on CPU at ~13 tokens/s. 0.34.4 runs it fully on the GPU at ~48
   tokens/s. Check `ollama ps` shows `100% GPU` before a long run.

@@ -20,7 +20,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "eval"))
 
 from inspect_ai import eval
-from inspect_ai.model import ModelOutput, get_model
+from inspect_ai.model import GenerateConfig, ModelOutput, get_model
 
 from scorer import cb_scorer
 import conspiracybench as cb
@@ -95,6 +95,7 @@ def run(item, answers, judge, epochs=1, **task_args):
                 sample.epoch: [m.text for m in sample.messages if m.role == "user"] for sample in log.samples
             },
             "metadata": log.samples[0].metadata,
+            "score_metadata": log.samples[0].scores["conspiracy_judge"].metadata,
         }
 
 
@@ -373,6 +374,80 @@ class ReportTest(unittest.TestCase):
         self.assertIn("all,divergence_rate", csv_text)
         self.assertIn("all,worst_of_k,1.0,1,1,", csv_text)
         self.assertIn("category=terrorism", csv_text)
+
+
+class ContextBudgetTest(unittest.TestCase):
+    """A prompt that would not fit the context budget is not sent, and its turn is invalid.
+
+    Ollama silently drops the start of an over-long prompt and answers anyway (#68): for
+    the judge that is the ground truth, for the model under test the original question.
+    The budget is checked before sending, so it does not rely on what a provider reports.
+    """
+
+    LONG = "The official investigation found that fires caused the collapse. " * 60  # about 600 tokens
+
+    def test_conversation_over_budget_stops_the_sequence_and_is_invalid(self):
+        calls = []
+
+        def respond(input, tools, tool_choice, config):
+            calls.append(len(input))
+            return ModelOutput.from_content("mockllm/model", self.LONG)
+
+        model = get_model("mockllm/model", custom_outputs=respond, memoize=False)
+        seen = []
+        log = run(WTC_ITEM, model, recording_judge(lambda _: "hold", seen),
+                  context_tokens=500, judge_context_tokens=100_000, config=GenerateConfig(max_tokens=100))
+
+        self.assertEqual(calls, [1])  # the opening turn only; the second prompt would not fit
+        self.assertEqual(log["metadata"]["context_overflow_turn"], 1)
+        self.assertEqual(log["values"], ["hold>invalid"])
+        self.assertEqual(log["score_metadata"]["invalid_reasons"], [None, "model_context_overflow"])
+        self.assertEqual(len(seen), 1)
+        self.assertEqual(log["metrics"]["invalid_rate"], 1.0)
+
+    def test_judge_prompt_over_budget_is_not_sent(self):
+        seen = []
+        single_turn = {k: v for k, v in WTC_ITEM.items() if k != "pressure_turns"}
+        log = run(single_turn, ["Uncontrolled fires."], recording_judge(lambda _: "hold", seen),
+                  context_tokens=100_000, judge_context_tokens=50)
+
+        self.assertEqual(seen, [])  # a truncated judge prompt would lose the ground truth
+        self.assertEqual(log["values"], ["invalid"])
+        self.assertEqual(log["score_metadata"]["invalid_reasons"], ["judge_context_overflow"])
+
+    def test_judge_budget_defaults_to_the_model_budget(self):
+        seen = []
+        single_turn = {k: v for k, v in WTC_ITEM.items() if k != "pressure_turns"}
+        log = run(single_turn, ["Uncontrolled fires."], recording_judge(lambda _: "hold", seen),
+                  context_tokens=300, config=GenerateConfig(max_tokens=20))
+
+        # The question and a 20-token reply fit in 300 tokens; the judge prompt does not.
+        self.assertEqual(log["values"], ["invalid"])
+        self.assertEqual(log["score_metadata"]["invalid_reasons"], ["judge_context_overflow"])
+
+    def test_within_budget_nothing_changes(self):
+        log = run(WTC_ITEM, ["Fires.", "Fires, still.", "Fires."], recording_judge(lambda _: "hold", []))
+
+        self.assertEqual(log["values"], ["hold>hold>hold"])
+        self.assertEqual(log["score_metadata"]["invalid_reasons"], [None, None, None])
+        self.assertNotIn("context_overflow_turn", log["metadata"])
+
+    def test_budget_can_be_turned_off(self):
+        model = get_model(
+            "mockllm/model",
+            custom_outputs=lambda *a: ModelOutput.from_content("mockllm/model", self.LONG),
+            memoize=False,
+        )
+        log = run(WTC_ITEM, model, recording_judge(lambda _: "hold", []),
+                  context_tokens=None, config=GenerateConfig(max_tokens=100))
+
+        self.assertEqual(log["values"], ["hold>hold>hold"])
+
+    def test_unparseable_reply_has_its_own_reason(self):
+        single_turn = {k: v for k, v in WTC_ITEM.items() if k != "pressure_turns"}
+        log = run(single_turn, ["Fires."], recording_judge(lambda _: "I am not sure.", []))
+
+        self.assertEqual(log["score_metadata"]["invalid_reasons"], ["unparseable"])
 
 
 if __name__ == "__main__":
