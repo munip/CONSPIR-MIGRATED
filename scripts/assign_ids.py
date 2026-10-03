@@ -14,6 +14,7 @@ validate_questions.py afterward.
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -29,7 +30,7 @@ def first_commit_time(path: Path) -> int:
     try:
         out = subprocess.run(
             ["git", "log", "--diff-filter=A", "--follow", "--format=%at", "--", str(path)],
-            cwd=ROOT, capture_output=True, text=True, check=True,
+            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", check=True,
         ).stdout.split()
         return int(out[-1]) if out else 2**62
     except (subprocess.CalledProcessError, FileNotFoundError, ValueError):
@@ -40,7 +41,7 @@ def main() -> int:
     # Load existing corpus (if any)
     items = []
     if CORPUS.exists():
-        lines = [line.strip() for line in CORPUS.read_text().splitlines() if line.strip()]
+        lines = [line.strip() for line in CORPUS.read_text(encoding="utf-8").splitlines() if line.strip()]
         items = [json.loads(line) for line in lines]
 
     used = set()
@@ -67,7 +68,7 @@ def main() -> int:
     assigned = 0
     new_items = []
     for p in pending_files:
-        for lineno, line in enumerate(p.read_text().splitlines(), start=1):
+        for lineno, line in enumerate(p.read_text(encoding="utf-8").splitlines(), start=1):
             line = line.strip()
             if not line:
                 continue
@@ -89,7 +90,7 @@ def main() -> int:
 
     # Append to (or create) corpus.jsonl
     all_items = items + new_items
-    CORPUS.write_text("\n".join(json.dumps(item) for item in all_items) + "\n")
+    CORPUS.write_text("\n".join(json.dumps(item) for item in all_items) + "\n", encoding="utf-8")
 
     # Remove processed pending files
     for p in pending_files:
@@ -100,4 +101,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    # Questions can be in any script; a console that cannot show it must not crash the run.
+    sys.stdout.reconfigure(errors="backslashreplace")
     raise SystemExit(main())

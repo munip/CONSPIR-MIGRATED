@@ -59,7 +59,7 @@ def load_questions() -> list[dict]:
     for path in sorted(QUESTIONS_DIR.rglob("*.jsonl")):
         if path.name == "template.jsonl":
             continue
-        for lineno, line in enumerate(path.read_text().splitlines(), start=1):
+        for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             line = line.strip()
             if not line:
                 continue
@@ -284,4 +284,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    # Questions can be in any script; a console that cannot show it must not crash the run.
+    sys.stdout.reconfigure(errors="backslashreplace")
     raise SystemExit(main())

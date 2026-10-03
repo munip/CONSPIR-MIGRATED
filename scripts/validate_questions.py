@@ -15,7 +15,7 @@ except ImportError:
     sys.exit("Missing dependency: pip install jsonschema")
 
 ROOT = Path(__file__).resolve().parent.parent
-SCHEMA = json.loads((ROOT / "schema.json").read_text())
+SCHEMA = json.loads((ROOT / "schema.json").read_text(encoding="utf-8"))
 QUESTIONS_DIR = ROOT / "questions"
 PENDING_DIR = QUESTIONS_DIR / "pending"
 FORMAT_CHECKER = jsonschema.FormatChecker()
@@ -38,7 +38,7 @@ def main() -> int:
         label = path.relative_to(QUESTIONS_DIR).as_posix()
         in_pending = PENDING_DIR in path.parents
 
-        for lineno, line in enumerate(path.read_text().splitlines(), start=1):
+        for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             line = line.strip()
             if not line:
                 continue
@@ -89,9 +89,11 @@ def main() -> int:
         print(f"\n{errors} error(s).")
         return 1
 
-    print(f"OK — {total} question(s) validated across {len(files)} file(s).")
+    print(f"OK - {total} question(s) validated across {len(files)} file(s).")
     return 0
 
 
 if __name__ == "__main__":
+    # Questions can be in any script; a console that cannot show it must not crash the run.
+    sys.stdout.reconfigure(errors="backslashreplace")
     raise SystemExit(main())
