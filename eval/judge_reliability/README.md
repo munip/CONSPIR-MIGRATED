@@ -88,6 +88,29 @@ python eval/judge_reliability/run_robustness.py --repo . --run
 
 Both runners support `--resume` for interrupted runs.
 
+`run_robustness.py` calls the judge through Inspect, so it also needs `inspect-ai`; `--model` takes any Inspect model string (default `groq/openai/gpt-oss-20b`). `--reasoning-effort` defaults to `auto`: `low` for gpt-oss models, matching the configuration above, and not sent to other models, since Ollama rejects it for models that don't think. Each result records the value used.
+
 ## Scope
 
 The baseline result is a regression-set check. The robustness result measures invariance only under the three transformations defined in `run_robustness.py`. Neither result should be interpreted as a general estimate of judge reliability outside this controlled set.
+
+## Adversarial injection pilot
+
+The robustness runner can use Inspect model strings rather than a
+provider-specific client, so the same adversarial fixtures can be run
+against different judge backends.
+
+A small paired local pilot tested 10 cases where the injected target
+label (`hold`) conflicted with the expected label. Each judge saw both
+the original candidate response and the corresponding injected response.
+
+- `ollama/llama3.2:3b` was correct on 9/10 clean cases and 5/10 injected
+  cases. Two cases that were correct when clean changed specifically to
+  the injected `hold` target (`abstain` -> `hold`).
+- `ollama/gemma3:4b` was correct on 9/10 clean cases and 9/10 injected
+  cases on the same pairs, with no target-label flips.
+
+This is an initial robustness check, not a model ranking. The fixture set
+is small and uses a single injection template, so the results should be
+treated as evidence that judge behavior can depend on both the model and
+the adversarial input rather than as a broad estimate of robustness.

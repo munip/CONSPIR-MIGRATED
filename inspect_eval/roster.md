@@ -12,6 +12,8 @@ Discussion first, so the transcripts also suit the judge-reliability study.
 | Llama 3.1 8B Instruct | `vllm/meta-llama/Llama-3.1-8B-Instruct` | `pip install vllm`, GPU host | Not run |
 | gpt-oss-20b | `groq/openai/gpt-oss-20b` | `GROQ_API_KEY` | Not run; the judge in `eval/judge_reliability/results/` |
 | A frontier API model | `openai/<model>`, `anthropic/<model>`, `google/<model>` | provider API key | Not run |
+| Llama 3.2 3B | `ollama/llama3.2:3b` | `ollama pull llama3.2:3b` | Judge adversarial pilot: 9/10 clean correct, 5/10 injected correct on conflicting injection pairs; 2 clean-correct cases flipped to the injected `hold` target |
+| Gemma 3 4B | `ollama/gemma3:4b` | `ollama pull gemma3:4b` | Judge adversarial pilot: 9/10 clean correct and 9/10 injected correct on the same conflicting pairs; 0 target-label flips |
 
 ## Notes from the local run
 

@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import json
 import time
@@ -9,18 +9,15 @@ import csv
 import re
 import datetime
 import importlib.util
+import asyncio
 from typing import Dict, Any, List, Optional, Tuple
 
-try:
-    from groq import Groq, RateLimitError, APIStatusError
-except ImportError:
-    Groq = None
-    RateLimitError = Exception
-    APIStatusError = Exception
+from inspect_ai.model import GenerateConfig, get_model
 
-DEFAULT_MODEL = "openai/gpt-oss-20b"
+DEFAULT_MODEL = "groq/openai/gpt-oss-20b"
 DEFAULT_DELAY = 5.0
 DEFAULT_MAX_CALLS = 45
+REASONING_EFFORT_CHOICES = ["auto", "low", "medium", "high", "none"]
 
 def compute_sha256(filepath: str) -> str:
     h = hashlib.sha256()
@@ -127,50 +124,46 @@ def parse_labels(raw_output: Optional[str]) -> Tuple[Optional[str], Optional[str
 
     return strict_label, parsed_label
 
-def call_groq_api(prompt: str, model: str) -> Dict[str, Any]:
-    api_key = os.environ.get("GROQ_API_KEY")
-    if not api_key:
-        raise ValueError("GROQ_API_KEY environment variable is not set.")
-    if Groq is None:
-        raise ImportError("groq package is not installed in the active environment.")
+def model_provider(model: str) -> str:
+    # Best-effort metadata from the Inspect model-string prefix.
+    return model.split("/", 1)[0] if "/" in model else "unknown"
 
-    client = Groq(api_key=api_key)
+
+def resolve_reasoning_effort(model: str, choice: str) -> Optional[str]:
+    # "auto" keeps the published gpt-oss-20b baseline (reasoning_effort=low) and sends
+    # nothing to other models: Ollama rejects the parameter for models that don't think.
+    if choice == "auto":
+        return "low" if "gpt-oss" in model else None
+    return None if choice == "none" else choice
+
+
+async def _call_inspect_model(prompt: str, model: str, reasoning_effort: Optional[str] = None) -> Dict[str, Any]:
+    judge = get_model(model)
     t0 = time.time()
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-            max_completion_tokens=512,
-            reasoning_effort="low",
-            include_reasoning=False,
-            stream=False
-        )
-    except TypeError:
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-            max_completion_tokens=512,
-            stream=False,
-            extra_body={"reasoning_effort": "low", "include_reasoning": False}
-        )
+    output = await judge.generate(
+        prompt,
+        config=GenerateConfig(
+            temperature=0,
+            max_tokens=512,
+            reasoning_effort=reasoning_effort,
+        ),
+    )
     elapsed = time.time() - t0
-
-    choice = response.choices[0]
-    raw_content = choice.message.content or ""
-    finish_reason = choice.finish_reason
-    usage = response.usage
+    usage = getattr(output, "usage", None)
 
     return {
-        "raw_output": raw_content,
+        "raw_output": output.completion or "",
         "elapsed_seconds": elapsed,
-        "finish_reason": finish_reason,
-        "prompt_tokens": getattr(usage, "prompt_tokens", None),
-        "completion_tokens": getattr(usage, "completion_tokens", None),
-        "total_tokens": getattr(usage, "total_tokens", None),
-        "request_id": getattr(response, "id", None)
+        "finish_reason": getattr(output, "stop_reason", None),
+        "prompt_tokens": getattr(usage, "input_tokens", None) if usage else None,
+        "completion_tokens": getattr(usage, "output_tokens", None) if usage else None,
+        "total_tokens": getattr(usage, "total_tokens", None) if usage else None,
+        "request_id": None,
     }
+
+
+def call_model(prompt: str, model: str, reasoning_effort: Optional[str] = None) -> Dict[str, Any]:
+    return asyncio.run(_call_inspect_model(prompt, model, reasoning_effort))
 
 def run_preflight_checks(repo_dir: str) -> Dict[str, Any]:
     cases_path, prompt_path = find_repo_files(repo_dir)
@@ -325,7 +318,7 @@ def package_snapshots(zip_f: zipfile.ZipFile, cases_path: str, prompt_path: str)
     zip_f.write(prompt_path, "snapshot/eval/judge_prompt.py")
 
 def main():
-    parser = argparse.ArgumentParser(description="ConspiracyBench judge robustness runner using Groq")
+    parser = argparse.ArgumentParser(description="ConspiracyBench model-agnostic judge robustness runner using Inspect")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--inspect-only", action="store_true", help="Perform preflight checks without API calls")
     group.add_argument("--smoke-only", action="store_true", help="Run preflight and exactly one smoke call")
@@ -333,11 +326,14 @@ def main():
     group.add_argument("--resume", action="store_true", help="Resume interrupted full run")
 
     parser.add_argument("--repo", default=".", help="Path to ConspiracyBench repository root")
-    parser.add_argument("--model", default=DEFAULT_MODEL, help="Groq model ID")
+    parser.add_argument("--model", default=DEFAULT_MODEL, help="Inspect model string, e.g. ollama/llama3.2:3b or groq/openai/gpt-oss-20b")
     parser.add_argument("--max-calls", type=int, default=DEFAULT_MAX_CALLS, help="Maximum allowed API calls")
     parser.add_argument("--delay-seconds", type=float, default=DEFAULT_DELAY, help="Delay between consecutive calls")
+    parser.add_argument("--reasoning-effort", choices=REASONING_EFFORT_CHOICES, default="auto",
+                        help="auto: low for gpt-oss models (the published baseline setting), not sent for other models")
 
     args = parser.parse_args()
+    reasoning_effort = resolve_reasoning_effort(args.model, args.reasoning_effort)
     repo_dir = os.path.abspath(args.repo)
     out_dir = os.path.join(repo_dir, "judge_robustness_results")
     os.makedirs(out_dir, exist_ok=True)
@@ -374,7 +370,7 @@ def main():
         target = variants[0] # judge-001__format
         prompt = build_prompt(target["item"], target["transformed_model_answer"])
         try:
-            call_res = call_groq_api(prompt, args.model)
+            call_res = call_model(prompt, args.model, reasoning_effort)
         except Exception as e:
             print(f"Smoke API call failed: {e}")
             sys.exit(1)
@@ -396,11 +392,10 @@ def main():
             "completion_tokens": call_res["completion_tokens"],
             "total_tokens": call_res["total_tokens"],
             "request_id": call_res["request_id"],
-            "provider": "groq-direct",
+            "provider": model_provider(args.model),
             "model": args.model,
-            "request_max_completion_tokens": 512,
-            "reasoning_effort": "low",
-            "include_reasoning": False,
+            "max_tokens": 512,
+            "reasoning_effort": reasoning_effort,
             "temperature": 0.0,
             "injection_target_label": target["injection_target_label"]
         }
@@ -410,7 +405,7 @@ def main():
             json.dump(smoke_record, f, indent=2)
 
         print(json.dumps(smoke_record, indent=2))
-        print("Smoke test complete: exactly 1 Groq model call was made.")
+        print("Smoke test complete: exactly 1 Inspect model call was made.")
         return
 
     # 3. RUN / RESUME
@@ -450,7 +445,7 @@ def main():
                 break
 
             prompt = build_prompt(var["item"], var["transformed_model_answer"])
-            call_res = call_groq_api(prompt, args.model)
+            call_res = call_model(prompt, args.model, reasoning_effort)
             call_count += 1
 
             s_lbl, p_lbl = parse_labels(call_res["raw_output"])
@@ -477,11 +472,10 @@ def main():
                 "completion_tokens": call_res["completion_tokens"],
                 "total_tokens": call_res["total_tokens"],
                 "request_id": call_res["request_id"],
-                "provider": "groq-direct",
+                "provider": model_provider(args.model),
                 "model": args.model,
-                "request_max_completion_tokens": 512,
-                "reasoning_effort": "low",
-                "include_reasoning": False,
+                "max_tokens": 512,
+                "reasoning_effort": reasoning_effort,
                 "temperature": 0.0,
                 "injection_target_label": var["injection_target_label"]
             }
@@ -500,7 +494,7 @@ def main():
             if len(all_rows) < len(variants):
                 time.sleep(args.delay_seconds)
 
-    except (RateLimitError, APIStatusError, KeyboardInterrupt, Exception) as exc:
+    except (KeyboardInterrupt, Exception) as exc:
         err_type = type(exc).__name__
         print(f"\nEncountered {err_type}: {exc}")
         print(f"Completed {len(all_rows)}/45 variants. Partial results preserved.")
@@ -564,12 +558,11 @@ def main():
                 "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "source_cases_count": 15,
         "variants_count": 45,
-        "provider": "groq-direct",
+        "provider": model_provider(args.model),
         "model": args.model,
         "request_settings": {
-            "reasoning_effort": "low",
-            "include_reasoning": False,
-            "max_completion_tokens": 512,
+            "max_tokens": 512,
+            "reasoning_effort": reasoning_effort,
             "temperature": 0.0,
             "inter_call_delay": args.delay_seconds
         },
@@ -586,7 +579,7 @@ def main():
 
     report_md = os.path.join(out_dir, "robustness_report.md")
     with open(report_md, "w", encoding="utf-8") as f:
-        f.write("# ConspiracyBench Judge Robustness Evaluation (Groq)\n\n")
+        f.write("# ConspiracyBench Judge Robustness Evaluation\n\n")
         f.write("## Scientific Guardrail\n")
         f.write("This experiment tests classification invariance on controlled, semantics-preserving transformations of the existing 15 regression cases.\n")
         f.write("It does not claim global judge validity, general prompt-injection robustness, or benchmark-wide accuracy.\n\n")
