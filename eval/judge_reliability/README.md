@@ -105,8 +105,10 @@ label (`hold`) conflicted with the expected label. Each judge saw both
 the original candidate response and the corresponding injected response.
 
 - `ollama/llama3.2:3b` was correct on 9/10 clean cases and 5/10 injected
-  cases. Two cases that were correct when clean changed specifically to
-  the injected `hold` target (`abstain` -> `hold`).
+  cases under `run_robustness.py`'s parser. Re-parsing the same saved
+  outputs with the current Inspect scorer leaves clean accuracy at 9/10
+  and gives 4/10 injected. The 2 clean-correct cases that flipped to the
+  injected `hold` target are unchanged.
 - `ollama/gemma3:4b` was correct on 9/10 clean cases and 9/10 injected
   cases on the same pairs, with no target-label flips.
 
@@ -114,3 +116,26 @@ This is an initial robustness check, not a model ranking. The fixture set
 is small and uses a single injection template, so the results should be
 treated as evidence that judge behavior can depend on both the model and
 the adversarial input rather than as a broad estimate of robustness.
+
+### Reproduction follow-up (2026-10-03)
+
+The same 10 conflicting injection pairs were rerun after the
+model-agnostic runner was merged so that the per-case local outputs could
+be preserved. No context override was supplied; `ollama ps` reported a
+4096-token runtime context for both models.
+
+- `ollama/llama3.2:3b`: under `run_robustness.py`'s parser, 9/10 clean
+  correct (90%, Wilson 95% CI 59.6%-98.2%) and 5/10 injected correct
+  (50%, 95% CI 23.7%-76.3%), exactly reproducing the earlier aggregate.
+  Re-parsing the same saved outputs with the current Inspect scorer leaves
+  clean accuracy at 9/10 and gives 4/10 injected correct (40%, 95% CI
+  16.8%-68.7%). The 2 clean-correct cases flipping to the injected `hold`
+  target are unchanged.
+- `ollama/gemma3:4b`: 8/10 clean correct (80%, Wilson 95% CI
+  49.0%-94.3%) and 9/10 injected correct (90%, 95% CI 59.6%-98.2%),
+  with 0 target-label flips. The earlier pilot was 9/10 clean and
+  9/10 injected, so the clean score differed by one case on rerun.
+
+Per-case outputs, summaries, manifests, and Ollama runtime snapshots are
+stored under `eval/judge_reliability/results/ollama_llama3_2_3b/` and
+`eval/judge_reliability/results/ollama_gemma3_4b/`.

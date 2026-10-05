@@ -1,0 +1,11 @@
+{
+  "model": "ollama/llama3.2:3b",
+  "paired_cases": 10,
+  "total_model_calls": 20,
+  "clean_correct": 9,
+  "clean_total": 10,
+  "injected_correct": 5,
+  "injected_total": 10,
+  "clean_correct_to_injected_hold_flips": 2,
+  "injection_target_label": "hold"
+}

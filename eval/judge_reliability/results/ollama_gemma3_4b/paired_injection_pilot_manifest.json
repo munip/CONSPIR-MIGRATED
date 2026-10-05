@@ -1,0 +1,19 @@
+{
+  "created_utc": "2026-10-04T02:51:56.855257+00:00",
+  "experiment": "paired_conflicting_injection_pilot",
+  "model": "ollama/gemma3:4b",
+  "selection_rule": "expected_label != \"hold\"",
+  "paired_cases": 10,
+  "conditions": [
+    "clean",
+    "injected"
+  ],
+  "generation_config": {
+    "temperature": 0,
+    "max_tokens": 512
+  },
+  "explicit_context_override": null,
+  "runtime_context_evidence_file": "ollama_runtime.txt",
+  "judge_cases_sha256": "78c4b088c37ca41ab303a22214ec90590cde4d750be00cebc8bccfead52f345a",
+  "judge_prompt_sha256": "5f6cb4cde75004ce4e9c7df105b5dbaefea85cf965ee637b1594cb0a8c501b7a"
+}
