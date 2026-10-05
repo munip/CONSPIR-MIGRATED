@@ -100,6 +100,20 @@
 A maintainer will review for factual accuracy of the ground truth before merging.
 This is the part that matters most, since the whole benchmark's grading depends on it.
 
+## Contributing an experiment that needs a model or compute
+
+If your experiment requires access to a model or compute you don't have, you don't need
+to run it yourself. Instead:
+
+1. **Write the experiment.** Add the code, config or script needed to run it.
+2. **State a clear research question and the parameters.** Say what you're trying to find
+   out, and list the models, datasets, sample sizes, seeds, hardware and anything else
+   needed to reproduce the run.
+3. **Open a pull request** with the experiment, following step 8 above.
+4. **Tag @stationhouse** in the pull request description and request compute.
+
+A maintainer will review the experiment and, if it's a good fit, run it for you.
+
 ## Proposing a new category
 
 `category` is a fixed list in [`schema.json`](./schema.json), not free text, so it stays
