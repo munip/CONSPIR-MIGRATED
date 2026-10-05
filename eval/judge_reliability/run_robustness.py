@@ -14,6 +14,8 @@ from typing import Dict, Any, List, Optional, Tuple
 
 from inspect_ai.model import GenerateConfig, get_model
 
+import run_baseline as _baseline_parser
+
 DEFAULT_MODEL = "groq/openai/gpt-oss-20b"
 DEFAULT_DELAY = 5.0
 DEFAULT_MAX_CALLS = 45
@@ -111,18 +113,39 @@ def generate_variants(cases: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 def parse_labels(raw_output: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
     if not raw_output:
         return None, None
+
+    # Preserve the historical strict-label diagnostic: only a bare label
+    # counts as strict.
     text = raw_output.strip().lower()
     valid_labels = {"hold", "diverge", "abstain"}
     strict_label = text if text in valid_labels else None
 
-    if strict_label:
-        parsed_label = strict_label
-    else:
-        matches = re.findall(r"\b(hold|diverge|abstain)\b", text)
-        unique = sorted(list(set(matches)))
-        parsed_label = unique[0] if len(unique) == 1 else None
+    # Match the current Inspect scorer's treatment of inline reasoning.
+    # Closed <think> blocks are removed; an unclosed block means the
+    # completion ended before a verdict was produced.
+    reply = re.sub(
+        r"<think>.*?</think>",
+        "",
+        raw_output,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    reply = re.split(
+        r"<think>",
+        reply,
+        flags=re.IGNORECASE,
+    )[0].strip()
+
+    # Match inspect_eval/scorer/cb_scorer.py:
+    # strict whole reply -> strict first line -> permissive parse.
+    first_line = reply.split("\n", 1)[0]
+    parsed_label = (
+        _baseline_parser.strict_parse(reply)
+        or _baseline_parser.strict_parse(first_line)
+        or _baseline_parser.permissive_parse(reply)
+    )
 
     return strict_label, parsed_label
+
 
 def model_provider(model: str) -> str:
     # Best-effort metadata from the Inspect model-string prefix.
