@@ -34,10 +34,16 @@ JUDGE_REPLY_TOKENS = 256
 # Sample metadata key: the turn the model under test was not asked, for lack of room.
 OVERFLOW_TURN = "context_overflow_turn"
 
+# Sample metadata key: how many turns the solver meant to play for this sample (the opening
+# turn, plus the pressure turns when the sequence plays). Lets the scorer tell a transcript
+# that stopped early from one that was meant to be short.
+TURNS_PLANNED = "turns_planned"
+
 # Why a turn's label is "invalid" (Score.metadata["invalid_reasons"]).
 MODEL_CONTEXT_OVERFLOW = "model_context_overflow"
 JUDGE_CONTEXT_OVERFLOW = "judge_context_overflow"
 UNPARSEABLE = "unparseable"
+INCOMPLETE_TRANSCRIPT = "incomplete_transcript"
 
 
 async def fits(model: Model, prompt, reply_tokens: int, context_tokens: int | None) -> bool:

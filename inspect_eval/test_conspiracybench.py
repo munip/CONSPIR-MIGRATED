@@ -19,8 +19,10 @@ ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "eval"))
 
-from inspect_ai import eval
+from inspect_ai import Task, eval
+from inspect_ai.dataset import MemoryDataset
 from inspect_ai.model import GenerateConfig, ModelOutput, get_model
+from inspect_ai.solver import generate
 
 from scorer import cb_scorer
 import conspiracybench as cb
@@ -93,7 +95,7 @@ def run(item, answers, judge, epochs=1, **task_args):
             max_samples=1,
         )
         if log.status == "error":
-            return {"status": log.status}
+            return {"status": log.status, "error": log.error.message if log.error else None}
         return {
             "status": log.status,
             # One entry per sample per epoch, before reduction.
@@ -756,6 +758,150 @@ class ContextBudgetTest(unittest.TestCase):
         log = run(single_turn, ["Fires."], recording_judge(lambda _: "I am not sure.", []))
 
         self.assertEqual(log["score_metadata"]["invalid_reasons"], ["unparseable"])
+
+
+def _numbered_item(number, turns=None):
+    item = {**MINIMAL_ITEM, "id": f"cb-990{number}", "question": f"Question {number}?"}
+    if turns:
+        item["pressure_turns"] = turns
+    return item
+
+
+def failing_on(trigger):
+    """Model under test: answers, but the call fails once the conversation contains ``trigger``.
+
+    Stands in for a connection that drops partway through a pressure sequence.
+    """
+
+    def respond(input, tools, tool_choice, config):
+        if any(m.role == "user" and m.text == trigger for m in input):
+            raise ConnectionError("connection dropped")
+        return ModelOutput.from_content("mockllm/model", "answer")
+
+    return get_model("mockllm/model", custom_outputs=respond, memoize=False)
+
+
+def run_items(items, model, judge, **eval_kwargs):
+    """Run several items, then read what the tests inspect while the log still exists."""
+    task = cb.build_task([cb.item_to_sample(item, item["id"]) for item in items])
+    with tempfile.TemporaryDirectory() as log_dir:
+        [log] = eval(task, model=model, model_roles={"grader": judge}, display="none",
+                     log_dir=log_dir, max_samples=1, **eval_kwargs)
+        summary = json.loads(report.report(Path(log.location), Path(log_dir) / "out").read_text(encoding="utf-8"))
+        scored = {str(s.id): s.scores["conspiracy_judge"] for s in log.samples if s.scores}
+        return {
+            "status": log.status,
+            "scores": {sample_id: score.value for sample_id, score in scored.items()},
+            "reasons": {sample_id: score.metadata["invalid_reasons"] for sample_id, score in scored.items()},
+            "planned": {str(s.id): s.metadata.get("turns_planned") for s in log.samples},
+            "user_turns": {str(s.id): [m.text for m in s.messages if m.role == "user"] for s in log.samples},
+            "retries": {str(s.id): len(s.error_retries or []) for s in log.samples},
+            "summary": summary,
+        }
+
+
+class IncompleteTranscriptTest(unittest.TestCase):
+    """A sample that errors partway must not look complete in the scores or the report.
+
+    Under ``fail_on_error=False`` Inspect keeps going past a sample error and the run still
+    reports success; under ``score_on_error=True`` it also scores the cut-off transcript. So
+    the scorer marks the turns that were never played as invalid, and the report shows how
+    many samples were planned, completed and errored, instead of a denominator that shrank.
+    """
+
+    ITEMS = [
+        _numbered_item(1),
+        _numbered_item(2, ["push one", "BOOM"]),  # the model call fails on the last pressure turn
+        _numbered_item(3, ["push one", "push two"]),
+    ]
+
+    def hold_judge(self):
+        return recording_judge(lambda _: "hold", [])
+
+    def test_report_shows_coverage_when_a_sample_errors(self):
+        result = run_items(self.ITEMS, failing_on("BOOM"), self.hold_judge(), fail_on_error=False)
+
+        self.assertEqual(result["status"], "success")  # Inspect calls this run a success
+        coverage = result["summary"]["coverage"]
+        self.assertEqual((coverage["planned"], coverage["completed"], coverage["errored"]), (3, 2, 1))
+        self.assertEqual([s["id"] for s in coverage["errored_samples"]], ["cb-9902"])
+        # Rates stay defined over the samples that completed.
+        self.assertEqual(result["summary"]["headline"]["samples"], 2)
+
+    def test_healthy_run_has_full_coverage(self):
+        result = run_items(self.ITEMS, failing_on("never sent"), self.hold_judge())
+
+        coverage = result["summary"]["coverage"]
+        self.assertEqual((coverage["planned"], coverage["completed"], coverage["errored"]), (3, 3, 0))
+        self.assertEqual(coverage["errored_samples"], [])
+
+    def test_cut_off_sample_is_marked_incomplete_not_complete(self):
+        result = run_items(self.ITEMS, failing_on("BOOM"), self.hold_judge(),
+                           fail_on_error=False, score_on_error=True)
+
+        self.assertEqual(result["scores"]["cb-9902"], "hold>hold>invalid")
+        self.assertEqual(result["reasons"]["cb-9902"], [None, None, "incomplete_transcript"])
+        self.assertEqual(result["scores"]["cb-9903"], "hold>hold>hold")
+        # Only the healthy item is a complete pressure sequence, and the report still counts the error.
+        self.assertEqual(result["summary"]["headline"]["sequences"], 1)
+        self.assertEqual(result["summary"]["coverage"]["errored"], 1)
+
+    def test_turns_planned_is_recorded_and_short_runs_are_not_flagged(self):
+        single = run(_numbered_item(1), ["Answer."], self.hold_judge())
+        self.assertEqual(single["metadata"]["turns_planned"], 1)
+        self.assertEqual(single["values"], ["hold"])
+
+        # A later epoch plays only the opening turn unless the item is in the repeat subset.
+        multi = _numbered_item(2, ["push one", "push two"])
+        repeated = run(multi, answering_model(lambda turn: "answer"), self.hold_judge(),
+                       epochs=2, pressure_ids=[])
+        self.assertEqual(sorted(repeated["values"]), ["hold", "hold>hold>hold"])
+        self.assertEqual(repeated["metadata"]["turns_planned"], 3)  # epoch 1
+
+    def test_retry_on_error_restarts_the_sample_without_duplicating_turns(self):
+        calls = []
+
+        def respond(input, tools, tool_choice, config):
+            calls.append(len(input))
+            if len(calls) == 2:
+                raise ConnectionError("connection dropped")
+            return ModelOutput.from_content("mockllm/model", "answer")
+
+        model = get_model("mockllm/model", custom_outputs=respond, memoize=False)
+        item = _numbered_item(2, ["push one", "push two"])
+        result = run_items([item], model, self.hold_judge(), retry_on_error=1)
+
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["retries"]["cb-9902"], 1)
+        self.assertEqual(result["user_turns"]["cb-9902"], ["Question 2?", "push one", "push two"])
+        self.assertEqual(result["scores"]["cb-9902"], "hold>hold>hold")
+        self.assertEqual(result["planned"]["cb-9902"], 3)
+
+    def test_coverage_does_not_need_the_log_to_store_samples(self):
+        # --no-log-samples leaves log.samples empty; Inspect's own totals still say what happened.
+        from inspect_ai.log import read_eval_log
+
+        task = cb.build_task([cb.item_to_sample(i, i["id"]) for i in self.ITEMS])
+        with tempfile.TemporaryDirectory() as log_dir:
+            [log] = eval(task, model=failing_on("BOOM"), model_roles={"grader": self.hold_judge()},
+                         display="none", log_dir=log_dir, max_samples=1, fail_on_error=False,
+                         log_samples=False)
+            coverage = report.coverage(read_eval_log(log.location))
+
+        self.assertEqual((coverage["planned"], coverage["completed"], coverage["errored"]), (3, 2, 1))
+
+    def test_scorer_ignores_solvers_that_do_not_record_planned_turns(self):
+        # A plain generate() solver never plays the pressure turns and never records a plan.
+        item = _numbered_item(2, ["push one", "push two"])
+        task = Task(dataset=MemoryDataset([cb.item_to_sample(item, "plain")]), solver=generate(),
+                    scorer=cb_scorer.conspiracy_judge("grader"))
+        with tempfile.TemporaryDirectory() as log_dir:
+            [log] = eval(task, model=answering_model(lambda turn: "answer"),
+                         model_roles={"grader": self.hold_judge()}, display="none", log_dir=log_dir)
+            score = log.samples[0].scores["conspiracy_judge"]
+
+        self.assertEqual(score.value, "hold")
+        self.assertEqual(score.metadata["invalid_reasons"], [None])
 
 
 if __name__ == "__main__":

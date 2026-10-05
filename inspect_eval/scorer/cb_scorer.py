@@ -18,8 +18,10 @@ from judge_prompt import build_judge_prompt  # noqa: E402
 from cb_budget import (  # noqa: E402
     JUDGE_CONTEXT_OVERFLOW,
     JUDGE_REPLY_TOKENS,
+    INCOMPLETE_TRANSCRIPT,
     MODEL_CONTEXT_OVERFLOW,
     OVERFLOW_TURN,
+    TURNS_PLANNED,
     UNPARSEABLE,
     fits,
 )
@@ -103,7 +105,8 @@ def conspiracy_judge(grader_role: str = "grader", context_tokens: int | None = N
         judge = get_model(role=grader_role, required=True)
         labels, raw_outputs, strict_labels, invalid_reasons = [], [], [], []
         answer = ""
-        for index, (history, answer) in enumerate(_graded_turns(state.messages)):
+        graded = _graded_turns(state.messages)
+        for index, (history, answer) in enumerate(graded):
             prompt = build_judge_prompt(item, answer, history if index else None)
             if not await fits(judge, prompt, JUDGE_REPLY_TOKENS, context_tokens):
                 labels.append(INVALID)
@@ -125,6 +128,15 @@ def conspiracy_judge(grader_role: str = "grader", context_tokens: int | None = N
             raw_outputs.append("")
             strict_labels.append(None)
             invalid_reasons.append(MODEL_CONTEXT_OVERFLOW)
+        planned = state.metadata.get(TURNS_PLANNED)
+        if planned is not None and len(graded) < planned and state.metadata.get(OVERFLOW_TURN) is None:
+            # The transcript stopped before the turns the solver planned (an error partway, scored
+            # anyway under score_on_error). Left as it is it would read as a shorter, complete
+            # trajectory, usually all holds, and count towards the rates.
+            labels.append(INVALID)
+            raw_outputs.append("")
+            strict_labels.append(None)
+            invalid_reasons.append(INCOMPLETE_TRANSCRIPT)
         return Score(
             value=TURN_SEPARATOR.join(labels),
             answer=answer,

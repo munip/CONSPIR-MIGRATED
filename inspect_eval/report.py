@@ -64,6 +64,41 @@ def rows_from_log(log) -> list[dict]:
     return rows
 
 
+def coverage(log) -> dict:
+    """How many samples were planned, completed and errored.
+
+    Rates are computed over the samples that completed, so a run with errors still scores.
+    This says how many there were, so it cannot look complete when it is not. An errored sample
+    is listed whether or not it was scored: under score_on_error its cut-off transcript is
+    graded, with the missing turns marked invalid.
+    """
+    samples = log.samples or []
+    errored = [
+        {
+            "id": str(s.id),
+            "epoch": s.epoch,
+            "error": ((s.error.message or "").strip().splitlines() or [""])[0][:200],
+        }
+        for s in samples
+        if s.error
+    ]
+    if log.results:
+        # Inspect's own totals, which hold even when the log stores no samples (--no-log-samples).
+        planned = log.results.total_samples
+        completed = log.results.completed_samples
+        errored_count = planned - completed
+    else:  # the run stopped early, so count what it was meant to run
+        planned = (log.eval.dataset.samples or len(samples)) * (log.eval.config.epochs or 1)
+        completed = len(samples) - len(errored)
+        errored_count = len(errored)
+    return {
+        "planned": planned,
+        "completed": completed,
+        "errored": errored_count,
+        "errored_samples": errored,
+    }
+
+
 def _valid(row):
     return all(label in VALID_OUTCOMES for label in row["trajectory"])
 
@@ -228,6 +263,8 @@ def csv_rows(model, summary) -> list[dict]:
 
     for name, metric in summary["headline"].items():
         add("all", name, metric)
+    cover = summary["coverage"]
+    add("all", "completion_rate", _rate(cover["completed"], cover["planned"]))
     for name, metric in (summary["repeated_sampling"] or {}).items():
         add("all", name, metric)
     for field, groups in summary["breakdowns"].items():
@@ -241,7 +278,12 @@ def report(log_path: Path, out_dir: Path) -> Path:
     from inspect_ai.log import read_eval_log
 
     log = read_eval_log(str(log_path))
-    summary = {"log": str(log_path), "config": run_config(log), **summarize_rows(rows_from_log(log))}
+    summary = {
+        "log": str(log_path),
+        "config": run_config(log),
+        "coverage": coverage(log),
+        **summarize_rows(rows_from_log(log)),
+    }
     model = re.sub(r"[^A-Za-z0-9._-]+", "_", log.eval.model)
     out_dir.mkdir(parents=True, exist_ok=True)
     json_path = out_dir / f"{model}.json"
@@ -260,7 +302,16 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, default=Path("results"), help="output directory")
     args = parser.parse_args(argv)
     for path in args.logs:
-        print(report(path, args.out))
+        json_path = report(path, args.out)
+        print(json_path)
+        cover = json.loads(json_path.read_text(encoding="utf-8"))["coverage"]
+        if cover["errored"] or cover["completed"] < cover["planned"]:
+            ids = ", ".join(f"{s['id']} (epoch {s['epoch']})" for s in cover["errored_samples"])
+            print(
+                f"warning: {path.name}: {cover['completed']} of {cover['planned']} samples completed; "
+                f"{cover['errored']} errored ({ids}). Rates cover the completed samples only.",
+                file=sys.stderr,
+            )
 
 
 if __name__ == "__main__":

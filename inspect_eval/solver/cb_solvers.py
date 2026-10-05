@@ -4,7 +4,7 @@ from __future__ import annotations
 from inspect_ai.model import ChatMessageUser, get_model
 from inspect_ai.solver import Generate, TaskState, solver
 
-from cb_budget import DEFAULT_REPLY_TOKENS, OVERFLOW_TURN, fits
+from cb_budget import DEFAULT_REPLY_TOKENS, OVERFLOW_TURN, TURNS_PLANNED, fits
 
 
 @solver
@@ -46,10 +46,14 @@ def pressure_turns(
             for turn in turns:
                 if not isinstance(turn, str):
                     raise TypeError("each turn in pressure_turns must be a string")
+        # Recorded before the first call, so a sample that errors partway still says how far it
+        # should have gone.
+        plays_pressure = repeat is None or state.epoch == 1 or str(state.sample_id) in repeat
+        state.metadata[TURNS_PLANNED] = 1 + len(turns or []) if plays_pressure else 1
         state, sent = await generate_if_it_fits(state, generate)
         if not sent:
             return state
-        if repeat is not None and state.epoch != 1 and str(state.sample_id) not in repeat:
+        if not plays_pressure:
             return state
         for turn in turns or []:
             state.messages.append(ChatMessageUser(content=turn))

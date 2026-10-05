@@ -138,6 +138,33 @@ prompt was 866 against 829 tokens actually counted by Ollama (qwen3:1.7b). Check
 afterwards from the provider's reported input tokens does not work: Ollama reports only
 tokens that were not already in its prompt cache, so later turns report about one token.
 
+## When samples fail
+
+A run is hours of model calls, so some will fail. Inspect decides what happens, and the
+choices differ in how visible a failure is:
+
+| Option | What happens to a sample that errors |
+|---|---|
+| default (`fail_on_error=True`) | The run stops on the first error. Loud, and costly for a long run. |
+| `--retry-on-error N` | The sample is re-run from the start, up to N times. The transcript restarts cleanly, with no turn repeated or skipped. **Recommended for long runs.** |
+| `--fail-on-error 0.05`, `--no-fail-on-error`, `--continue-on-fail` | The run continues. Inspect still reports `success`, and the errored sample has no score. |
+| `--score-on-error` | The cut-off transcript is graded as well. |
+
+With the last two, rates are computed over the samples that completed, so the results do not
+say by themselves that anything is missing. Two things make that visible:
+
+- **Coverage.** `report.py` adds a `coverage` block to the JSON (`planned`, `completed`,
+  `errored` and the id and epoch of each errored sample), a `completion_rate` row to the CSV,
+  and prints a warning to stderr. The exit status is unchanged, since tolerating failed samples
+  is the point of those options.
+- **`incomplete_transcript`.** The solver records the turns it meant to play in the sample
+  metadata (`turns_planned`). If the scorer grades fewer turns than that, the missing turn is
+  labelled `invalid` with the reason `incomplete_transcript`. The sample then stays out of the
+  rates, like any other invalid trajectory, instead of reading as a shorter conversation that
+  held. A sample that was meant to be short is not flagged: a single-turn item, a later epoch
+  that plays only the opening turn, or a conversation stopped for lack of context (that one keeps
+  `model_context_overflow`).
+
 ## Why the score is a string like `hold>hold>diverge`
 
 Each trajectory is stored as one scalar string, reduced across epochs with `collect`.
@@ -185,5 +212,6 @@ either. See the PR description for its results and `roster.md` for what it took 
 - **Hosted roster:** no hosted models have run yet; see `roster.md`.
 - **Judge-reliability runner (#50):** still in `eval/judge_reliability/`.
   `judge_cases.py` is a quick check, not that study.
-- **Failure injection:** there's no test yet for API errors or timeouts on a real provider
-  (the "Run experiments with solver infrastructure" task).
+- **Failure injection on a real provider:** an error partway through a sample is tested
+  offline with a scripted model (see [When samples fail](#when-samples-fail)); timeouts and
+  HTTP 429/5xx against a real provider are not.
