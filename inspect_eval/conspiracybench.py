@@ -43,6 +43,26 @@ from solver import pressure_turns  # noqa: E402
 # one epoch so a quick run stays quick; pass -T epochs=5 for a benchmark run.
 BENCHMARK_EPOCHS = 5
 
+# How long one failing model call is retried before the sample errors. Inspect retries for
+# ever unless told otherwise, so a dead endpoint would stall a run without failing it. Its
+# backoff starts at 3 s and doubles, so 10 retries tolerate about 50 minutes of outage; the
+# timeout caps the total time spent retrying one call. Both apply to the judge as well.
+DEFAULT_MAX_RETRIES = 10
+DEFAULT_TIMEOUT = 3600
+
+
+def _optional_int(value):
+    """An int, or None for ``none`` / ``null``.
+
+    ``-T name=none`` reaches a task as the string "none", not None. Left alone it would end up in
+    the config (the log then cannot be read back) or fail later in a comparison. Anything that
+    is not a number or none raises here, before the run starts.
+    """
+    if isinstance(value, str):
+        text = value.strip().lower()
+        return None if text in ("", "none", "null") else int(text)
+    return value
+
 
 def build_task(
     dataset,
@@ -53,6 +73,8 @@ def build_task(
     config: GenerateConfig | None = None,
     context_tokens: int | None = DEFAULT_CONTEXT_TOKENS,
     judge_context_tokens: int | None = None,
+    max_retries: int | None = DEFAULT_MAX_RETRIES,
+    timeout: int | None = DEFAULT_TIMEOUT,
 ) -> Task:
     """The ConspiracyBench task over any dataset. ``conspiracybench`` below uses the repo's.
 
@@ -63,8 +85,18 @@ def build_task(
     test and, unless ``judge_context_tokens`` is given, for the judge too (see
     ``cb_budget``). A turn that would not fit is not sent and is scored invalid, rather
     than risk a provider silently truncating it. ``context_tokens=None`` turns it off.
+
+    ``max_retries`` and ``timeout`` bound how long one failing model call is retried, for
+    the model under test and for the judge. Inspect's own default is to retry for ever, so
+    a dead endpoint would stall a run without failing it. A value already set in ``config``
+    wins, ``None`` means no limit, and ``--max-retries`` / ``--timeout`` override both.
     """
     config = config or GenerateConfig()
+    config = config.model_copy(update={
+        name: value
+        for name, value in (("max_retries", max_retries), ("timeout", timeout))
+        if getattr(config, name) is None
+    })
     if judge_context_tokens is None:
         judge_context_tokens = context_tokens
     solver = [pressure_turns(pressure_ids, context_tokens=context_tokens, max_tokens=config.max_tokens)]
@@ -91,6 +123,8 @@ def conspiracybench(
     max_tokens: int | None = 2048,
     context_tokens: int | None = DEFAULT_CONTEXT_TOKENS,
     judge_context_tokens: int | None = None,
+    max_retries: int | None = DEFAULT_MAX_RETRIES,
+    timeout: int | None = DEFAULT_TIMEOUT,
     grader_role: str = "grader",
 ) -> Task:
     """Every item, sampled ``epochs`` times on the opening turn.
@@ -104,7 +138,12 @@ def conspiracybench(
     ``context_tokens`` must not exceed the context the models are actually loaded with
     (``num_ctx`` in the Ollama Modelfile). Pass ``judge_context_tokens`` when the judge's
     context differs from the model under test's.
+
+    ``max_retries`` and ``timeout`` are how long one failing model call is retried, for the
+    model and the judge (see ``DEFAULT_MAX_RETRIES``).
     """
+    context_tokens, judge_context_tokens = _optional_int(context_tokens), _optional_int(judge_context_tokens)
+    max_retries, timeout = _optional_int(max_retries), _optional_int(timeout)
     dataset = conspiracybench_dataset(include_pending=include_pending)
     pressure_ids = stratified_subset(dataset, pressure_subset_per_cell, subset_seed)
     return build_task(
@@ -116,4 +155,6 @@ def conspiracybench(
         config=GenerateConfig(temperature=temperature, max_tokens=max_tokens),
         context_tokens=context_tokens,
         judge_context_tokens=judge_context_tokens,
+        max_retries=max_retries,
+        timeout=timeout,
     )

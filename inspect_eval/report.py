@@ -64,6 +64,27 @@ def rows_from_log(log) -> list[dict]:
     return rows
 
 
+def root_cause(error) -> str:
+    """Why a sample errored, in one line.
+
+    When Inspect stops retrying a model call it raises tenacity's RetryError, whose message
+    (``RetryError(<Future at 0x... state=finished raised Transient>)``) hides what kept
+    failing. The cause is the first exception in the traceback, so show that.
+    """
+    message = ((error.message or "").strip().splitlines() or [""])[0]
+    if not message.startswith("RetryError"):
+        return message[:200]
+    for line in (error.traceback or "").splitlines():
+        if not line or line[0].isspace() or line.startswith(("Traceback", "The above exception", "During handling")):
+            continue
+        name, _, detail = line.partition(": ")
+        if name.endswith("RetryError"):
+            continue  # the wrapper itself, which comes last
+        short = name.rsplit(".", 1)[-1]
+        return (f"{short}: {detail}" if detail else short)[:180] + " (retries exhausted)"
+    return message[:200]
+
+
 def coverage(log) -> dict:
     """How many samples were planned, completed and errored.
 
@@ -77,7 +98,7 @@ def coverage(log) -> dict:
         {
             "id": str(s.id),
             "epoch": s.epoch,
-            "error": ((s.error.message or "").strip().splitlines() or [""])[0][:200],
+            "error": root_cause(s.error),
         }
         for s in samples
         if s.error

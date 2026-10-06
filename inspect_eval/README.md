@@ -62,11 +62,13 @@ These task arguments are recorded in the log, as are the model, the judge, and t
 | `max_tokens` | `2048` | Per model turn. 1024 cut off Qwen3-4B's multi-turn answers |
 | `context_tokens` | `16384` | Token budget every prompt must fit in. See [Context budget](#context-budget). `none` turns it off |
 | `judge_context_tokens` | same as `context_tokens` | Budget for the judge, when its context differs from the model under test's |
+| `max_retries` | `10` | Retries for one failing model call, for the model and the judge. See [A dead endpoint](#a-dead-endpoint). `none` removes the limit |
+| `timeout` | `3600` | Seconds spent retrying one call before giving up. `none` removes the limit |
 | `system_prompt` | none | Sent as a system message when set |
 | `include_pending` | `false` | Also include `questions/pending/` |
 
-Retries, rate limits and concurrency are Inspect's own options (`--max-connections`,
-`--max-retries`, `--timeout`, `--fail-on-error`).
+Rate limits and concurrency are Inspect's own options (`--max-connections`, `--fail-on-error`).
+`--max-retries` and `--timeout` override the task's `max_retries` and `timeout`.
 
 ## What it does
 
@@ -154,7 +156,7 @@ With the last two, rates are computed over the samples that completed, so the re
 say by themselves that anything is missing. Two things make that visible:
 
 - **Coverage.** `report.py` adds a `coverage` block to the JSON (`planned`, `completed`,
-  `errored` and the id and epoch of each errored sample), a `completion_rate` row to the CSV,
+  `errored` and the id, epoch and root cause of each errored sample), a `completion_rate` row to the CSV,
   and prints a warning to stderr. The exit status is unchanged, since tolerating failed samples
   is the point of those options.
 - **`incomplete_transcript`.** The solver records the turns it meant to play in the sample
@@ -164,6 +166,27 @@ say by themselves that anything is missing. Two things make that visible:
   held. A sample that was meant to be short is not flagged: a single-turn item, a later epoch
   that plays only the opening turn, or a conversation stopped for lack of context (that one keeps
   `model_context_overflow`).
+
+### A dead endpoint
+
+Inspect retries a failing model call for ever unless told otherwise, and the waits grow (3 s,
+doubling, up to 30 minutes), so a dead endpoint stalls a run without ever failing it.
+`--retry-on-error` and `--fail-on-error` cannot help, because the call never returns.
+
+The task therefore sets `max_retries=10` and `timeout=3600`: about 50 minutes of outage is
+tolerated, and a call is given up on after about an hour of retrying. They apply to the model under
+test and to the judge. Change them like any task argument, or with Inspect's own options,
+which take priority:
+
+```bash
+.venv/bin/inspect eval inspect_eval/conspiracybench.py -T max_retries=3 -T timeout=600 ...
+.venv/bin/inspect eval inspect_eval/conspiracybench.py --max-retries 3 --timeout 600 ...
+```
+
+A single attempt that hangs is cut off by `--attempt-timeout`, which is not set by default: a
+slow local model can legitimately take minutes to answer. When retries run out, the sample errors
+and the coverage block names what kept failing, for example
+`Transient: 503 upstream down (retries exhausted)`.
 
 ## Why the score is a string like `hold>hold>diverge`
 
@@ -212,6 +235,7 @@ either. See the PR description for its results and `roster.md` for what it took 
 - **Hosted roster:** no hosted models have run yet; see `roster.md`.
 - **Judge-reliability runner (#50):** still in `eval/judge_reliability/`.
   `judge_cases.py` is a quick check, not that study.
-- **Failure injection on a real provider:** an error partway through a sample is tested
-  offline with a scripted model (see [When samples fail](#when-samples-fail)); timeouts and
-  HTTP 429/5xx against a real provider are not.
+- **Failure injection on a real provider:** errors, 429/5xx-style retries, timeouts and
+  resuming a run are tested offline with scripted providers (see
+  [When samples fail](#when-samples-fail) and `test_infrastructure.py`); a real provider has
+  not been tried.
