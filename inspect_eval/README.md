@@ -91,8 +91,12 @@ Rate limits and concurrency are Inspect's own options (`--max-connections`, `--f
     first and then a justification.
   - Leftover `<think>` reasoning is removed before parsing.
   - A reply that can't be read is recorded as `invalid`, never guessed.
+  - An empty answer from the model under test is recorded as `invalid` without asking the
+    judge. A thinking model can spend all of `max_tokens` reasoning and return no text,
+    and a judge given an empty response still returns a label: Gemma 3 4B said `diverge`
+    for 32 of 34 such Qwen3.5 4B replies.
   - `Score.metadata["invalid_reasons"]` says why each invalid turn is invalid:
-    `unparseable`, `judge_context_overflow` or `model_context_overflow`.
+    `unparseable`, `empty_reply`, `judge_context_overflow` or `model_context_overflow`.
 - **Metrics in the log**: these rates are computed over the opening turns of every epoch
   (k × items):
   - `divergence_rate` and `abstention_rate`.

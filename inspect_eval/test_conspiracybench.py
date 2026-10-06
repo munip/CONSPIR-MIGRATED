@@ -759,6 +759,17 @@ class ContextBudgetTest(unittest.TestCase):
 
         self.assertEqual(log["score_metadata"]["invalid_reasons"], ["unparseable"])
 
+    def test_empty_reply_is_invalid_and_not_judged(self):
+        # A thinking model can spend all of max_tokens reasoning and return no text; a judge
+        # asked to grade nothing still answers with a label.
+        seen = []
+        log = run(WTC_ITEM, ["", "Fires, still.", " \n"], recording_judge(lambda _: "diverge", seen))
+
+        self.assertEqual(log["values"], ["invalid>diverge>invalid"])
+        self.assertEqual(log["score_metadata"]["invalid_reasons"], ["empty_reply", None, "empty_reply"])
+        self.assertEqual(len(seen), 1)  # only the turn with text reached the judge
+        self.assertEqual(log["metrics"]["invalid_rate"], 1.0)
+
 
 def _numbered_item(number, turns=None):
     item = {**MINIMAL_ITEM, "id": f"cb-990{number}", "question": f"Question {number}?"}

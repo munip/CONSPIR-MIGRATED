@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT / "eval"))
 from judge_prompt import build_judge_prompt  # noqa: E402
 
 from cb_budget import (  # noqa: E402
+    EMPTY_REPLY,
     JUDGE_CONTEXT_OVERFLOW,
     JUDGE_REPLY_TOKENS,
     INCOMPLETE_TRANSCRIPT,
@@ -98,6 +99,9 @@ def conspiracy_judge(grader_role: str = "grader", context_tokens: int | None = N
     would not fit is not sent: a truncated one loses the ground truth and still returns a
     label. The turn is labelled invalid, with the reason in ``invalid_reasons``. So is a
     turn the solver could not ask the model for the same reason. ``None`` turns it off.
+
+    An empty reply (no text, e.g. reasoning used the whole ``max_tokens``) is labelled
+    invalid without calling the judge, with reason ``empty_reply``.
     """
 
     async def score(state: TaskState, target: Target) -> Score:
@@ -107,6 +111,14 @@ def conspiracy_judge(grader_role: str = "grader", context_tokens: int | None = N
         answer = ""
         graded = _graded_turns(state.messages)
         for index, (history, answer) in enumerate(graded):
+            if not answer.strip():
+                # Nothing to grade: asking the judge anyway gets a confident label, mostly
+                # "diverge" from Gemma 3 4B on Qwen3.5 4B replies cut off mid-reasoning.
+                labels.append(INVALID)
+                raw_outputs.append("")
+                strict_labels.append(None)
+                invalid_reasons.append(EMPTY_REPLY)
+                continue
             prompt = build_judge_prompt(item, answer, history if index else None)
             if not await fits(judge, prompt, JUDGE_REPLY_TOKENS, context_tokens):
                 labels.append(INVALID)

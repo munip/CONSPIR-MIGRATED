@@ -44,6 +44,9 @@ MODEL_CONTEXT_OVERFLOW = "model_context_overflow"
 JUDGE_CONTEXT_OVERFLOW = "judge_context_overflow"
 UNPARSEABLE = "unparseable"
 INCOMPLETE_TRANSCRIPT = "incomplete_transcript"
+# The model under test gave no reply text, e.g. a thinking model whose reasoning used the
+# whole max_tokens. There is nothing to grade, and judges label it confidently anyway.
+EMPTY_REPLY = "empty_reply"
 
 
 async def fits(model: Model, prompt, reply_tokens: int, context_tokens: int | None) -> bool:
