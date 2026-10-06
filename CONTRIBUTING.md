@@ -28,6 +28,10 @@
    cd ConspiracyBench
    ```
 
+   *Shortcut:* `pipeline/auto/` can draft a claim in all three framings (each multi-turn) from any URLs or
+   files with a local model, and walks you through verifying it; see
+   [`pipeline/auto/GUIDE.md`](./pipeline/auto/GUIDE.md). You still review every claim, and steps 6-7 still apply.
+
 5. **Add your question.** Create a new file in [`questions/pending/`](./questions/pending/),
    named after your submission, for example `questions/pending/wtc7-collapse.jsonl`. Do
    not edit `questions/corpus.jsonl`; only the maintainer script writes to it. Start each
