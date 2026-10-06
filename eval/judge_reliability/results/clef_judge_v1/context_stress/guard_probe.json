@@ -1,0 +1,6 @@
+{
+  "guard_raised": true,
+  "message": "Input is 30203 tokens, over max_length=16384; Clef would silently truncate 13819 trailing state tokens from candidate_response.",
+  "filler_chars": 124000,
+  "max_length": 16384
+}

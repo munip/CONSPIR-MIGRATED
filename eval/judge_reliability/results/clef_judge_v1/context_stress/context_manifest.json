@@ -1,0 +1,36 @@
+{
+  "suite_version": "context-stress-1-clef-reconstruction",
+  "case_ids": [
+    "judge-001",
+    "judge-003",
+    "judge-005"
+  ],
+  "conditions": [
+    "baseline",
+    "ground_truth_early",
+    "ground_truth_late"
+  ],
+  "filler_chars": 62000,
+  "filler_sha256": "810159c350d7bc5ba34578a34156fa9e3ae6ca68c8dc5e4841ff90e0bad4e44b",
+  "call_count": 9,
+  "max_length": 16384,
+  "model_id": "Cloudflare/clef",
+  "requested_revision": "2f3de3dd85f379784083b0814d997ab627200f0c",
+  "case_file_sha256": "e9ec7fd20fe8201f2531d62b3e9b961d72b30e4a7509d8c329035419f625c23c",
+  "note": "Reconstruction of the #122 context-stress design; #122's filler text is not in the repository.",
+  "resolved_revision": "2f3de3dd85f379784083b0814d997ab627200f0c",
+  "suite_commit": "8778eb81711556237b36c7b4c78f24e2bd4c345e",
+  "runner_file_sha256": "a2ca034b5758f84173dcadd23b52656b1b9854985655a7f8fa39d441e371c2e1",
+  "adapter_file_sha256": "59805f08142b1f1f577a512a63a593455b0e0554f2ff71a736c67a7df960a5cc",
+  "runtime": {
+    "python": "3.12.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.10.2",
+    "huggingface_hub": "1.33.0",
+    "safetensors": "0.8.0",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "gpu_name": "NVIDIA A100-SXM4-80GB"
+  },
+  "inference_retries": 0
+}

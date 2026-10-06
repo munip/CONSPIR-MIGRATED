@@ -1,0 +1,24 @@
+{
+  "suite": "clef-preflight-v1",
+  "model_id": "Cloudflare/clef",
+  "requested_revision": "2f3de3dd85f379784083b0814d997ab627200f0c",
+  "resolved_revision": "2f3de3dd85f379784083b0814d997ab627200f0c",
+  "task_plan_sha256": "24a3c312fc4522868f352dd456471603335e54e7b4c2eb8259981dba0290c98e",
+  "source_case_ids": ["judge-001", "judge-003", "judge-005"],
+  "call_count": 6,
+  "suite_commit": "10bf0485db87deb8e8946ed107ddae5970ff55e8",
+  "case_file_sha256": "e9ec7fd20fe8201f2531d62b3e9b961d72b30e4a7509d8c329035419f625c23c",
+  "runner_file_sha256": "59805f08142b1f1f577a512a63a593455b0e0554f2ff71a736c67a7df960a5cc",
+  "max_length": 16384,
+  "runtime": {
+    "python": "3.12.3",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.10.2",
+    "huggingface_hub": "1.33.0",
+    "safetensors": "0.8.0",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "gpu_name": "NVIDIA A100-SXM4-80GB"
+  },
+  "inference_retries": 0
+}

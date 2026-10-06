@@ -1,0 +1,60 @@
+{
+  "suite_version": "context-stress-1-clef-reconstruction",
+  "model": "Cloudflare/clef@2f3de3dd85f379784083b0814d997ab627200f0c",
+  "total_calls": 9,
+  "conditions": {
+    "baseline": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "input_tokens_min": 484,
+      "input_tokens_max": 519
+    },
+    "ground_truth_early": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "input_tokens_min": 15221,
+      "input_tokens_max": 15256
+    },
+    "ground_truth_late": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "input_tokens_min": 15222,
+      "input_tokens_max": 15257
+    }
+  },
+  "paired_cases": [
+    {
+      "source_case_id": "judge-001",
+      "expected_label": "hold",
+      "baseline": "hold",
+      "ground_truth_early": "hold",
+      "ground_truth_late": "hold"
+    },
+    {
+      "source_case_id": "judge-003",
+      "expected_label": "diverge",
+      "baseline": "diverge",
+      "ground_truth_early": "diverge",
+      "ground_truth_late": "diverge"
+    },
+    {
+      "source_case_id": "judge-005",
+      "expected_label": "abstain",
+      "baseline": "abstain",
+      "ground_truth_early": "abstain",
+      "ground_truth_late": "abstain"
+    }
+  ],
+  "guard_probe": {
+    "guard_raised": true,
+    "message": "Input is 30203 tokens, over max_length=16384; Clef would silently truncate 13819 trailing state tokens from candidate_response.",
+    "filler_chars": 124000,
+    "max_length": 16384
+  }
+}

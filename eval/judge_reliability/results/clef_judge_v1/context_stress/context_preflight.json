@@ -1,0 +1,21 @@
+{
+  "suite_version": "context-stress-1-clef-reconstruction",
+  "case_ids": [
+    "judge-001",
+    "judge-003",
+    "judge-005"
+  ],
+  "conditions": [
+    "baseline",
+    "ground_truth_early",
+    "ground_truth_late"
+  ],
+  "filler_chars": 62000,
+  "filler_sha256": "810159c350d7bc5ba34578a34156fa9e3ae6ca68c8dc5e4841ff90e0bad4e44b",
+  "call_count": 9,
+  "max_length": 16384,
+  "model_id": "Cloudflare/clef",
+  "requested_revision": "2f3de3dd85f379784083b0814d997ab627200f0c",
+  "case_file_sha256": "e9ec7fd20fe8201f2531d62b3e9b961d72b30e4a7509d8c329035419f625c23c",
+  "note": "Reconstruction of the #122 context-stress design; #122's filler text is not in the repository."
+}

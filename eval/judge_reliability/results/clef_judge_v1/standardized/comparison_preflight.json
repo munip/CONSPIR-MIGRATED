@@ -1,0 +1,18 @@
+{
+  "suite_version": "1",
+  "task_plan_sha256": "8cf22ae4ce40e3b7f3005e330fcaf885e56f3862db6d4510b8455bb6377fac49",
+  "model": "clef/Cloudflare/clef@2f3de3dd85f3",
+  "provider": "clef",
+  "source_case_count": 15,
+  "core_call_count": 60,
+  "stability_repeat_call_count": 24,
+  "total_call_count": 84,
+  "case_file_sha256": "e9ec7fd20fe8201f2531d62b3e9b961d72b30e4a7509d8c329035419f625c23c",
+  "prompt_file_sha256": "caabf5ebad6f11e9ca9ddc281450422a016eddb36ce87db833ee5de6d8166777",
+  "reasoning_effort": null,
+  "temperature": null,
+  "max_tokens": null,
+  "adapter": "run_clef_preflight.build_clef_request (typed choice)",
+  "max_length": 16384,
+  "prompt_build_errors": []
+}
