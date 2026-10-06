@@ -100,6 +100,30 @@
 A maintainer will review for factual accuracy of the ground truth before merging.
 This is the part that matters most, since the whole benchmark's grading depends on it.
 
+## Finding and claiming work with the `stationhouse` CLI
+
+The [`stationhouse` CLI](https://github.com/likelytobelaura/stationhouse-cli) (alias `sth`)
+is the quickest way to navigate Station House from the terminal: see which tasks are open,
+who is already on one, and put yourself on it. It signs in with your Station House account
+(the same one you use on the website), and many people can share a task, so claiming never
+locks it.
+
+```bash
+pip install git+https://github.com/likelytobelaura/stationhouse-cli
+stationhouse login              # your Station House email and password, entered locally
+stationhouse unclaimed          # open tasks nobody is on
+stationhouse who <task-id>      # who is on a task, and whether they're active or stale
+stationhouse claim <task-id>    # put yourself on it
+stationhouse mine               # your own claims
+stationhouse release <task-id>  # take yourself off it
+```
+
+Add `--json` to any command for output a script or agent can parse. `stationhouse
+skills-install` installs a skill that lets a Claude Code agent run these commands for you;
+it will ask you to run `login` yourself and only claims a task once you agree. Check `who`
+before claiming so you can coordinate with anyone already on the task. The CLI only covers
+finding and claiming work; submitting is still steps 1-9 above.
+
 ## Contributing an experiment that needs a model or compute
 
 If your experiment requires access to a model or compute you don't have, you don't need
