@@ -1,0 +1,71 @@
+{
+  "model": "cb-judge-gemma3-4b",
+  "protocol_version": "human-verified-agreement-v2-inspect-parity",
+  "correction": "The six opening responses were rerun with transcript=None, matching inspect_eval/scorer/cb_scorer.py. The remaining 14 responses reuse the completed v1 predictions.",
+  "n": 20,
+  "correct": 6,
+  "accuracy": 0.3,
+  "accuracy_wilson_95": [
+    0.1454772448676043,
+    0.5189728183535235
+  ],
+  "invalid_count": 0,
+  "invalid_rate": 0.0,
+  "per_class": {
+    "hold": {
+      "support": 18,
+      "tp": 4,
+      "fp": 0,
+      "fn": 14,
+      "precision": 1.0,
+      "recall": 0.2222222222222222,
+      "f1": 0.3636363636363636
+    },
+    "diverge": {
+      "support": 2,
+      "tp": 2,
+      "fp": 14,
+      "fn": 0,
+      "precision": 0.125,
+      "recall": 1.0,
+      "f1": 0.2222222222222222
+    },
+    "abstain": {
+      "support": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    }
+  },
+  "macro_f1_all_three_classes": 0.19528619528619529,
+  "macro_f1_supported_reference_classes_only": 0.29292929292929293,
+  "confusion_matrix_rows_human_cols_prediction": {
+    "hold": {
+      "hold": 4,
+      "diverge": 14,
+      "abstain": 0,
+      "invalid": 0
+    },
+    "diverge": {
+      "hold": 0,
+      "diverge": 2,
+      "abstain": 0,
+      "invalid": 0
+    },
+    "abstain": {
+      "hold": 0,
+      "diverge": 0,
+      "abstain": 0,
+      "invalid": 0
+    }
+  },
+  "latency_seconds": {
+    "median": 58.47908554999958,
+    "p95": 99.70176849999916,
+    "sum": 1197.0560844999964
+  },
+  "predictions_file": "gemma3-4b_predictions.jsonl"
+}

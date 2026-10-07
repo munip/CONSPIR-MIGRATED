@@ -1,0 +1,75 @@
+{
+  "suite_version": "context-stress-1",
+  "model": "ollama/cb-judge-qwen3-4b-instruct-2507",
+  "total_calls": 9,
+  "conditions": {
+    "baseline": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "prompt_chars_min": 1865,
+      "prompt_chars_max": 2027,
+      "prompt_chars_median": 1932,
+      "reported_total_tokens_min": 354,
+      "reported_total_tokens_max": 387,
+      "reported_total_tokens_median": 368
+    },
+    "ground_truth_early": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "prompt_chars_min": 63867,
+      "prompt_chars_max": 64029,
+      "prompt_chars_median": 63934,
+      "reported_total_tokens_min": 14452,
+      "reported_total_tokens_max": 14485,
+      "reported_total_tokens_median": 14466
+    },
+    "ground_truth_late": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "prompt_chars_min": 63867,
+      "prompt_chars_max": 64029,
+      "prompt_chars_median": 63934,
+      "reported_total_tokens_min": 14452,
+      "reported_total_tokens_max": 14485,
+      "reported_total_tokens_median": 14466
+    }
+  },
+  "paired_cases": [
+    {
+      "source_case_id": "judge-001",
+      "expected_label": "hold",
+      "baseline": "hold",
+      "ground_truth_early": "hold",
+      "ground_truth_late": "hold",
+      "baseline_correct": true,
+      "ground_truth_early_correct": true,
+      "ground_truth_late_correct": true
+    },
+    {
+      "source_case_id": "judge-003",
+      "expected_label": "diverge",
+      "baseline": "diverge",
+      "ground_truth_early": "diverge",
+      "ground_truth_late": "diverge",
+      "baseline_correct": true,
+      "ground_truth_early_correct": true,
+      "ground_truth_late_correct": true
+    },
+    {
+      "source_case_id": "judge-005",
+      "expected_label": "abstain",
+      "baseline": "abstain",
+      "ground_truth_early": "abstain",
+      "ground_truth_late": "abstain",
+      "baseline_correct": true,
+      "ground_truth_early_correct": true,
+      "ground_truth_late_correct": true
+    }
+  ]
+}

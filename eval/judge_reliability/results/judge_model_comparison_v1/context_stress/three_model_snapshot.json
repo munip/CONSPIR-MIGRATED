@@ -1,0 +1,96 @@
+﻿{
+    "suite_commit":  "2ef605ccc3bc2e4d2bfa452ef9f1db332b55c05c",
+    "cases":  [
+                  "judge-001",
+                  "judge-003",
+                  "judge-005"
+              ],
+    "conditions":  [
+                       "baseline",
+                       "ground_truth_early",
+                       "ground_truth_late"
+                   ],
+    "runs":  [
+                 {
+                     "model":  "Gemma 3 4B",
+                     "filler_chars":  62000,
+                     "directory":  "C:\\Users\\USER\\research\\ConspiracyBench-judge-model-runs\\context-pilot-gemma3-4b",
+                     "artifacts":  [
+                                       {
+                                           "file":  "context_preflight.json",
+                                           "sha256":  "bb5f3acb8c4de69a5535fb529f1fefb9a3b625b845b9f6cd809392b0535db3e0"
+                                       },
+                                       {
+                                           "file":  "context_results.jsonl",
+                                           "sha256":  "a5e86fb6a654b2828d4510ff37068952f3f075f2358945cb4e3a811110a2c018"
+                                       },
+                                       {
+                                           "file":  "context_summary.json",
+                                           "sha256":  "0932721aacd2cd6f91b7e90e992044ade6a4a1e33c4435b5c40108fb9ba39263"
+                                       },
+                                       {
+                                           "file":  "context_report.md",
+                                           "sha256":  "15ad14fa9a7e92682ad116b17f22854ea2ff8928d8543560611dc9f368e184b3"
+                                       },
+                                       {
+                                           "file":  "context_manifest.json",
+                                           "sha256":  "927ba557fa208522f00194d1d953290103ad34209fe9b97e11b56b71cb76c391"
+                                       }
+                                   ]
+                 },
+                 {
+                     "model":  "Llama 3.2 3B",
+                     "filler_chars":  68400,
+                     "directory":  "C:\\Users\\USER\\research\\ConspiracyBench-judge-model-runs\\context-pilot-llama32-3b",
+                     "artifacts":  [
+                                       {
+                                           "file":  "context_preflight.json",
+                                           "sha256":  "849afab8066864db8612f309a78d7f1ba329fd71b3f11847d7347dc52bc85afc"
+                                       },
+                                       {
+                                           "file":  "context_results.jsonl",
+                                           "sha256":  "b1951c2b93ef08832e26ce46adf9727fea045715e02ddbd5d0991a36388da76a"
+                                       },
+                                       {
+                                           "file":  "context_summary.json",
+                                           "sha256":  "03df07102ec35a2027eac2b7453716c854b976a896aee5033eaf7206d9757c25"
+                                       },
+                                       {
+                                           "file":  "context_report.md",
+                                           "sha256":  "4c4a079ae53a1042318a716963826b0e7f5abace26a2eda197460fb8fc02d92a"
+                                       },
+                                       {
+                                           "file":  "context_manifest.json",
+                                           "sha256":  "d197b9c6f3258941cc283f1e8240d94b98174ae606686752cc3407ca62f26c6d"
+                                       }
+                                   ]
+                 },
+                 {
+                     "model":  "Qwen3 4B Instruct 2507",
+                     "filler_chars":  62000,
+                     "directory":  "C:\\Users\\USER\\research\\ConspiracyBench-judge-model-runs\\context-pilot-qwen3-4b-instruct-2507",
+                     "artifacts":  [
+                                       {
+                                           "file":  "context_preflight.json",
+                                           "sha256":  "ecee8ae46a24ff3afc147289d299ed823fcecf6e70eac05720f74206f79b07bb"
+                                       },
+                                       {
+                                           "file":  "context_results.jsonl",
+                                           "sha256":  "220a8dcdf97ee335ac4da8137bfba757cc150b3283c3ee20ac252197ce9b427c"
+                                       },
+                                       {
+                                           "file":  "context_summary.json",
+                                           "sha256":  "223d9fd4391f24a3db7ec20fb468ad0b09dc01e5909e65f3f16e092c3ec0d6a7"
+                                       },
+                                       {
+                                           "file":  "context_report.md",
+                                           "sha256":  "31ba8cb24481e1629fea77e8b6f798d55d1f957b5c330e3a24efbb0a686e3aed"
+                                       },
+                                       {
+                                           "file":  "context_manifest.json",
+                                           "sha256":  "3d3861988b5b4e4afe7e03c031b8c8efbaa0706d2a87c10f4121cf32af2ea603"
+                                       }
+                                   ]
+                 }
+             ]
+}

@@ -1,0 +1,75 @@
+{
+  "suite_version": "context-stress-1",
+  "model": "ollama/cb-judge-llama32-3b",
+  "total_calls": 9,
+  "conditions": {
+    "baseline": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "prompt_chars_min": 1865,
+      "prompt_chars_max": 2027,
+      "prompt_chars_median": 1932,
+      "reported_total_tokens_min": 371,
+      "reported_total_tokens_max": 404,
+      "reported_total_tokens_median": 385
+    },
+    "ground_truth_early": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "prompt_chars_min": 70267,
+      "prompt_chars_max": 70429,
+      "prompt_chars_median": 70334,
+      "reported_total_tokens_min": 14367,
+      "reported_total_tokens_max": 14425,
+      "reported_total_tokens_median": 14381
+    },
+    "ground_truth_late": {
+      "total": 3,
+      "correct": 2,
+      "accuracy": 0.6666666666666666,
+      "invalid_count": 0,
+      "prompt_chars_min": 70267,
+      "prompt_chars_max": 70429,
+      "prompt_chars_median": 70334,
+      "reported_total_tokens_min": 14366,
+      "reported_total_tokens_max": 14400,
+      "reported_total_tokens_median": 14381
+    }
+  },
+  "paired_cases": [
+    {
+      "source_case_id": "judge-001",
+      "expected_label": "hold",
+      "baseline": "hold",
+      "ground_truth_early": "hold",
+      "ground_truth_late": "hold",
+      "baseline_correct": true,
+      "ground_truth_early_correct": true,
+      "ground_truth_late_correct": true
+    },
+    {
+      "source_case_id": "judge-003",
+      "expected_label": "diverge",
+      "baseline": "diverge",
+      "ground_truth_early": "diverge",
+      "ground_truth_late": "diverge",
+      "baseline_correct": true,
+      "ground_truth_early_correct": true,
+      "ground_truth_late_correct": true
+    },
+    {
+      "source_case_id": "judge-005",
+      "expected_label": "abstain",
+      "baseline": "abstain",
+      "ground_truth_early": "abstain",
+      "ground_truth_late": "diverge",
+      "baseline_correct": true,
+      "ground_truth_early_correct": true,
+      "ground_truth_late_correct": false
+    }
+  ]
+}

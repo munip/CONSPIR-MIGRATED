@@ -1,0 +1,77 @@
+{
+  "suite_commit": "e41e6deaa215a4500dde55f685a5c56f35728d3e",
+  "runs": {
+    "llama32_3b": {
+      "comparison_preflight.json": {
+        "sha256": "781b195a7838d23a68118f520fe6926bb05b231d2f5283128ab709b2b93df52d",
+        "bytes": 593
+      },
+      "comparison_results.jsonl": {
+        "sha256": "08a8c69a659ade501ac0d52f3d90a847a0f926741a599a31c90b1af280ff418d",
+        "bytes": 172795
+      },
+      "comparison_summary.json": {
+        "sha256": "1a3a671496f22ecd25d7313a1c8093ea5ab60c7a0b84c543eb7c76cfa9db49a7",
+        "bytes": 4512
+      },
+      "comparison_report.md": {
+        "sha256": "e3347364dbdf8d1847393eb961ab640a49e55940ae45c4530183ec6726af68e9",
+        "bytes": 926
+      },
+      "comparison_manifest.json": {
+        "sha256": "eabf46be435ae6b29b06d27798b1f500e899a52654ccc58590a336f215aeac77",
+        "bytes": 619
+      },
+      "model": "ollama/cb-judge-llama32-3b",
+      "total_calls": 84
+    },
+    "gemma3_4b": {
+      "comparison_preflight.json": {
+        "sha256": "137b507aca1e03eb24a780b7e056c31595e588d64177328d5488a120434f59ed",
+        "bytes": 592
+      },
+      "comparison_results.jsonl": {
+        "sha256": "2c1faa4596311fdf0d2afd4202ec51c97e77a533b78052da6c959a8dc68c3d14",
+        "bytes": 168770
+      },
+      "comparison_summary.json": {
+        "sha256": "dd967c7065554d6cc1251ef2faf3c8097f0213dfd79574f9eea523f4251d2741",
+        "bytes": 4493
+      },
+      "comparison_report.md": {
+        "sha256": "b43898c7c5a61bbe2b9741e6c7c11aa49782c12670491e52fe48f8a8257ddbaa",
+        "bytes": 924
+      },
+      "comparison_manifest.json": {
+        "sha256": "7de5db7a2acfc6d4d59c381baecb8e0675a80a8e203091fff581a5dcf403b01d",
+        "bytes": 618
+      },
+      "model": "ollama/cb-judge-gemma3-4b",
+      "total_calls": 84
+    },
+    "qwen3_4b_instruct_2507": {
+      "comparison_preflight.json": {
+        "sha256": "d28eae3cb584cd11cfc2f9ae051bda66eac8fec78af0122fb65bfc9f19a5b75e",
+        "bytes": 605
+      },
+      "comparison_results.jsonl": {
+        "sha256": "80d7ed5671535905bc8d024ae16d337b80f8488e6a8646c6cf3e862f889c81ae",
+        "bytes": 183838
+      },
+      "comparison_summary.json": {
+        "sha256": "c513ce2b11894467e2684e0da1632af066e2060aa4b97386b480fdc25e0cb474",
+        "bytes": 4491
+      },
+      "comparison_report.md": {
+        "sha256": "b22cdce503ce2894bc3905fbc0857f0dcceb7e5b6fdcdea25a80744db779ab80",
+        "bytes": 939
+      },
+      "comparison_manifest.json": {
+        "sha256": "45c80c09d87213f54f7e3cd592025e95b17059ebb817cd559e77abea2c3866a0",
+        "bytes": 631
+      },
+      "model": "ollama/cb-judge-qwen3-4b-instruct-2507",
+      "total_calls": 84
+    }
+  }
+}

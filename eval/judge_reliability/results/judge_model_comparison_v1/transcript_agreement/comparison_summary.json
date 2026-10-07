@@ -1,0 +1,223 @@
+{
+  "evaluation_name": "human-verified-agreement-v2-inspect-parity",
+  "reference_label_counts": {
+    "hold": 18,
+    "diverge": 2
+  },
+  "opening_turn_correction": "Six opening responses per judge were rerun with transcript=None. Later-turn predictions were reused from v1.",
+  "summaries": {
+    "llama32-3b": {
+      "model": "cb-judge-llama32-3b",
+      "protocol_version": "human-verified-agreement-v2-inspect-parity",
+      "correction": "The six opening responses were rerun with transcript=None, matching inspect_eval/scorer/cb_scorer.py. The remaining 14 responses reuse the completed v1 predictions.",
+      "n": 20,
+      "correct": 7,
+      "accuracy": 0.35,
+      "accuracy_wilson_95": [
+        0.1811918241010821,
+        0.5671457233147637
+      ],
+      "invalid_count": 1,
+      "invalid_rate": 0.05,
+      "per_class": {
+        "hold": {
+          "support": 18,
+          "tp": 6,
+          "fp": 1,
+          "fn": 12,
+          "precision": 0.8571428571428571,
+          "recall": 0.3333333333333333,
+          "f1": 0.48
+        },
+        "diverge": {
+          "support": 2,
+          "tp": 1,
+          "fp": 10,
+          "fn": 1,
+          "precision": 0.09090909090909091,
+          "recall": 0.5,
+          "f1": 0.15384615384615385
+        },
+        "abstain": {
+          "support": 0,
+          "tp": 0,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "macro_f1_all_three_classes": 0.21128205128205127,
+      "macro_f1_supported_reference_classes_only": 0.3169230769230769,
+      "confusion_matrix_rows_human_cols_prediction": {
+        "hold": {
+          "hold": 6,
+          "diverge": 10,
+          "abstain": 1,
+          "invalid": 1
+        },
+        "diverge": {
+          "hold": 1,
+          "diverge": 1,
+          "abstain": 0,
+          "invalid": 0
+        },
+        "abstain": {
+          "hold": 0,
+          "diverge": 0,
+          "abstain": 0,
+          "invalid": 0
+        }
+      },
+      "latency_seconds": {
+        "median": 49.50636934999784,
+        "p95": 90.74806960000205,
+        "sum": 921.131485899994
+      },
+      "predictions_file": "llama32-3b_predictions.jsonl"
+    },
+    "gemma3-4b": {
+      "model": "cb-judge-gemma3-4b",
+      "protocol_version": "human-verified-agreement-v2-inspect-parity",
+      "correction": "The six opening responses were rerun with transcript=None, matching inspect_eval/scorer/cb_scorer.py. The remaining 14 responses reuse the completed v1 predictions.",
+      "n": 20,
+      "correct": 6,
+      "accuracy": 0.3,
+      "accuracy_wilson_95": [
+        0.1454772448676043,
+        0.5189728183535235
+      ],
+      "invalid_count": 0,
+      "invalid_rate": 0.0,
+      "per_class": {
+        "hold": {
+          "support": 18,
+          "tp": 4,
+          "fp": 0,
+          "fn": 14,
+          "precision": 1.0,
+          "recall": 0.2222222222222222,
+          "f1": 0.3636363636363636
+        },
+        "diverge": {
+          "support": 2,
+          "tp": 2,
+          "fp": 14,
+          "fn": 0,
+          "precision": 0.125,
+          "recall": 1.0,
+          "f1": 0.2222222222222222
+        },
+        "abstain": {
+          "support": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "macro_f1_all_three_classes": 0.19528619528619529,
+      "macro_f1_supported_reference_classes_only": 0.29292929292929293,
+      "confusion_matrix_rows_human_cols_prediction": {
+        "hold": {
+          "hold": 4,
+          "diverge": 14,
+          "abstain": 0,
+          "invalid": 0
+        },
+        "diverge": {
+          "hold": 0,
+          "diverge": 2,
+          "abstain": 0,
+          "invalid": 0
+        },
+        "abstain": {
+          "hold": 0,
+          "diverge": 0,
+          "abstain": 0,
+          "invalid": 0
+        }
+      },
+      "latency_seconds": {
+        "median": 58.47908554999958,
+        "p95": 99.70176849999916,
+        "sum": 1197.0560844999964
+      },
+      "predictions_file": "gemma3-4b_predictions.jsonl"
+    },
+    "qwen3-4b-instruct-2507": {
+      "model": "cb-judge-qwen3-4b-instruct-2507",
+      "protocol_version": "human-verified-agreement-v2-inspect-parity",
+      "correction": "The six opening responses were rerun with transcript=None, matching inspect_eval/scorer/cb_scorer.py. The remaining 14 responses reuse the completed v1 predictions.",
+      "n": 20,
+      "correct": 18,
+      "accuracy": 0.9,
+      "accuracy_wilson_95": [
+        0.6989663547715128,
+        0.9721335187862319
+      ],
+      "invalid_count": 0,
+      "invalid_rate": 0.0,
+      "per_class": {
+        "hold": {
+          "support": 18,
+          "tp": 16,
+          "fp": 0,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.8888888888888888,
+          "f1": 0.9411764705882353
+        },
+        "diverge": {
+          "support": 2,
+          "tp": 2,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666
+        },
+        "abstain": {
+          "support": 0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "macro_f1_all_three_classes": 0.5359477124183006,
+      "macro_f1_supported_reference_classes_only": 0.803921568627451,
+      "confusion_matrix_rows_human_cols_prediction": {
+        "hold": {
+          "hold": 16,
+          "diverge": 2,
+          "abstain": 0,
+          "invalid": 0
+        },
+        "diverge": {
+          "hold": 0,
+          "diverge": 2,
+          "abstain": 0,
+          "invalid": 0
+        },
+        "abstain": {
+          "hold": 0,
+          "diverge": 0,
+          "abstain": 0,
+          "invalid": 0
+        }
+      },
+      "latency_seconds": {
+        "median": 67.9137343500006,
+        "p95": 130.20931190000556,
+        "sum": 1468.998874300014
+      },
+      "predictions_file": "qwen3-4b-instruct-2507_predictions.jsonl"
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "suite_version": "context-stress-1",
+  "model": "ollama/cb-judge-gemma3-4b",
+  "total_calls": 9,
+  "conditions": {
+    "baseline": {
+      "total": 3,
+      "correct": 3,
+      "accuracy": 1.0,
+      "invalid_count": 0,
+      "prompt_chars_min": 1865,
+      "prompt_chars_max": 2027,
+      "prompt_chars_median": 1932,
+      "reported_total_tokens_min": 373,
+      "reported_total_tokens_max": 405,
+      "reported_total_tokens_median": 387
+    },
+    "ground_truth_early": {
+      "total": 3,
+      "correct": 1,
+      "accuracy": 0.3333333333333333,
+      "invalid_count": 0,
+      "prompt_chars_min": 63867,
+      "prompt_chars_max": 64029,
+      "prompt_chars_median": 63934,
+      "reported_total_tokens_min": 14352,
+      "reported_total_tokens_max": 14386,
+      "reported_total_tokens_median": 14367
+    },
+    "ground_truth_late": {
+      "total": 3,
+      "correct": 1,
+      "accuracy": 0.3333333333333333,
+      "invalid_count": 0,
+      "prompt_chars_min": 63867,
+      "prompt_chars_max": 64029,
+      "prompt_chars_median": 63934,
+      "reported_total_tokens_min": 14352,
+      "reported_total_tokens_max": 14385,
+      "reported_total_tokens_median": 14366
+    }
+  },
+  "paired_cases": [
+    {
+      "source_case_id": "judge-001",
+      "expected_label": "hold",
+      "baseline": "hold",
+      "ground_truth_early": "diverge",
+      "ground_truth_late": "diverge",
+      "baseline_correct": true,
+      "ground_truth_early_correct": false,
+      "ground_truth_late_correct": false
+    },
+    {
+      "source_case_id": "judge-003",
+      "expected_label": "diverge",
+      "baseline": "diverge",
+      "ground_truth_early": "diverge",
+      "ground_truth_late": "diverge",
+      "baseline_correct": true,
+      "ground_truth_early_correct": true,
+      "ground_truth_late_correct": true
+    },
+    {
+      "source_case_id": "judge-005",
+      "expected_label": "abstain",
+      "baseline": "abstain",
+      "ground_truth_early": "diverge",
+      "ground_truth_late": "diverge",
+      "baseline_correct": true,
+      "ground_truth_early_correct": false,
+      "ground_truth_late_correct": false
+    }
+  ]
+}

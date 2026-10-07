@@ -1,0 +1,16 @@
+{
+  "suite_version": "1",
+  "task_plan_sha256": "8cf22ae4ce40e3b7f3005e330fcaf885e56f3862db6d4510b8455bb6377fac49",
+  "model": "ollama/cb-judge-gemma3-4b",
+  "provider": "ollama",
+  "source_case_count": 15,
+  "core_call_count": 60,
+  "stability_repeat_call_count": 24,
+  "total_call_count": 84,
+  "case_file_sha256": "78c4b088c37ca41ab303a22214ec90590cde4d750be00cebc8bccfead52f345a",
+  "prompt_file_sha256": "5f6cb4cde75004ce4e9c7df105b5dbaefea85cf965ee637b1594cb0a8c501b7a",
+  "reasoning_effort": null,
+  "temperature": 0.0,
+  "max_tokens": 512,
+  "prompt_build_errors": []
+}
