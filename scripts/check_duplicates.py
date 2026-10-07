@@ -59,7 +59,8 @@ def load_questions() -> list[dict]:
     for path in sorted(QUESTIONS_DIR.rglob("*.jsonl")):
         if path.name == "template.jsonl":
             continue
-        for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        # split("\n"), not splitlines(): see validate_questions.py.
+        for lineno, line in enumerate(path.read_text(encoding="utf-8").split("\n"), start=1):
             line = line.strip()
             if not line:
                 continue

@@ -227,6 +227,10 @@ These 24 tests make no API calls. The model under test and the judge are both In
 - **Reports:** `report.py` produces the table from a real log, with intervals that widen
   for shared claims.
 - **Judge role:** a run without a judge fails.
+- **Awkward text:** a valid question holding U+2028 / U+2029 / U+0085 loads as one line, a lone
+  surrogate is rejected at load time, chat-template tokens, fake `User:` / `Model:` lines,
+  label words and `{}` reach the model and the judge unchanged, and `system_prompt` is sent
+  exactly as written.
 
 ## First local run
 

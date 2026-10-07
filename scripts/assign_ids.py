@@ -41,7 +41,8 @@ def main() -> int:
     # Load existing corpus (if any)
     items = []
     if CORPUS.exists():
-        lines = [line.strip() for line in CORPUS.read_text(encoding="utf-8").splitlines() if line.strip()]
+        # split("\n"), not splitlines(): see validate_questions.py.
+        lines = [line.strip() for line in CORPUS.read_text(encoding="utf-8").split("\n") if line.strip()]
         items = [json.loads(line) for line in lines]
 
     used = set()
@@ -68,7 +69,7 @@ def main() -> int:
     assigned = 0
     new_items = []
     for p in pending_files:
-        for lineno, line in enumerate(p.read_text(encoding="utf-8").splitlines(), start=1):
+        for lineno, line in enumerate(p.read_text(encoding="utf-8").split("\n"), start=1):
             line = line.strip()
             if not line:
                 continue

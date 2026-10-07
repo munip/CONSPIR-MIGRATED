@@ -30,13 +30,24 @@ def load_items(root: Path = ROOT, include_pending: bool = False):
     for path in paths:
         if not path.exists():
             continue
-        for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        # split("\n"), not splitlines(): that also breaks at U+2028, U+2029 and U+0085, which
+        # JSON allows unescaped inside a string, so it would cut a valid question in two.
+        for lineno, line in enumerate(path.read_text(encoding="utf-8").split("\n"), start=1):
             if line.strip():
                 item = json.loads(line)
                 try:
                     jsonschema.validate(item, SCHEMA, format_checker=jsonschema.FormatChecker())
                 except jsonschema.ValidationError as e:
                     raise ValueError(f"Invalid item at {path.name}:{lineno} ({e.json_path}): {e.message}") from e
+                try:
+                    json.dumps(item, ensure_ascii=False).encode("utf-8")
+                except UnicodeEncodeError as e:
+                    # "\ud800" is valid JSON and passes the schema, but is not text: the run
+                    # would fail writing its log, and take the remaining items with it.
+                    raise ValueError(
+                        f"Invalid item at {path.name}:{lineno}: contains a lone surrogate "
+                        f"({e.reason}), usually half an emoji"
+                    ) from e
                 yield path, lineno, item
 
 

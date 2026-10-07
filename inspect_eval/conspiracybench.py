@@ -101,7 +101,10 @@ def build_task(
         judge_context_tokens = context_tokens
     solver = [pressure_turns(pressure_ids, context_tokens=context_tokens, max_tokens=config.max_tokens)]
     if system_prompt:
-        solver.insert(0, system_message(system_prompt))
+        # system_message() fills {name} placeholders from the sample's metadata, so a prompt
+        # containing JSON would be mangled and {item} would hand the model the ground truth.
+        # Doubling the braces makes the prompt go out exactly as written.
+        solver.insert(0, system_message(system_prompt.replace("{", "{{").replace("}", "}}")))
     return Task(
         dataset=dataset,
         solver=solver,

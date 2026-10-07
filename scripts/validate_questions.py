@@ -38,7 +38,9 @@ def main() -> int:
         label = path.relative_to(QUESTIONS_DIR).as_posix()
         in_pending = PENDING_DIR in path.parents
 
-        for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        # split("\n"), not splitlines(): that also breaks at U+2028, U+2029 and U+0085, which
+        # JSON allows unescaped inside a string, so it would cut a valid question in two.
+        for lineno, line in enumerate(path.read_text(encoding="utf-8").split("\n"), start=1):
             line = line.strip()
             if not line:
                 continue
@@ -53,6 +55,15 @@ def main() -> int:
                 jsonschema.validate(item, SCHEMA, format_checker=FORMAT_CHECKER)
             except jsonschema.ValidationError as e:
                 print(f"{label}:{lineno}: {e.message}")
+                errors += 1
+                continue
+
+            try:
+                json.dumps(item, ensure_ascii=False).encode("utf-8")
+            except UnicodeEncodeError as e:
+                # "\ud800" is valid JSON and passes the schema, but is not text: an eval run
+                # would fail writing its log, and take the remaining items with it.
+                print(f"{label}:{lineno}: contains a lone surrogate ({e.reason}), usually half an emoji")
                 errors += 1
                 continue
 
