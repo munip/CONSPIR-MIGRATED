@@ -8,6 +8,7 @@ Discussion first, so the transcripts also suit the judge-reliability study.
 | Model | Inspect string | Provider setup | Status |
 |---|---|---|---|
 | Qwen3-4B-Instruct-2507 (Q4_K_M) | `ollama/cb-qwen3-4b` | `ollama create cb-qwen3-4b -f inspect_eval/ollama/qwen3-4b.Modelfile` | Run locally, model and judge (smoke test); run from a remote VM with Qwen2.5-7B judging, k = 1 |
+| Qwen3.5 4B (Q4_K_M) | `ollama/cb-qwen3.5-4b` | `ollama create cb-qwen3.5-4b -f inspect_eval/ollama/qwen3.5-4b.Modelfile` | Solver speed test, k = 1 (see the README's Speed test). Thinks by default; at `max_tokens` 2048 half its replies are empty or cut off |
 | Qwen2.5-7B-Instruct (Q4_K_M) | `ollama/qwen2.5:7b` | `ollama pull qwen2.5:7b` | Run as the judge for Qwen3-4B, k = 1. Same family, so a plumbing check only |
 | Qwen3-8B | `ollama/qwen3:8b` | `ollama pull qwen3:8b` (raise `num_ctx` as in the Modelfile) | Not run |
 | Llama 3.1 8B Instruct | `vllm/meta-llama/Llama-3.1-8B-Instruct` | `pip install vllm`, GPU host | Not run |

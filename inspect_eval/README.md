@@ -192,6 +192,75 @@ slow local model can legitimately take minutes to answer. When retries run out, 
 and the coverage block names what kept failing, for example
 `Transient: 503 upstream down (retries exhausted)`.
 
+## Speed test
+
+[`speedtest.py`](./speedtest.py) reads Inspect logs and reports where a run's time went. It
+makes no model calls, so any log can be rechecked later.
+
+```bash
+# 1. Baseline: the solver alone, k = 1, every setting recorded in the log.
+.venv/bin/inspect eval inspect_eval/conspiracybench.py --no-score \
+  --model ollama/cb-qwen3.5-4b --model-role grader=<judge> --log-dir logs/speed-baseline
+# 2. Change one thing (here, concurrency) and run again into a new folder.
+.venv/bin/inspect eval inspect_eval/conspiracybench.py --no-score --max-connections 1 \
+  --model ollama/cb-qwen3.5-4b --model-role grader=<judge> --log-dir logs/speed-mc1
+# 3. Compare, and check the model was sent the same thing.
+.venv/bin/python inspect_eval/speedtest.py logs/speed-baseline/*.eval logs/speed-mc1/*.eval
+.venv/bin/python inspect_eval/speedtest.py --same-prompts logs/speed-baseline/*.eval logs/speed-mc1/*.eval
+```
+
+- **`--no-score`** times the solver without the judge. Score the same log afterwards
+  with `inspect score` to time the judge on its own.
+- **Per log**, it prints the wall clock and run throughput, and the model-under-test calls
+  split by single- vs multi-turn item and opening vs pressure turn: calls, failed calls,
+  retries, tokens in and out, turns that hit `max_tokens`, **empty answers**, latency,
+  and how long each call spent generating versus waiting inside Inspect.
+- **`--same-prompts`** compares the HTTP request body each turn sent to the provider, byte
+  for byte, after checking that every earlier reply in it is the reply the model actually
+  gave in that run. It exits non-zero on any difference. A speed change must pass it.
+  Inspect resends a reply with one leading newline added, the same in every run; the
+  check expects it.
+- Record the hardware, the Ollama version and its settings next to the numbers. Numbers
+  from different machines aren't comparable.
+
+What it found on Qwen3.5 4B with Ollama 0.35.1 (Apple M3 Pro 18 GB, k = 1, 39 items, 68
+turns):
+
+- **Thinking uses up `max_tokens`, and that changes the results.** Qwen3.5 4B thinks by
+  default. At `max_tokens` 2048, 53 of 68 turns hit the limit: 34 replies were empty and
+  19 were cut off. When this was measured the judge was still asked to grade an empty
+  reply, and Gemma 3 4B labelled 32 of 34 of them `diverge`. Opening-turn divergence was
+  49% (19/39) at 2048, against 18% (7/39) at 8192 and 21% (8/39) with thinking off. The
+  scorer now labels an empty reply `invalid` (`empty_reply`) without asking the judge,
+  so it no longer counts as `diverge`, but it still drops out of the rates. Check
+  `empty_answers` before trusting a run on a thinking model.
+
+  | Thinking, `max_tokens` (k = 1, `--max-connections 1`) | Wall clock | Empty / cut off | Opening divergence | k = 5 projected |
+  |---|---|---|---|---|
+  | on, 2048 | 72 min | 34 / 19 | 49% | 5.2 h |
+  | on, 8192 | 108 min* | 0 / 0 | 18% | 7.8 h |
+  | off (`--extra-body`, below) | 19.5 min | 0 / 0 | 21% | 1.3 h |
+
+  \*117 min including a 9-minute Ollama restart; Inspect retried and no turn was lost. At
+  8192 the longest reply was 7,212 tokens and no turn overflowed the 16k context budget.
+  The judge was Gemma 3 4B (`num_ctx` 16384) via `inspect score`, which took 1.5 to 3.5
+  minutes per log. k = 5 is 195 opening and 101 pressure turns, timed at each run's mean.
+- **Ollama serves Qwen3.5 one request at a time.** It ignores `OLLAMA_NUM_PARALLEL` for
+  this architecture (`model architecture does not currently support parallel requests`).
+  With Inspect's default of 10 connections, the queue outlasts the OpenAI client's 600 s
+  timeout: 51 requests failed and were retried. Use **`--max-connections 1`**. It removes
+  every timeout at the same throughput.
+- **`--reasoning-effort none` doesn't reach Ollama.** Inspect's `ollama` provider drops
+  `none`, so thinking stays on. `--extra-body '{"reasoning_effort":"none"}'` turns it off.
+  That changes what the model does, so it is a different benchmark condition, not a
+  speed setting.
+- **Recommended for Qwen3.5 4B on Ollama:** `--max-connections 1`, and `-T max_tokens=8192`
+  if the benchmark keeps thinking on. Turning thinking off is 5.5× faster than that, but it
+  measures a different model behaviour, so it's a decision for the benchmark, not for the
+  solver. llama.cpp's own `llama-server` with `-np 4` batches this model (1.25× aggregate
+  throughput on the same GGUF), but outputs then depend on what else is in the batch, even
+  at temperature 0.
+
 ## Why the score is a string like `hold>hold>diverge`
 
 Each trajectory is stored as one scalar string, reduced across epochs with `collect`.

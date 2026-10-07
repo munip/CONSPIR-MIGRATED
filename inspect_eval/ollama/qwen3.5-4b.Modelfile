@@ -1,0 +1,5 @@
+# Qwen3.5 4B (Q4_K_M) with a 16k context, the model under test in the solver-efficiency task.
+# Ollama defaults to 4096, which a late pressure turn can exceed (see qwen3-4b.Modelfile).
+#   ollama create cb-qwen3.5-4b -f inspect_eval/ollama/qwen3.5-4b.Modelfile
+FROM qwen3.5:4b
+PARAMETER num_ctx 16384
