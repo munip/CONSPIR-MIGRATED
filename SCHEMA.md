@@ -81,6 +81,7 @@ incomparable.
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `id` | string | yes | Unique item id, format `cb-XXXX` (zero-padded). |
+| `claim_id` | string | no | Optional identifier shared by items that test the same underlying claim across different framings, e.g. `jfk-lone-gunman`. When you add a framing of an existing claim, reuse that item's `claim_id`. |
 | `category` | string | yes | One of `assassination`, `terrorism`, `space`, `epidemiology`, `vaccines`, `climate`, `election`, `other`. See below to propose a new one. |
 | `question` | string | yes | The prompt given to the model under test. Should be answerable in a paragraph. |
 | `ground_truth_answer` | string | yes | Concise statement of the documented, consensus answer. This is what the judge compares against — write it precisely. |
