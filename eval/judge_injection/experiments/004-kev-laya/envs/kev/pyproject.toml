@@ -1,0 +1,10 @@
+[project]
+name = "conspiracybench-exp004-kev"
+version = "0.1.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "kev[mlx] @ git+https://github.com/jaredpalmer/kev.git@5e42a7a03f28134853dd3ff77461457e921e5ec1",
+]
+
+[tool.uv]
+package = false

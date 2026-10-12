@@ -1,0 +1,823 @@
+{
+  "config": {
+    "case_order_sha256": "f68253215220eaa78a08fd680cebf56bf7e888cc9ff20e16583dca07bda547b0",
+    "dataset_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+    "detector": {
+      "engine": "PromptShieldEngine",
+      "revision": "28b2670e65bbc29021ce739cbbd2449b03b1cdc8",
+      "settings": {
+        "alerting": {
+          "enabled": false
+        },
+        "canary": {
+          "enabled": false
+        },
+        "detectors": {
+          "d022_semantic_classifier": {
+            "enabled": false
+          },
+          "d035_perplexity_spectral": {
+            "enabled": false
+          }
+        },
+        "fatigue": {
+          "enabled": false
+        },
+        "feedback": {
+          "auto_tune": false,
+          "enabled": false
+        },
+        "history": {
+          "enabled": false
+        },
+        "logging": {
+          "level": "INFO"
+        },
+        "mode": "block",
+        "parallel": false,
+        "strict_mode": true,
+        "threat_feed": {
+          "auto_sync": false,
+          "enabled": false
+        },
+        "threshold": 0.7,
+        "vault": {
+          "enabled": false,
+          "similarity_threshold": 0.75
+        }
+      }
+    },
+    "inspect_execution": {
+      "dataset_order": "frozen release order",
+      "replay_model": "mockllm/model (inert; replay solver does not call it)",
+      "sample_concurrency": 1,
+      "sample_shuffle": false
+    },
+    "judge_generation": {
+      "cache": false,
+      "max_tokens": 512,
+      "retries": 2,
+      "temperature": 0,
+      "timeout_seconds": 120
+    },
+    "judge_model": "ollama/llama3.2:3b",
+    "modes": [
+      "off",
+      "shadow",
+      "gate"
+    ],
+    "repetitions": 1,
+    "schema_version": 1
+  },
+  "config_sha256": "651062b7aae0c411a469ff3abd9ab2caabac9810863b9f7f5c48666eada29dfe",
+  "created_at": "2026-10-04T16:32:57Z",
+  "dataset": {
+    "assistant_turns_per_mode": 168,
+    "case_count": 140,
+    "case_order_sha256": "f68253215220eaa78a08fd680cebf56bf7e888cc9ff20e16583dca07bda547b0",
+    "manifest_file": "manifest-v1.0.0.json",
+    "release_file": "release-v1.0.0.jsonl",
+    "release_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+    "version": "1.0.0"
+  },
+  "dependencies": {
+    "inspect_ai": "0.3.269",
+    "promptshield_engine_importable": true,
+    "promptshield_revision": "28b2670e65bbc29021ce739cbbd2449b03b1cdc8"
+  },
+  "experiment": "PromptShield quality experiment",
+  "report_integrity_errors": [],
+  "schema_version": 1,
+  "units": {
+    "gate/rep-001": {
+      "attempts": [
+        {
+          "directory": "units/gate_rep-001/attempts/92ac53054a80",
+          "finished_at": "2026-10-04T16:34:21Z",
+          "id": "92ac53054a80",
+          "inspect_log_directory": "units/gate_rep-001/attempts/92ac53054a80/inspect",
+          "native_inspect_logs": [
+            "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\quality\\20261004T163257Z\\units\\gate_rep-001\\attempts\\92ac53054a80\\inspect\\2026-10-04T16-33-52-00-00_promptshield-quality-gate-rep-001_MzGNfQpNwqKZCMKXhmWXTK.eval"
+          ],
+          "result_file": "units/gate_rep-001/attempts/92ac53054a80/per_case_results.jsonl",
+          "result_sha256": "23256d1175cd541145d69f9acee695c8fe071cf9f248b49a9372ce3ffc9d565b",
+          "started_at": "2026-10-04T16:33:52Z",
+          "status": "complete"
+        }
+      ],
+      "completed_at": "2026-10-04T16:34:21Z",
+      "created_at": "2026-10-04T16:32:57Z",
+      "mode": "gate",
+      "native_inspect_logs": [
+        "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\quality\\20261004T163257Z\\units\\gate_rep-001\\attempts\\92ac53054a80\\inspect\\2026-10-04T16-33-52-00-00_promptshield-quality-gate-rep-001_MzGNfQpNwqKZCMKXhmWXTK.eval"
+      ],
+      "operations": {
+        "detector_config": {
+          "data_dir": "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\promptshield-runtime\\3a0240ee7558419da39106add0223106",
+          "engine": "PromptShieldEngine",
+          "revision": "28b2670e65bbc29021ce739cbbd2449b03b1cdc8",
+          "settings": {
+            "actions": {
+              "critical": "block",
+              "high": "block",
+              "low": "log",
+              "medium": "flag"
+            },
+            "alerting": {
+              "enabled": false,
+              "webhooks": [
+                {
+                  "events": [
+                    "block"
+                  ],
+                  "headers": {},
+                  "url": ""
+                }
+              ]
+            },
+            "allowlist": {
+              "patterns": []
+            },
+            "blocklist": {
+              "patterns": []
+            },
+            "canary": {
+              "enabled": false,
+              "header_format": "<-@!-- {canary} --@!->",
+              "token_length": 16
+            },
+            "data_dir": "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\promptshield-runtime\\3a0240ee7558419da39106add0223106",
+            "detectors": {
+              "d001_system_prompt_extraction": {
+                "enabled": true,
+                "severity": "critical",
+                "threshold": 0.6
+              },
+              "d002_role_hijack": {
+                "enabled": true,
+                "severity": "critical"
+              },
+              "d003_instruction_override": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d004_prompt_leaking": {
+                "enabled": true,
+                "severity": "critical"
+              },
+              "d005_context_manipulation": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d006_multi_turn_escalation": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d007_task_deflection": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d008_base64_payload": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d009_rot13_substitution": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d010_unicode_homoglyph": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d011_whitespace_injection": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d012_markdown_html_injection": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d013_data_exfiltration": {
+                "enabled": true,
+                "severity": "critical"
+              },
+              "d014_tool_function_abuse": {
+                "enabled": true,
+                "severity": "critical"
+              },
+              "d015_rag_poisoning": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d016_url_injection": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d017_hypothetical_framing": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d018_academic_pretext": {
+                "enabled": true,
+                "severity": "low"
+              },
+              "d019_dual_persona": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d020_token_smuggling": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d021_vault_similarity": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d022_semantic_classifier": {
+                "device": "cpu",
+                "enabled": false,
+                "model_name": "protectai/deberta-v3-base-prompt-injection-v2",
+                "severity": "high",
+                "threshold": 0.7
+              },
+              "d023_pii_detection": {
+                "custom_patterns": [],
+                "enabled": true,
+                "entities": {
+                  "api_key": true,
+                  "credit_card": true,
+                  "email": true,
+                  "ip_address": true,
+                  "phone": true,
+                  "ssn": true
+                },
+                "severity": "high"
+              },
+              "d025_multi_encoding": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d026_denial_of_wallet": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d027_stylometric_discontinuity": {
+                "confidence_floor": 0.6,
+                "confidence_slope": 4.0,
+                "enabled": true,
+                "max_input_tokens": 4000,
+                "min_input_tokens": 100,
+                "severity": "medium",
+                "stride": 25,
+                "threshold": 0.06,
+                "window_size": 50
+              },
+              "d028_sequence_alignment": {
+                "enabled": true,
+                "gap_penalty": -1,
+                "match_bonus": 3,
+                "max_input_tokens": 2000,
+                "min_input_tokens": 4,
+                "mismatch_penalty": -1,
+                "severity": "high",
+                "synonym_bonus": 2,
+                "threshold": 0.63
+              },
+              "d029_many_shot_structural": {
+                "enabled": true,
+                "max_input_chars": 200000,
+                "min_density": 0.15,
+                "min_shots": 8,
+                "pivot_boost": 0.1,
+                "severity": "high"
+              },
+              "d031_language_enforcement": {
+                "allowed_languages": [
+                  "en"
+                ],
+                "enabled": false,
+                "min_input_chars": 32,
+                "severity": "medium"
+              },
+              "d032_topic_enforcement": {
+                "case_sensitive": false,
+                "denied_topics": [],
+                "enabled": false,
+                "min_keyword_hits": 2,
+                "severity": "medium"
+              },
+              "d034_honeypot_tool": {
+                "enabled": true,
+                "honeypot_tools": [
+                  "admin_shell",
+                  "internal_debug_console",
+                  "system_key_dump",
+                  "sudo_execute_raw",
+                  "priv_esc_helper"
+                ],
+                "severity": "critical"
+              },
+              "d035_perplexity_spectral": {
+                "cusum_k": 0.5,
+                "enabled": false,
+                "max_input_tokens": 2000,
+                "min_input_tokens": 20,
+                "model_name": "distilgpt2",
+                "severity": "medium",
+                "threshold": 5.0
+              }
+            },
+            "fatigue": {
+              "cooldown_seconds": 60,
+              "enabled": false,
+              "ewma_alpha": 0.3,
+              "harden_delta": 0.1,
+              "min_samples_before_trigger": 8,
+              "near_miss_delta": 0.15,
+              "source_key": "source",
+              "trigger_ratio": 0.4
+            },
+            "feedback": {
+              "auto_tune": false,
+              "enabled": false,
+              "max_threshold_adjustment": 0.15,
+              "tune_interval": 100
+            },
+            "history": {
+              "enabled": false,
+              "retention_days": 90,
+              "store_input_text": false
+            },
+            "logging": {
+              "format": "json",
+              "level": "INFO",
+              "output": "stdout"
+            },
+            "max_workers": 4,
+            "mode": "block",
+            "normalization": {
+              "collapse_whitespace": true,
+              "enabled": true,
+              "homoglyph_map": true,
+              "nfkc": true,
+              "strip_zero_width": true
+            },
+            "parallel": false,
+            "scoring": {
+              "ensemble_bonus": 0.05
+            },
+            "strict_mode": true,
+            "threat_feed": {
+              "auto_sync": false,
+              "enabled": false,
+              "feed_url": "https://raw.githubusercontent.com/prompt-shield/threat-feed/main/feeds/latest.json",
+              "sync_interval_hours": 24
+            },
+            "threshold": 0.7,
+            "vault": {
+              "auto_store_detections": true,
+              "embedding_model": "all-MiniLM-L6-v2",
+              "enabled": false,
+              "max_entries": 100000,
+              "min_confidence_to_store": 0.7,
+              "similarity_threshold": 0.75
+            }
+          },
+          "settings_source": "resolved_engine"
+        },
+        "grader_event_errors": 0,
+        "grader_events": 152,
+        "initialization_ms": 38.69650000706315,
+        "inspect_status": "success",
+        "judge_calls": 152,
+        "judge_errors": 0,
+        "judge_retries": 0,
+        "judge_time_ms": 14528.99009961402,
+        "judge_usage": {
+          "input_tokens": 21715,
+          "input_tokens_cache_read": 73523,
+          "output_tokens": 771,
+          "total_tokens": 96009
+        },
+        "mode": "gate",
+        "repetition": 1,
+        "run_duration_ms": 28850.591199996416,
+        "sample_errors": 0,
+        "scan_latency_ms": {
+          "count": 168,
+          "max": 285.76,
+          "p50": 38.935,
+          "p95": 231.6185000000001
+        },
+        "warmup_ms": 11.07960002264008,
+        "warmup_scan": {
+          "action": "PASS",
+          "detector_ids": [],
+          "input_hash": "e698793698ea3c7d1a8113eb027f9a5e53973594788719e7e0370227484cb282",
+          "input_length": 111,
+          "risk_score": 0.0,
+          "scan_duration_ms": 11.04
+        }
+      },
+      "repetition": 1,
+      "result_file": "units/gate_rep-001/attempts/92ac53054a80/per_case_results.jsonl",
+      "result_sha256": "23256d1175cd541145d69f9acee695c8fe071cf9f248b49a9372ce3ffc9d565b",
+      "status": "complete",
+      "updated_at": "2026-10-04T16:34:21Z"
+    },
+    "off/rep-001": {
+      "attempts": [
+        {
+          "directory": "units/off_rep-001/attempts/1c78eb5ebdba",
+          "finished_at": "2026-10-04T16:33:22Z",
+          "id": "1c78eb5ebdba",
+          "inspect_log_directory": "units/off_rep-001/attempts/1c78eb5ebdba/inspect",
+          "native_inspect_logs": [
+            "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\quality\\20261004T163257Z\\units\\off_rep-001\\attempts\\1c78eb5ebdba\\inspect\\2026-10-04T16-32-58-00-00_promptshield-quality-off-rep-001_BpxY4yBG2RTMuaRxvwFA8x.eval"
+          ],
+          "result_file": "units/off_rep-001/attempts/1c78eb5ebdba/per_case_results.jsonl",
+          "result_sha256": "f6a03f54e90c727a3cc5d092d2f84ef2b5969e55dcb3d47e54ba70e5b84ac1a7",
+          "started_at": "2026-10-04T16:32:57Z",
+          "status": "complete"
+        }
+      ],
+      "completed_at": "2026-10-04T16:33:22Z",
+      "created_at": "2026-10-04T16:32:57Z",
+      "mode": "off",
+      "native_inspect_logs": [
+        "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\quality\\20261004T163257Z\\units\\off_rep-001\\attempts\\1c78eb5ebdba\\inspect\\2026-10-04T16-32-58-00-00_promptshield-quality-off-rep-001_BpxY4yBG2RTMuaRxvwFA8x.eval"
+      ],
+      "operations": {
+        "detector_config": null,
+        "grader_event_errors": 0,
+        "grader_events": 168,
+        "initialization_ms": null,
+        "inspect_status": "success",
+        "judge_calls": 168,
+        "judge_errors": 0,
+        "judge_retries": 0,
+        "judge_time_ms": 22082.583299605176,
+        "judge_usage": {
+          "input_tokens": 40832,
+          "input_tokens_cache_read": 67356,
+          "output_tokens": 826,
+          "total_tokens": 109014
+        },
+        "mode": "off",
+        "repetition": 1,
+        "run_duration_ms": 24933.165499998722,
+        "sample_errors": 0,
+        "scan_latency_ms": {
+          "count": 0,
+          "max": null,
+          "p50": null,
+          "p95": null
+        },
+        "warmup_ms": null,
+        "warmup_scan": null
+      },
+      "repetition": 1,
+      "result_file": "units/off_rep-001/attempts/1c78eb5ebdba/per_case_results.jsonl",
+      "result_sha256": "f6a03f54e90c727a3cc5d092d2f84ef2b5969e55dcb3d47e54ba70e5b84ac1a7",
+      "status": "complete",
+      "updated_at": "2026-10-04T16:33:22Z"
+    },
+    "shadow/rep-001": {
+      "attempts": [
+        {
+          "directory": "units/shadow_rep-001/attempts/8da910913cda",
+          "finished_at": "2026-10-04T16:33:52Z",
+          "id": "8da910913cda",
+          "inspect_log_directory": "units/shadow_rep-001/attempts/8da910913cda/inspect",
+          "native_inspect_logs": [
+            "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\quality\\20261004T163257Z\\units\\shadow_rep-001\\attempts\\8da910913cda\\inspect\\2026-10-04T16-33-22-00-00_promptshield-quality-shadow-rep-001_MYYcHGZKKdBJZwHr6dXmFd.eval"
+          ],
+          "result_file": "units/shadow_rep-001/attempts/8da910913cda/per_case_results.jsonl",
+          "result_sha256": "4a5034cc023ab178c5c0bd22aeb3f9153b0a036e671e66f0075f1924cb247363",
+          "started_at": "2026-10-04T16:33:22Z",
+          "status": "complete"
+        }
+      ],
+      "completed_at": "2026-10-04T16:33:52Z",
+      "created_at": "2026-10-04T16:32:57Z",
+      "mode": "shadow",
+      "native_inspect_logs": [
+        "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\quality\\20261004T163257Z\\units\\shadow_rep-001\\attempts\\8da910913cda\\inspect\\2026-10-04T16-33-22-00-00_promptshield-quality-shadow-rep-001_MYYcHGZKKdBJZwHr6dXmFd.eval"
+      ],
+      "operations": {
+        "detector_config": {
+          "data_dir": "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\promptshield-runtime\\4955ac6dd6dd4df4817dbeaa067af626",
+          "engine": "PromptShieldEngine",
+          "revision": "28b2670e65bbc29021ce739cbbd2449b03b1cdc8",
+          "settings": {
+            "actions": {
+              "critical": "block",
+              "high": "block",
+              "low": "log",
+              "medium": "flag"
+            },
+            "alerting": {
+              "enabled": false,
+              "webhooks": [
+                {
+                  "events": [
+                    "block"
+                  ],
+                  "headers": {},
+                  "url": ""
+                }
+              ]
+            },
+            "allowlist": {
+              "patterns": []
+            },
+            "blocklist": {
+              "patterns": []
+            },
+            "canary": {
+              "enabled": false,
+              "header_format": "<-@!-- {canary} --@!->",
+              "token_length": 16
+            },
+            "data_dir": "C:\\Users\\Tomer\\Documents\\huggingface\\ConspiracyBench\\results\\promptshield-runtime\\4955ac6dd6dd4df4817dbeaa067af626",
+            "detectors": {
+              "d001_system_prompt_extraction": {
+                "enabled": true,
+                "severity": "critical",
+                "threshold": 0.6
+              },
+              "d002_role_hijack": {
+                "enabled": true,
+                "severity": "critical"
+              },
+              "d003_instruction_override": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d004_prompt_leaking": {
+                "enabled": true,
+                "severity": "critical"
+              },
+              "d005_context_manipulation": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d006_multi_turn_escalation": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d007_task_deflection": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d008_base64_payload": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d009_rot13_substitution": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d010_unicode_homoglyph": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d011_whitespace_injection": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d012_markdown_html_injection": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d013_data_exfiltration": {
+                "enabled": true,
+                "severity": "critical"
+              },
+              "d014_tool_function_abuse": {
+                "enabled": true,
+                "severity": "critical"
+              },
+              "d015_rag_poisoning": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d016_url_injection": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d017_hypothetical_framing": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d018_academic_pretext": {
+                "enabled": true,
+                "severity": "low"
+              },
+              "d019_dual_persona": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d020_token_smuggling": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d021_vault_similarity": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d022_semantic_classifier": {
+                "device": "cpu",
+                "enabled": false,
+                "model_name": "protectai/deberta-v3-base-prompt-injection-v2",
+                "severity": "high",
+                "threshold": 0.7
+              },
+              "d023_pii_detection": {
+                "custom_patterns": [],
+                "enabled": true,
+                "entities": {
+                  "api_key": true,
+                  "credit_card": true,
+                  "email": true,
+                  "ip_address": true,
+                  "phone": true,
+                  "ssn": true
+                },
+                "severity": "high"
+              },
+              "d025_multi_encoding": {
+                "enabled": true,
+                "severity": "high"
+              },
+              "d026_denial_of_wallet": {
+                "enabled": true,
+                "severity": "medium"
+              },
+              "d027_stylometric_discontinuity": {
+                "confidence_floor": 0.6,
+                "confidence_slope": 4.0,
+                "enabled": true,
+                "max_input_tokens": 4000,
+                "min_input_tokens": 100,
+                "severity": "medium",
+                "stride": 25,
+                "threshold": 0.06,
+                "window_size": 50
+              },
+              "d028_sequence_alignment": {
+                "enabled": true,
+                "gap_penalty": -1,
+                "match_bonus": 3,
+                "max_input_tokens": 2000,
+                "min_input_tokens": 4,
+                "mismatch_penalty": -1,
+                "severity": "high",
+                "synonym_bonus": 2,
+                "threshold": 0.63
+              },
+              "d029_many_shot_structural": {
+                "enabled": true,
+                "max_input_chars": 200000,
+                "min_density": 0.15,
+                "min_shots": 8,
+                "pivot_boost": 0.1,
+                "severity": "high"
+              },
+              "d031_language_enforcement": {
+                "allowed_languages": [
+                  "en"
+                ],
+                "enabled": false,
+                "min_input_chars": 32,
+                "severity": "medium"
+              },
+              "d032_topic_enforcement": {
+                "case_sensitive": false,
+                "denied_topics": [],
+                "enabled": false,
+                "min_keyword_hits": 2,
+                "severity": "medium"
+              },
+              "d034_honeypot_tool": {
+                "enabled": true,
+                "honeypot_tools": [
+                  "admin_shell",
+                  "internal_debug_console",
+                  "system_key_dump",
+                  "sudo_execute_raw",
+                  "priv_esc_helper"
+                ],
+                "severity": "critical"
+              },
+              "d035_perplexity_spectral": {
+                "cusum_k": 0.5,
+                "enabled": false,
+                "max_input_tokens": 2000,
+                "min_input_tokens": 20,
+                "model_name": "distilgpt2",
+                "severity": "medium",
+                "threshold": 5.0
+              }
+            },
+            "fatigue": {
+              "cooldown_seconds": 60,
+              "enabled": false,
+              "ewma_alpha": 0.3,
+              "harden_delta": 0.1,
+              "min_samples_before_trigger": 8,
+              "near_miss_delta": 0.15,
+              "source_key": "source",
+              "trigger_ratio": 0.4
+            },
+            "feedback": {
+              "auto_tune": false,
+              "enabled": false,
+              "max_threshold_adjustment": 0.15,
+              "tune_interval": 100
+            },
+            "history": {
+              "enabled": false,
+              "retention_days": 90,
+              "store_input_text": false
+            },
+            "logging": {
+              "format": "json",
+              "level": "INFO",
+              "output": "stdout"
+            },
+            "max_workers": 4,
+            "mode": "block",
+            "normalization": {
+              "collapse_whitespace": true,
+              "enabled": true,
+              "homoglyph_map": true,
+              "nfkc": true,
+              "strip_zero_width": true
+            },
+            "parallel": false,
+            "scoring": {
+              "ensemble_bonus": 0.05
+            },
+            "strict_mode": true,
+            "threat_feed": {
+              "auto_sync": false,
+              "enabled": false,
+              "feed_url": "https://raw.githubusercontent.com/prompt-shield/threat-feed/main/feeds/latest.json",
+              "sync_interval_hours": 24
+            },
+            "threshold": 0.7,
+            "vault": {
+              "auto_store_detections": true,
+              "embedding_model": "all-MiniLM-L6-v2",
+              "enabled": false,
+              "max_entries": 100000,
+              "min_confidence_to_store": 0.7,
+              "similarity_threshold": 0.75
+            }
+          },
+          "settings_source": "resolved_engine"
+        },
+        "grader_event_errors": 0,
+        "grader_events": 168,
+        "initialization_ms": 84.66120000230148,
+        "inspect_status": "success",
+        "judge_calls": 168,
+        "judge_errors": 0,
+        "judge_retries": 0,
+        "judge_time_ms": 15792.312400066294,
+        "judge_usage": {
+          "input_tokens": 24529,
+          "input_tokens_cache_read": 83659,
+          "output_tokens": 825,
+          "total_tokens": 109013
+        },
+        "mode": "shadow",
+        "repetition": 1,
+        "run_duration_ms": 30345.053199969698,
+        "sample_errors": 0,
+        "scan_latency_ms": {
+          "count": 168,
+          "max": 317.24,
+          "p50": 38.36,
+          "p95": 228.6005
+        },
+        "warmup_ms": 67.89090001257136,
+        "warmup_scan": {
+          "action": "PASS",
+          "detector_ids": [],
+          "input_hash": "e698793698ea3c7d1a8113eb027f9a5e53973594788719e7e0370227484cb282",
+          "input_length": 111,
+          "risk_score": 0.0,
+          "scan_duration_ms": 67.84
+        }
+      },
+      "repetition": 1,
+      "result_file": "units/shadow_rep-001/attempts/8da910913cda/per_case_results.jsonl",
+      "result_sha256": "4a5034cc023ab178c5c0bd22aeb3f9153b0a036e671e66f0075f1924cb247363",
+      "status": "complete",
+      "updated_at": "2026-10-04T16:33:52Z"
+    }
+  },
+  "updated_at": "2026-10-04T16:34:21Z"
+}

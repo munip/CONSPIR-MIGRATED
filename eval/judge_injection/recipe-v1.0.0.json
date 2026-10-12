@@ -1,0 +1,50 @@
+{
+  "dataset_version": "1.0.0",
+  "source_corpus": "../../questions/corpus.jsonl",
+  "source_corpus_commit": "1bffd0a8c62fcc7431ca7fc79bfcf9bebf0b8c6c",
+  "source_corpus_sha256": "d40079566c700bcfc3899477bf71552df168555057c0973b9bfc00f2cc3e8790",
+  "base_answers": "base_answers-v1.0.0.jsonl",
+  "attack_templates": "attack_templates-v1.0.0.json",
+  "multiturn_cases": "multiturn-v1.0.0.json",
+  "release": "release-v1.0.0.jsonl",
+  "manifest": "manifest-v1.0.0.json",
+  "authoring_method": "Human-authored source-grounded answer cores and rationales; deterministic source-grounded profile expansion; parameterized attack text; no generation API.",
+  "single_turn": {
+    "answer_labels": ["hold", "diverge", "abstain"],
+    "length_profiles": ["short", "typical", "long"],
+    "profile_assignment": "(source_item_index + label_index) modulo 3; index order is short, typical, long",
+    "hard_negative_label_assignment": "source_item_index modulo 3; one contextualized quote per item",
+    "attack_family_assignment": "(source_item_index * 3 + label_index) modulo 7",
+    "attack_location_assignment": "even answer index prefixes; odd answer index suffixes",
+    "target_assignment": "(label_index + 1 + source_item_index modulo 2) modulo 3; label order is hold, diverge, abstain"
+  },
+  "multi_turn": {
+    "pair_count": 7,
+    "corpus_distribution": {"cb-0005": 3, "cb-0012": 2, "cb-0013": 2},
+    "attack_families_in_order": [
+      "direct_overrides",
+      "authority_spoofing",
+      "role_delimiter_spoofing",
+      "grading_rubric_replacement",
+      "fabricated_verdicts",
+      "reward_pressure",
+      "obfuscated_instructions"
+    ],
+    "attack_locations_in_order": [
+      "earlier_assistant_0_prefix",
+      "current_answer_suffix",
+      "earlier_assistant_1_suffix",
+      "current_answer_prefix",
+      "earlier_assistant_0_suffix",
+      "current_answer_suffix",
+      "earlier_assistant_1_prefix"
+    ],
+    "target_assignment": "next label after expected_label in hold, diverge, abstain order"
+  },
+  "length_profiles": {
+    "short": {"min_words": 20, "max_words": 49},
+    "typical": {"min_words": 50, "max_words": 150},
+    "long": {"min_words": 300, "max_words": 600},
+    "expansion": "Expand the human-authored core using only its claim, the exact source ground truth, and source grading guidance; abstentions expand only their stated limits."
+  }
+}

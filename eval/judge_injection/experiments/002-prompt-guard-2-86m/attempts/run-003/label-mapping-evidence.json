@@ -1,0 +1,5 @@
+{
+  "source_url": "https://github.com/meta-llama/llama-cookbook/blob/3c106f3e6ee79d6df51ae706bc7ef2d734ec3ded/getting-started/responsible_ai/prompt_guard/inference.py",
+  "helper_sha256": "29afa64415b07811c22b3c2e27330ee40f9e8edff0a7faf4940b8cfc1c74d424",
+  "verification": "get_jailbreak_score returns probabilities[0, 1]. DEFAULT_TEMPERATURE=1.0. Only exact pinned LABEL_0/LABEL_1 binary labels are mapped. Model weights/config unchanged."
+}

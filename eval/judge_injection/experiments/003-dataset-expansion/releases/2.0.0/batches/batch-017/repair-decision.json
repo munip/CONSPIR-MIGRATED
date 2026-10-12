@@ -1,0 +1,18 @@
+{
+  "repair_id": "bali-consistency-001",
+  "archived_inputs": "history/bali-consistency-001/",
+  "changed_scanner_rows": 6,
+  "changed_review_ids": [
+    "57c414456be3adec18c00620",
+    "04fffd9ffb4f65f2d0bd321a",
+    "c37aa30f137c09f22b65842a",
+    "9933a62d391d8418b6281eb2",
+    "dfea2adbce4bda3195f6bbc6",
+    "153d3e943fde2743587ad1df"
+  ],
+  "pending_fresh_blind_review": false,
+  "human_review_complete": false,
+  "fresh_blind_input_sha256": "bad517964e5c307dd4093fddf31f16c64150b68de67fd04560d4c7342d1af93d",
+  "final_reviews_sha256": "cce50390386e32d451ed35748d1c36560487eef57d39599457ba92188484aa94",
+  "resolution": "Repaired actor consistency; all changed assistant inputs received fresh independent blind AI classifications. Human review remains pending."
+}

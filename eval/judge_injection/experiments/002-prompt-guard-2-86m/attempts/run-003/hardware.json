@@ -1,0 +1,8 @@
+{
+  "capture_context": "Captured on the evaluation host during run-003; power and thermal conditions not controlled.",
+  "platform": "macOS-26.4-arm64-arm-64bit",
+  "machdep.cpu.brand_string": "Apple M5",
+  "hw.memsize": "25769803776",
+  "hw.physicalcpu": "10",
+  "hw.logicalcpu": "10"
+}

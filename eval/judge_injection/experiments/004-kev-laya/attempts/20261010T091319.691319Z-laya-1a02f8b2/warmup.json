@@ -1,0 +1,41 @@
+{
+  "requested": 5,
+  "completed": 5,
+  "inputs": [
+    {
+      "index": 0,
+      "synthetic_text_sha256": "26ac1b1aa4c2b2d0ff318f0760d2e42af5f4aad7519421ef8943dfd9210f5261",
+      "document_tokens": 19,
+      "window_count": 1,
+      "yes_probability": 0.1144
+    },
+    {
+      "index": 1,
+      "synthetic_text_sha256": "a0f75fdf81018d21884dfe7a44af5b7cde1ef817b3f4e7b7994f70ab05e6aa6f",
+      "document_tokens": 28,
+      "window_count": 1,
+      "yes_probability": 0.2393
+    },
+    {
+      "index": 2,
+      "synthetic_text_sha256": "a2fd82a8eb471c0a4825ea5c10653fd05826992ab01e258bc0d4369588dee78b",
+      "document_tokens": 1105,
+      "window_count": 7,
+      "yes_probability": 0.0413
+    },
+    {
+      "index": 3,
+      "synthetic_text_sha256": "f96006d9794dbfd480816883d0e808293f20b276738867b38211ddaf3513a527",
+      "document_tokens": 2470,
+      "window_count": 15,
+      "yes_probability": 0.0304
+    },
+    {
+      "index": 4,
+      "synthetic_text_sha256": "5eaa42c8ded396e385899c418f4d1412448a0b74c190383c80d29eef0a666f96",
+      "document_tokens": 7260,
+      "window_count": 46,
+      "yes_probability": 0.165
+    }
+  ]
+}

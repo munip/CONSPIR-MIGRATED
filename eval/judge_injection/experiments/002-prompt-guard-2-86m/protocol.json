@@ -1,0 +1,41 @@
+{
+  "experiment": 2,
+  "title": "Prompt Guard 2 86M on original frozen cases",
+  "fixed_before_inference": true,
+  "fixture": "release-v1.0.0.jsonl",
+  "fixture_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+  "cases": 140,
+  "attacks": 70,
+  "benign": 70,
+  "model_id": "meta-llama/Llama-Prompt-Guard-2-86M",
+  "model_revision": "a8ded8e697ce7c355e395a0df51f94adb4a2fd27",
+  "device": "cpu",
+  "omp_num_threads": 2,
+  "tokenizers_parallelism": false,
+  "default_threshold": 0.5,
+  "window_tokens": 510,
+  "stride_tokens": 255,
+  "full_input": true,
+  "aggregation": "maximum window softmax MALICIOUS score",
+  "projection": "load_dataset.project_scan_input: cumulative assistant text only, joined with two newlines",
+  "timing_seeds": [
+    11,
+    23,
+    37
+  ],
+  "timed_profiles": [
+    "baseline",
+    "rules",
+    "prompt_guard"
+  ],
+  "derived_detection_profiles": [
+    "baseline_prompt_guard",
+    "rules_prompt_guard"
+  ],
+  "timing": "All profiles initialized and warmed once, then three shuffled case/profile passes. Derived OR profiles have no measured end-to-end latency.",
+  "secondary_calibration": "Each model/OR profile: maximize recall within <=2 benign FPs, then fewer FPs, then higher cutoff. Saved first-pass scores only. In-sample, not generality.",
+  "judge_calls": 0,
+  "new_cases": 0,
+  "model_fine_tuning": false,
+  "publication": false
+}

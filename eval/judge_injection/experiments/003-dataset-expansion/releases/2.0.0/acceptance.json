@@ -1,0 +1,124 @@
+{
+  "structural_checks_passed": true,
+  "structural_errors": [],
+  "coverage": {
+    "train": {
+      "rows": 1960,
+      "claims": 49,
+      "patterns": 21,
+      "attacks_after_512_words": 18,
+      "families": {
+        "direct_overrides": 140,
+        "authority_spoofing": 140,
+        "role_delimiter_spoofing": 140,
+        "grading_rubric_replacement": 140,
+        "fabricated_verdicts": 140,
+        "reward_pressure": 140,
+        "obfuscated_instructions": 140
+      },
+      "categories": {
+        "assassination": 244,
+        "vaccines": 236,
+        "space": 220,
+        "epidemiology": 326,
+        "election": 58,
+        "terrorism": 194,
+        "other": 580,
+        "climate": 102
+      },
+      "factual_labels": {
+        "hold": 1046,
+        "diverge": 458,
+        "abstain": 456
+      },
+      "multi_turn_pairs": 196,
+      "benign_hard_negative_rows": 490,
+      "final_scan_words": {
+        "min": 31,
+        "max": 717
+      },
+      "unique_core_texts": 675,
+      "secondary_family_attacks": 375
+    },
+    "validation": {
+      "rows": 280,
+      "claims": 4,
+      "patterns": 21,
+      "attacks_after_512_words": 13,
+      "families": {
+        "direct_overrides": 20,
+        "authority_spoofing": 20,
+        "role_delimiter_spoofing": 20,
+        "grading_rubric_replacement": 20,
+        "fabricated_verdicts": 20,
+        "reward_pressure": 20,
+        "obfuscated_instructions": 20
+      },
+      "categories": {
+        "epidemiology": 70,
+        "election": 70,
+        "climate": 70,
+        "vaccines": 70
+      },
+      "factual_labels": {
+        "hold": 150,
+        "diverge": 66,
+        "abstain": 64
+      },
+      "multi_turn_pairs": 28,
+      "benign_hard_negative_rows": 70,
+      "final_scan_words": {
+        "min": 33,
+        "max": 732
+      },
+      "unique_core_texts": 104,
+      "secondary_family_attacks": 40
+    },
+    "test": {
+      "rows": 560,
+      "claims": 8,
+      "patterns": 21,
+      "attacks_after_512_words": 27,
+      "families": {
+        "direct_overrides": 40,
+        "authority_spoofing": 40,
+        "role_delimiter_spoofing": 40,
+        "grading_rubric_replacement": 40,
+        "fabricated_verdicts": 40,
+        "reward_pressure": 40,
+        "obfuscated_instructions": 40
+      },
+      "categories": {
+        "epidemiology": 72,
+        "space": 68,
+        "other": 142,
+        "climate": 66,
+        "vaccines": 74,
+        "assassination": 70,
+        "terrorism": 68
+      },
+      "factual_labels": {
+        "hold": 300,
+        "diverge": 130,
+        "abstain": 130
+      },
+      "multi_turn_pairs": 56,
+      "benign_hard_negative_rows": 140,
+      "final_scan_words": {
+        "min": 31,
+        "max": 775
+      },
+      "unique_core_texts": 249,
+      "secondary_family_attacks": 77
+    }
+  },
+  "human_review_required": 864,
+  "human_review_accepted": 0,
+  "human_review_pending": 864,
+  "ai_disagreements": 0,
+  "unresolved_label_disputes": 0,
+  "cross_split_near_duplicates": 0,
+  "near_duplicates_pending": 0,
+  "final_acceptance_passed": false,
+  "test_frozen": false
+}

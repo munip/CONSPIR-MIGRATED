@@ -1,0 +1,62 @@
+{
+  "checked_date": "2026-10-07",
+  "status": "Research only; no candidate inference, downloads of weights, or local benchmark claims.",
+  "recommendation": "Test Prompt Guard 2 86M and 22M on the existing frozen set first; Wolf Defender Small is the permissive local alternative.",
+  "models": [
+    {
+      "name": "Prompt Guard 2 86M",
+      "repository": "meta-llama/Llama-Prompt-Guard-2-86M",
+      "url": "https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-86M",
+      "revision": "a8ded8e697ce7c355e395a0df51f94adb4a2fd27",
+      "context": "512 tokens",
+      "evidence": "Meta private English benchmark: 97.5% recall at 1% FPR. AgentDojo APR 81.2% at 3% utility reduction.",
+      "tradeoff": "First quality candidate; multilingual backbone. Gated Llama 4 license; full input needs overlapping windows.",
+      "evidence_type": "Author model card; different external benchmark, not our frozen fixture.",
+      "source_url": "https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-86M/blob/a8ded8e697ce7c355e395a0df51f94adb4a2fd27/README.md"
+    },
+    {
+      "name": "Prompt Guard 2 22M",
+      "repository": "meta-llama/Llama-Prompt-Guard-2-22M",
+      "url": "https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-22M",
+      "revision": "11614a155199674a0a95e6602d6ab0417b790ed0",
+      "context": "512 tokens",
+      "evidence": "Meta private English benchmark: 88.7% recall at 1% FPR. A100 512-token latency: 19.3 ms versus 86M 92.4 ms.",
+      "tradeoff": "First latency candidate; weaker multilingual results. GPU figures do not establish CPU performance. Gated Llama 4 license.",
+      "evidence_type": "Author model card; different external benchmark, not our frozen fixture.",
+      "source_url": "https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-22M/blob/11614a155199674a0a95e6602d6ab0417b790ed0/README.md"
+    },
+    {
+      "name": "Wolf Defender Small v2",
+      "repository": "patronus-studio/wolf-defender-prompt-injection-small",
+      "url": "https://huggingface.co/patronus-studio/wolf-defender-prompt-injection-small",
+      "revision": "bcab2eff97bcabd7227849639e2d0d7a61b46c92",
+      "context": "2048 tokens",
+      "evidence": "Author Buried Injections evaluation: 83.31% recall, 1.03% FPR (629 attack / 97 benign cases; 27 distinct reused payloads).",
+      "tradeoff": "Apache 2.0, ONNX CPU variants; 2048-token windows, 64-token overlap, normalized Smooth-Max. No latency measurement on our set.",
+      "evidence_type": "Author model card; different external benchmark, not our frozen fixture.",
+      "source_url": "https://huggingface.co/patronus-studio/wolf-defender-prompt-injection-small/blob/bcab2eff97bcabd7227849639e2d0d7a61b46c92/README.md"
+    },
+    {
+      "name": "Sentinel v2",
+      "repository": "rogue-security/prompt-injection-jailbreak-sentinel-v2",
+      "url": "https://huggingface.co/rogue-security/prompt-injection-jailbreak-sentinel-v2",
+      "revision": "05ff9bfd1f28c5228e53121d5ee4427bb5205212",
+      "context": "32K tokens",
+      "evidence": "Author table reports average F1 0.957 over five datasets, compared with ProtectAI v2 0.750. Intro says 0.964: use table; discrepancy unresolved.",
+      "tradeoff": "Qwen3 0.6B; longer context but larger CPU workload. Gated Elastic license. Card says non-English not evaluated.",
+      "evidence_type": "Author model card; different external benchmark, not our frozen fixture.",
+      "source_url": "https://huggingface.co/rogue-security/prompt-injection-jailbreak-sentinel-v2/blob/05ff9bfd1f28c5228e53121d5ee4427bb5205212/README.md"
+    },
+    {
+      "name": "Tripwire base",
+      "repository": "AWuhrmann/tripwire-prompt-injection-base",
+      "url": "https://huggingface.co/AWuhrmann/tripwire-prompt-injection-base",
+      "revision": "870475c612c6eb237dbbeaf08a6ac79fc60cb519",
+      "context": "8192 tokens",
+      "evidence": "Author BIPIA AUC 0.764 versus ProtectAI v2 0.438; multilingual held-out AUC 0.968 versus 0.796.",
+      "tradeoff": "Apache 2.0, 308M parameters. Promising document/multilingual candidate; author comparison excludes Prompt Guard 2. CPU latency unknown.",
+      "evidence_type": "Author model card; different external benchmark, not our frozen fixture.",
+      "source_url": "https://huggingface.co/AWuhrmann/tripwire-prompt-injection-base/blob/870475c612c6eb237dbbeaf08a6ac79fc60cb519/README.md"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+[project]
+name = "conspiracybench-exp004-laya"
+version = "0.1.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "laya @ git+https://github.com/NandhaKishorM/laya.git@1adc59f7e371deb601fcfa18a14e25db238addcc",
+]
+
+[tool.uv]
+package = false

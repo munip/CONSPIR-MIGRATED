@@ -1,0 +1,28 @@
+{
+  "experiment": 2,
+  "status": "completed",
+  "completed_scans": 1260,
+  "judge_calls": 0,
+  "files": {
+    "README.md": "05b4767c7f86d72ee43fd516ced6284c4c0879ffe51bea271788bdd91a7b3592",
+    "analysis.json": "db6f7644935f986349e43cdebb312914e2ed3134eff367d7705f0d32570b3702",
+    "case-scores.csv": "1e7345288e1895dbd7e4b0232ae5176071e64a39a6b13ee474a985dcb5dad14a",
+    "detection.png": "1ad3c752457fcebc071ecfc5337889cc1da4df98531783017fc309a83f5ce8c1",
+    "detection.svg": "cacc9c1263cef3f2c38d18e23fad99ffba795890faddbe2c711dab9e47441910",
+    "families.png": "3f6dd7da3cc0337e84fc08524487bbd2ce6fb21fd267a9e9041a40a3930757e7",
+    "families.svg": "31281be0750b60b9ec3b292071167554dbc0a865d6aad62d0a585104ec5ba6c9",
+    "hardware.json": "e92583e88ddc0fd4f4347dc93ef16e8b392cead51ae1a74f1654ea17957887e4",
+    "label-mapping-evidence.json": "b9e806e17f18bac10c0eddef3b0f48215c963005165e1c0985112a74dfc1fd58",
+    "latency.png": "589c46f6541c75ca2177d67fdfe4d95db8d909a9e831a8f0f1ed078c995380f6",
+    "latency.svg": "70ef0e956f6a23074c0cbbedba9dfade969037f9512c5c32f63f2fdcc4f734d0",
+    "metrics.csv": "50295156ab7511156aaadf06fb5ce0b417ea0f3ea6942315c8bfb927880c91e2",
+    "report.html": "b548824904256ec126710d8ec53215f6b571c143488043609a58cc25dbcc6e69",
+    "scans.json.gz": "5db42e5e22bb3f31382befaf49d9e35bc502b434d6b248a1461417694de2fdd2",
+    "source-inference.zip": "822106ecd805a450d83acf8cb350b4c59b14eb7f5c608a34efc4281b083c8478",
+    "source.zip": "b7b75193fb4c94ed744bf55e86d2c9da1afe37d6cda98e9c3ec1fdfb2589351d",
+    "summary.json": "551c6d18866fac58f1214b7f31172d971c1f92546f6e893480249b78e59ec863",
+    "thresholds.csv": "3c43214bda10a6dcdf30cafdfed48b3a4912276c2e7e0ad6ea1f583dbe7af29b",
+    "thresholds.png": "0db389196d56fdd3fe6cf417c5fe754f5ca9d4b9ce237114b8335983231e6767",
+    "thresholds.svg": "2ef5f65ccfa4aec9e678e1195b83f4ae8a02faffa76700c36dac79a32b0556b5"
+  }
+}

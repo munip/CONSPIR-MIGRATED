@@ -1,0 +1,108 @@
+{
+  "experiment": 4,
+  "attempt_id": "20261010T083905.748839Z-kev-06f8508d",
+  "model": "kev",
+  "model_protocol": {
+    "repo": "jaredpalmer/kev-4b",
+    "release_tag": "v1.0",
+    "revision": "6cfce5c2fa4b4bd64026336ab649c5ca78857d52",
+    "sdk_repo": "https://github.com/jaredpalmer/kev",
+    "sdk_revision": "5e42a7a03f28134853dd3ff77461457e921e5ec1",
+    "backend": "official MLX backend",
+    "dtype": "bfloat16",
+    "calibration": "checkpoint default",
+    "document_policy": "encode each complete document strictly; no truncation, document-result reuse, or cross-document prefix reuse"
+  },
+  "started_at_utc": "2026-10-10T08:39:05.751446+00:00",
+  "completion_status": "complete",
+  "phase": "complete",
+  "requested_documents": 1960,
+  "shuffle_seed": 0,
+  "shuffle_order_sha256": "c0d6d7f9e410269b42b87e1914b75e16afd574e3e9fb0c6a3a0e59ea48bd8685",
+  "dataset": {
+    "train_sha256": "056aa5e226e4acca7ca33768f78416579fd2673b139147a8975e7f1103d9f793",
+    "full_release_sha256": "881f4903902154b2171b8e0cfaa041d54c5f88cc16c16e62e448422b1e67e640",
+    "manifest_expected_train_sha256": "056aa5e226e4acca7ca33768f78416579fd2673b139147a8975e7f1103d9f793",
+    "requested_rows": 1960,
+    "label_counts": {
+      "benign": 980,
+      "malicious": 980
+    },
+    "attack_counts": {
+      "authority_spoofing": 140,
+      "direct_overrides": 140,
+      "fabricated_verdicts": 140,
+      "grading_rubric_replacement": 140,
+      "obfuscated_instructions": 140,
+      "reward_pressure": 140,
+      "role_delimiter_spoofing": 140
+    }
+  },
+  "hardware": {
+    "system": "Darwin",
+    "release": "27.0.0",
+    "machine": "arm64",
+    "processor": "Apple M5",
+    "logical_cpu_count": 10,
+    "physical_memory_bytes": 25769803776
+  },
+  "power_state": {
+    "captured_at_utc": "2026-10-10T08:39:05.754952+00:00",
+    "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=23265379)\t100%; charged; 0:00 remaining present: true"
+  },
+  "software": {
+    "python": "3.12.15 (main, Oct  3 2026, 00:54:33) [Clang 22.1.3 ]",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "kev": "0.1.0",
+    "torch": "2.8.0",
+    "transformers": "5.19.0",
+    "mlx": "0.32.3",
+    "mlx-lm": "0.31.3",
+    "huggingface-hub": "2.2.0"
+  },
+  "warnings": [
+    "mx.metal.get_active_memory is deprecated and will be removed in a future version. Use mx.get_active_memory instead.",
+    "mx.metal.get_peak_memory is deprecated and will be removed in a future version. Use mx.get_peak_memory instead.",
+    "mx.metal.get_cache_memory is deprecated and will be removed in a future version. Use mx.get_cache_memory instead."
+  ],
+  "resource_samples": [],
+  "download_seconds": 247.87698016700006,
+  "artifact_size_bytes": 9502510659,
+  "artifact_bytes": {
+    "kev_checkpoint": 159702543,
+    "backbone": 9342808116
+  },
+  "load_seconds": 13.148652290999962,
+  "effective_precision": {
+    "backend": "mlx",
+    "weights_dtype": "bfloat16",
+    "checkpoint_temperature": 2.406050072164233
+  },
+  "backend_memory": {
+    "after_load": {
+      "active_bytes": 8411510280,
+      "peak_bytes": 15867964940,
+      "cache_bytes": 655360
+    },
+    "after_warmup": {
+      "active_bytes": 8411510282,
+      "peak_bytes": 15867964940,
+      "cache_bytes": 1081154518
+    },
+    "after_scoring": {
+      "active_bytes": 8411510282,
+      "peak_bytes": 15867964940,
+      "cache_bytes": 1074122679
+    }
+  },
+  "preflight_count": 1960,
+  "warmup_count": 5,
+  "scored_result_count": 1960,
+  "finished_at_utc": "2026-10-10T09:13:14.841120+00:00",
+  "wall_seconds": 1263.322118792,
+  "peak_rss_bytes": 6101680128,
+  "power_state_end": {
+    "captured_at_utc": "2026-10-10T09:13:14.842259+00:00",
+    "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=23265379)\t100%; charged; 0:00 remaining present: true"
+  }
+}

@@ -1,0 +1,9 @@
+count,filter_outcome,injection_label,mode
+13,caught,malicious,shadow
+57,passed,malicious,shadow
+2,caught,benign,shadow
+68,passed,benign,shadow
+13,caught,malicious,gate
+57,passed,malicious,gate
+2,caught,benign,gate
+68,passed,benign,gate

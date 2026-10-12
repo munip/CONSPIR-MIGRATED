@@ -1,0 +1,13 @@
+{
+  "split": "train",
+  "start": 20,
+  "pairs_per_family": 10,
+  "case_sha256": "ccb1bafab5f8b01a91918d2f7394fe376ab0c5d91eb5f2a754a96207c8a22910",
+  "blind_sha256": "85be5b9f455734d7d9ec8677682d53de0d3cbcd705ab45fb4389000455d1bcda",
+  "source_partition_sha256": "7e367fa0f63c76f009a41dff22acdb1bc724a5f2347abc55b9bb84dbc60f01db",
+  "source_seeds_sha256": "56ddbbc0c201b6661e1de6f118cb4cc8d212bca3f11e4101860c500e707abb09",
+  "attack_inventory_sha256": "a4897f9ea29df59738705234b73688cb1c558e8bd74f3c644a2e232614bb3465",
+  "hard_negative_inventory_sha256": "dde52109f8fa5a48c93d9ab3ed1c785589452ad126d9652b8a7e1094f77aa2ac",
+  "saved_authoring_inputs_sha256": "f80034894d6f8496fb5165e54a6385524cf04ca8602c62e51e2b1be88a2c6b64",
+  "generation_instructions_sha256": "d2e8e6f16daddfdb3b9ee43c0463e746dc9d829ffa0adcb8c99327bfa84d4739"
+}

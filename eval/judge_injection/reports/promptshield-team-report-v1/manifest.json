@@ -1,0 +1,28 @@
+{
+  "captured_date": "2026-10-07",
+  "detector_source_commit": "3f54e118694954cf242b39d659a6638a3c6f1d01",
+  "scope": "original-frozen-140-only",
+  "fixture_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+  "judge_calls": 0,
+  "completed_measured_scans": 560,
+  "sanitization": "Local data_dir values replaced by <local-runtime>; original scan results preserved. pair_subtype metadata added from unchanged fixture.",
+  "files": {
+    "README.md": "67d1d258e8e0aeaea08a6072d8d1f6d84388102ce9c9c335174cef90d9edf173",
+    "build_report.py": "faedb528fdab9ea3b8a9caac7ae24f437b9ccfa91f52b92f6ad1fc0e9c383752",
+    "detection.png": "66e24cba0ef8a5e7a699a67d298d6685e4fd4348eef46ee5a80e1e9a0fc168f6",
+    "detection.svg": "ea003ed7d6095d6b27db5e59b88ab02c76f176cd6d7b5b9d77ac5cfdbb84d246",
+    "families.png": "d5e0b2ac1c9383bd49178306ccb1efb274502562b967ca69fae708f98de8a528",
+    "families.svg": "d2fd7b951d246cf9108e120ea13e428c239be2e9628f6f36952fceafbeb8c66f",
+    "latency.png": "e2e7df9bbc5f14e2788f58ea7ac80b7f8f0399968caa103c6f61f77e1024e345",
+    "latency.svg": "84f8885e726c3ee7c1f0051ff1aaf945226f8508b4052a10cfe179055843b872",
+    "metrics.csv": "24a80b4e02ca09e22c75e8b7b379b9dbf41a66c8b373ba7a6a5cfc0c4c60eab8",
+    "model-research.json": "e07d4debdc36c083751ec1147cbc71f7615747b1dde074e9d125562800df27f8",
+    "report.html": "dfd30e8a0290476107e52b31aa293b3354ca95af385d85e51c39d863bf47f381",
+    "report.pdf": "132987d4cead0bc9aaf9300204e809113738b28df38949a0850e996a63225e84",
+    "scans.json.gz": "cea3cc4ed5ae88fe4ec23f1cabce856432dd68308200bcebc750cf763dd3daf0",
+    "study-source.zip": "6b36d3f7bff0a360073e90d75410111e05f5813d36b9a2f83e346071e9051eaf",
+    "summary.json": "ba0bf3e80f960299c9685501a94bad1516d83603eec05b18dca1237cb4aba7ec",
+    "threshold.png": "c24abfafd7d3218a54e1824165f073bf2d5b5a14f818d46fa4c4e054c045f370",
+    "threshold.svg": "ad4272ed7c12ce415b83b6a344291c156467f61278f1864d7acd26cf87c9d7b4"
+  }
+}

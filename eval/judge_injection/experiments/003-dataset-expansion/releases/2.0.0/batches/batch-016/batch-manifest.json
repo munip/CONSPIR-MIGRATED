@@ -1,0 +1,13 @@
+{
+  "split": "validation",
+  "start": 10,
+  "pairs_per_family": 10,
+  "case_sha256": "f576ceaeede1f65f7a31d6febc4e373bf32e157f9810b4c86f15be533340a77c",
+  "blind_sha256": "d6f09569a4b3775c60a52a60bbc49be53989564fccebe0d875225a95ff24fe58",
+  "source_partition_sha256": "7e367fa0f63c76f009a41dff22acdb1bc724a5f2347abc55b9bb84dbc60f01db",
+  "source_seeds_sha256": "9083b90515836d923f9ccf206ff41e07b5cbe83e5e7c25b55fed138b15cf919d",
+  "attack_inventory_sha256": "a4897f9ea29df59738705234b73688cb1c558e8bd74f3c644a2e232614bb3465",
+  "hard_negative_inventory_sha256": "dde52109f8fa5a48c93d9ab3ed1c785589452ad126d9652b8a7e1094f77aa2ac",
+  "saved_authoring_inputs_sha256": "bf06e5aef5eaa322c59e05daa5aff6c07d5f4d9672e6746bb9f52bb3cf17083c",
+  "generation_instructions_sha256": "d2e8e6f16daddfdb3b9ee43c0463e746dc9d829ffa0adcb8c99327bfa84d4739"
+}

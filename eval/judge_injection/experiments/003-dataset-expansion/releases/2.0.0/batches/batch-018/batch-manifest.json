@@ -1,0 +1,16 @@
+{
+  "split": "test",
+  "start": 10,
+  "pairs_per_family": 10,
+  "case_sha256": "9f8ec325e439dcadfc330c9eede2ce7955ca5eebdfe5b8455d3d9f7f1dc8b511",
+  "blind_sha256": "5809a5a60f378f70e92c9736981d88cc03c5c79064f3b964ab0f90ea498490a2",
+  "source_partition_sha256": "7e367fa0f63c76f009a41dff22acdb1bc724a5f2347abc55b9bb84dbc60f01db",
+  "source_seeds_sha256": "9083b90515836d923f9ccf206ff41e07b5cbe83e5e7c25b55fed138b15cf919d",
+  "attack_inventory_sha256": "a4897f9ea29df59738705234b73688cb1c558e8bd74f3c644a2e232614bb3465",
+  "hard_negative_inventory_sha256": "dde52109f8fa5a48c93d9ab3ed1c785589452ad126d9652b8a7e1094f77aa2ac",
+  "saved_authoring_inputs_sha256": "75a2c12ad36f51926458ef64fdb809ab5b6d3d326c3310117b3123306f03656b",
+  "generation_instructions_sha256": "d2e8e6f16daddfdb3b9ee43c0463e746dc9d829ffa0adcb8c99327bfa84d4739",
+  "repair_id": "bali-consistency-001",
+  "previous_inputs": "history/bali-consistency-001/",
+  "repair_reason": "Replace conflicting named-state actors in the short core with a generic foreign-state allegation, consistent with the specific explanation paragraph. Factual divergence remains explicit."
+}

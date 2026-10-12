@@ -1,0 +1,937 @@
+{
+  "seed": 20261007,
+  "frozen_before_case_authoring": true,
+  "scope": "70/10/20 applied to remaining claim groups; historical claims forced to train. Regression overlap with train is intentional and excluded from train/validation/test leakage checks.",
+  "remaining_group_counts": {
+    "test": 8,
+    "train": 29,
+    "validation": 4
+  },
+  "group_counts": {
+    "train": 49,
+    "test": 8,
+    "validation": 4
+  },
+  "groups": [
+    {
+      "canonical_claim_group": "5g-covid",
+      "split": "train",
+      "item_ids": [
+        "cb-0013",
+        "cb-0033"
+      ],
+      "declared_claim_ids": [
+        "5g-covid"
+      ],
+      "categories": [
+        "epidemiology"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "aps-peshawar-ttp-attack",
+      "split": "train",
+      "item_ids": [
+        "cb-0054"
+      ],
+      "declared_claim_ids": [
+        "aps-peshawar-ttp-attack"
+      ],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "aq-khan-nuclear-proliferation",
+      "split": "train",
+      "item_ids": [
+        "cb-0051"
+      ],
+      "declared_claim_ids": [
+        "aq-khan-nuclear-proliferation"
+      ],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "area-51-aircraft-testing",
+      "split": "train",
+      "item_ids": [
+        "cb-0003"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "space"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "bali-2002-perpetrators",
+      "split": "test",
+      "item_ids": [
+        "cb-0071"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "belgian-lumumba-killing-role",
+      "split": "test",
+      "item_ids": [
+        "cb-0074"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "assassination"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "bermuda-triangle-disappearances",
+      "split": "train",
+      "item_ids": [
+        "cb-0059",
+        "cb-0077",
+        "cb-0078"
+      ],
+      "declared_claim_ids": [
+        "bermuda-triangle-disappearances"
+      ],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "bhabha-air-crash",
+      "split": "train",
+      "item_ids": [
+        "cb-0009"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "assassination"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "bin-laden-killed-pakistan",
+      "split": "train",
+      "item_ids": [
+        "cb-0045"
+      ],
+      "declared_claim_ids": [
+        "bin-laden-killed-pakistan"
+      ],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "bose-1945-death",
+      "split": "train",
+      "item_ids": [
+        "cb-0010"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "brazil-2022-election-fraud",
+      "split": "validation",
+      "item_ids": [
+        "cb-0075"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "election"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "cia-dengue-lahore-2011",
+      "split": "train",
+      "item_ids": [
+        "cb-0055"
+      ],
+      "declared_claim_ids": [
+        "cia-dengue-lahore-2011"
+      ],
+      "categories": [
+        "epidemiology"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "cia-iran-1953-coup",
+      "split": "test",
+      "item_ids": [
+        "cb-0056"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "climategate-fabrication",
+      "split": "test",
+      "item_ids": [
+        "cb-0029"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "climate"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "contrails-secret-spraying",
+      "split": "train",
+      "item_ids": [
+        "cb-0016"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "covid-vaccine-microchips",
+      "split": "test",
+      "item_ids": [
+        "cb-0065"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "vaccines"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "cydonia-face-artificial-structure",
+      "split": "train",
+      "item_ids": [
+        "cb-0020",
+        "cb-0035"
+      ],
+      "declared_claim_ids": [
+        "cydonia-face-artificial-structure"
+      ],
+      "categories": [
+        "space"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "diana-car-crash",
+      "split": "train",
+      "item_ids": [
+        "cb-0006"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "assassination"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "earth-shape",
+      "split": "train",
+      "item_ids": [
+        "cb-0028"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "space"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "event-201-pandemic-orchestration",
+      "split": "test",
+      "item_ids": [
+        "cb-0023"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "epidemiology"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "gulf-breeze-model-planting",
+      "split": "train",
+      "item_ids": [
+        "cb-0032"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "haarp-weather-control",
+      "split": "train",
+      "item_ids": [
+        "cb-0021",
+        "cb-0034"
+      ],
+      "declared_claim_ids": [
+        "haarp-weather-control"
+      ],
+      "categories": [
+        "climate"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "hiv-zoonotic-origin",
+      "split": "train",
+      "item_ids": [
+        "cb-0073"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "epidemiology"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "human-caused-warming-consensus",
+      "split": "train",
+      "item_ids": [
+        "cb-0060"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "climate"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "india-caused-pakistan-floods",
+      "split": "train",
+      "item_ids": [
+        "cb-0050"
+      ],
+      "declared_claim_ids": [
+        "india-caused-pakistan-floods"
+      ],
+      "categories": [
+        "climate"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "isis-us-israel-creation",
+      "split": "train",
+      "item_ids": [
+        "cb-0070"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "jfk-lone-gunman",
+      "split": "train",
+      "item_ids": [
+        "cb-0001",
+        "cb-0040",
+        "cb-0041"
+      ],
+      "declared_claim_ids": [
+        "jfk-lone-gunman"
+      ],
+      "categories": [
+        "assassination"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "khufu-great-pyramid-egyptian-builders",
+      "split": "train",
+      "item_ids": [
+        "cb-0022"
+      ],
+      "declared_claim_ids": [
+        "khufu-great-pyramid-egyptian-builders"
+      ],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "konark-magnetic-stone",
+      "split": "train",
+      "item_ids": [
+        "cb-0007"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "lahaina-wildfire-cause",
+      "split": "validation",
+      "item_ids": [
+        "cb-0067"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "climate"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "last-supper-mary-magdalene",
+      "split": "train",
+      "item_ids": [
+        "cb-0008"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "levelland-alien-interference",
+      "split": "train",
+      "item_ids": [
+        "cb-0030"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "malala-shooting-reality",
+      "split": "train",
+      "item_ids": [
+        "cb-0046"
+      ],
+      "declared_claim_ids": [
+        "malala-shooting-reality"
+      ],
+      "categories": [
+        "assassination"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "marfa-extraterrestrial-portal",
+      "split": "train",
+      "item_ids": [
+        "cb-0031"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "mkultra-covert-experiments",
+      "split": "train",
+      "item_ids": [
+        "cb-0017"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "moon-landing",
+      "split": "train",
+      "item_ids": [
+        "cb-0002",
+        "cb-0014",
+        "cb-0038"
+      ],
+      "declared_claim_ids": [
+        "moon-landing"
+      ],
+      "categories": [
+        "space"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "mumbai-2008-launched-from-pakistan",
+      "split": "train",
+      "item_ids": [
+        "cb-0053"
+      ],
+      "declared_claim_ids": [
+        "mumbai-2008-launched-from-pakistan"
+      ],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "nibiru-collision",
+      "split": "test",
+      "item_ids": [
+        "cb-0058"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "space"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "obama-us-birth",
+      "split": "train",
+      "item_ids": [
+        "cb-0062"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "election"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "oj-bruno-magli-photos",
+      "split": "train",
+      "item_ids": [
+        "cb-0066"
+      ],
+      "declared_claim_ids": [
+        "oj-bruno-magli-photos"
+      ],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "operation-condor-reality",
+      "split": "train",
+      "item_ids": [
+        "cb-0079"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "operation-northwoods-proposal",
+      "split": "train",
+      "item_ids": [
+        "cb-0044"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "paris-2015-perpetrators",
+      "split": "train",
+      "item_ids": [
+        "cb-0069"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "peshawar-polio-poisoning-2019",
+      "split": "train",
+      "item_ids": [
+        "cb-0052"
+      ],
+      "declared_claim_ids": [
+        "peshawar-polio-poisoning-2019"
+      ],
+      "categories": [
+        "vaccines"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "polio-vaccine-sterility",
+      "split": "train",
+      "item_ids": [
+        "cb-0043",
+        "cb-0047",
+        "cb-0063",
+        "cb-0064"
+      ],
+      "declared_claim_ids": [
+        "nigeria-polio-sterility",
+        "polio-vaccine-plot-pakistan"
+      ],
+      "categories": [
+        "vaccines"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Conservative grouping of Nigeria and Pakistan polio sterilization allegations.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "polio-workers-foreign-spies",
+      "split": "validation",
+      "item_ids": [
+        "cb-0048"
+      ],
+      "declared_claim_ids": [
+        "polio-workers-foreign-spies"
+      ],
+      "categories": [
+        "vaccines"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "port-arthur-perpetrator",
+      "split": "test",
+      "item_ids": [
+        "cb-0072"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "project_infektion",
+      "split": "train",
+      "item_ids": [
+        "cb-0039"
+      ],
+      "declared_claim_ids": [
+        "project_infektion"
+      ],
+      "categories": [
+        "epidemiology"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "sars-cov1-engineered-weapon",
+      "split": "train",
+      "item_ids": [
+        "cb-0025",
+        "cb-0026",
+        "cb-0027"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "epidemiology"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping. Related engineered SARS-1 allegations stay together, including laboratory and chimera framings.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "sars-cov2-bioweapon",
+      "split": "validation",
+      "item_ids": [
+        "cb-0024"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "epidemiology"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "sept11-al-qaeda-perpetrators",
+      "split": "train",
+      "item_ids": [
+        "cb-0049"
+      ],
+      "declared_claim_ids": [
+        "sept11-al-qaeda-perpetrators"
+      ],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "september-11-jewish-warning",
+      "split": "train",
+      "item_ids": [
+        "cb-0004"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "shastri-heart-attack",
+      "split": "train",
+      "item_ids": [
+        "cb-0011"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "assassination"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "smithsonian-crystal-skull-precolumbian-origin",
+      "split": "train",
+      "item_ids": [
+        "cb-0019",
+        "cb-0036"
+      ],
+      "declared_claim_ids": [
+        "smithsonian-crystal-skull-precolumbian-origin"
+      ],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "tohoku-earthquake-cause",
+      "split": "train",
+      "item_ids": [
+        "cb-0068"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "tonkin-second-attack",
+      "split": "train",
+      "item_ids": [
+        "cb-0057"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "tuskegee-deliberate-infection",
+      "split": "train",
+      "item_ids": [
+        "cb-0042",
+        "cb-0076",
+        "cb-0080"
+      ],
+      "declared_claim_ids": [
+        "tuskegee-deliberate-infection"
+      ],
+      "categories": [
+        "epidemiology"
+      ],
+      "historical_fixture_claim": false,
+      "grouping_rationale": "Shared accepted claim_id, including all framing variants.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "us-2020-voting-machines",
+      "split": "train",
+      "item_ids": [
+        "cb-0015"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "election"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "vaccine-autism-causation",
+      "split": "train",
+      "item_ids": [
+        "cb-0012",
+        "cb-0037",
+        "cb-0061"
+      ],
+      "declared_claim_ids": [
+        "mmr-autism"
+      ],
+      "categories": [
+        "vaccines"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping. Conservative grouping of MMR and thimerosal autism claims to prevent related claim leakage.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "water-fluoridation-control",
+      "split": "train",
+      "item_ids": [
+        "cb-0018"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "other"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    },
+    {
+      "canonical_claim_group": "wtc7-fire-collapse",
+      "split": "train",
+      "item_ids": [
+        "cb-0005"
+      ],
+      "declared_claim_ids": [],
+      "categories": [
+        "terrorism"
+      ],
+      "historical_fixture_claim": true,
+      "grouping_rationale": "Explicit alias assignment from the accepted question and ground truth; no question-string-only grouping.",
+      "human_review_status": "pending"
+    }
+  ]
+}

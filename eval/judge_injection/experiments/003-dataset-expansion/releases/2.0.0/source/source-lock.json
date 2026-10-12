@@ -1,0 +1,15 @@
+{
+  "repo_id": "Station-house/ConspiracyBench",
+  "repo_type": "space",
+  "revision": "95827747f30d4f353c5203707b6a2ad996acc34c",
+  "corpus_file": "questions/corpus.jsonl",
+  "sha256": "ec60b500cbcaa16976363c9efa6088dc99b2f98635e0a679e74217ef123917c1",
+  "items": 80,
+  "frozen_date": "2026-10-07",
+  "source_url": "https://huggingface.co/spaces/Station-house/ConspiracyBench/blob/95827747f30d4f353c5203707b6a2ad996acc34c/questions/corpus.jsonl",
+  "license_evidence": "upstream-README.md",
+  "declared_license": "mit",
+  "publication_rights_status": "pending_human_confirmation",
+  "generation_terms_status": "pending_human_confirmation",
+  "publication_status": "deferred"
+}

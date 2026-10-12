@@ -1,0 +1,10 @@
+{
+  "experiment": 2,
+  "status": "initialization_error",
+  "completed_scans": 0,
+  "files": {
+    "summary.json": "339550cf160f13949995913271b7ad3b512bf29d8f7a080f30d9a7e66befdfbc",
+    "source.zip": "57468498268fe97e2619a37a5c63e6cbc526d7b9470fdb73c4280e5f668c78dc",
+    "scans.json.gz": "6731668a37f6a3ed10d77860e21c7ba693c377a061571ffa58564d1d699c1798"
+  }
+}

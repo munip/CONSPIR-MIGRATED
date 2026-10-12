@@ -1,0 +1,111 @@
+{
+  "experiment": 4,
+  "attempt_id": "20261010T091319.691319Z-laya-1a02f8b2",
+  "model": "laya",
+  "model_protocol": {
+    "repo": "convaiinnovations/laya",
+    "language": "English",
+    "revision": "7b928d828b7b0e022f929d9bd2e44165aa270148",
+    "sdk_repo": "https://github.com/NandhaKishorM/laya",
+    "sdk_revision": "1adc59f7e371deb601fcfa18a14e25db238addcc",
+    "backend": "PyTorch MPS",
+    "precision": "SDK default",
+    "method": "stock predict_long; default window size; default 50% overlap; batch_size=1",
+    "document_score": "maximum window yes probability; not a calibrated document probability",
+    "window_logging": "record every window token_start, token_end, and yes probability"
+  },
+  "started_at_utc": "2026-10-10T09:13:19.691578+00:00",
+  "completion_status": "complete",
+  "phase": "complete",
+  "requested_documents": 1960,
+  "shuffle_seed": 0,
+  "shuffle_order_sha256": "c0d6d7f9e410269b42b87e1914b75e16afd574e3e9fb0c6a3a0e59ea48bd8685",
+  "dataset": {
+    "train_sha256": "056aa5e226e4acca7ca33768f78416579fd2673b139147a8975e7f1103d9f793",
+    "full_release_sha256": "881f4903902154b2171b8e0cfaa041d54c5f88cc16c16e62e448422b1e67e640",
+    "manifest_expected_train_sha256": "056aa5e226e4acca7ca33768f78416579fd2673b139147a8975e7f1103d9f793",
+    "requested_rows": 1960,
+    "label_counts": {
+      "benign": 980,
+      "malicious": 980
+    },
+    "attack_counts": {
+      "authority_spoofing": 140,
+      "direct_overrides": 140,
+      "fabricated_verdicts": 140,
+      "grading_rubric_replacement": 140,
+      "obfuscated_instructions": 140,
+      "reward_pressure": 140,
+      "role_delimiter_spoofing": 140
+    }
+  },
+  "hardware": {
+    "system": "Darwin",
+    "release": "27.0.0",
+    "machine": "arm64",
+    "processor": "Apple M5",
+    "logical_cpu_count": 10,
+    "physical_memory_bytes": 25769803776
+  },
+  "power_state": {
+    "captured_at_utc": "2026-10-10T09:13:19.700210+00:00",
+    "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=23265379)\t100%; charged; 0:00 remaining present: true"
+  },
+  "software": {
+    "python": "3.12.15 (main, Oct  3 2026, 00:54:33) [Clang 22.1.3 ]",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "laya": "0.4.1",
+    "torch": "2.14.1",
+    "transformers": "5.19.0",
+    "numpy": "2.5.3",
+    "safetensors": "0.8.0",
+    "huggingface-hub": "2.2.0"
+  },
+  "warnings": [
+    "laya: this checkpoint ships invalid temperatures or values outside [0.5, 5]; using choice:11+=0.10058280825614929 -> 0.5. Treat confidence from the affected entries as uncalibrated.",
+    "[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway."
+  ],
+  "resource_samples": [],
+  "download_seconds": 26.47230099999979,
+  "artifact_size_bytes": 846195574,
+  "artifact_bytes": {
+    "english_checkpoint": 846195574
+  },
+  "load_seconds": 4.716301417000068,
+  "effective_precision": {
+    "device": "mps",
+    "parameter_dtype": "torch.float16",
+    "autocast_enabled": true,
+    "mps_amp_min_rows": 5,
+    "temperature_raw": [
+      1.6369030475616455,
+      1.2514300346374512,
+      1.983399510383606
+    ],
+    "calibration_file": null
+  },
+  "backend_memory": {
+    "after_load": {
+      "current_allocated_bytes": 1688613632,
+      "driver_allocated_bytes": 2156347392
+    },
+    "after_warmup": {
+      "current_allocated_bytes": 1688613632,
+      "driver_allocated_bytes": 2166030336
+    },
+    "after_scoring": {
+      "current_allocated_bytes": 1688613632,
+      "driver_allocated_bytes": 2174418944
+    }
+  },
+  "preflight_count": 1960,
+  "warmup_count": 5,
+  "scored_result_count": 1960,
+  "finished_at_utc": "2026-10-10T09:22:25.743454+00:00",
+  "wall_seconds": 546.027752041,
+  "peak_rss_bytes": 3021324288,
+  "power_state_end": {
+    "captured_at_utc": "2026-10-10T09:22:25.743498+00:00",
+    "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=23265379)\t100%; charged; 0:00 remaining present: true"
+  }
+}

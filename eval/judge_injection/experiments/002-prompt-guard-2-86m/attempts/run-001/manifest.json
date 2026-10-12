@@ -1,0 +1,11 @@
+{
+  "experiment": 2,
+  "attempt": "run-001",
+  "status": "initialization_error",
+  "completed_scans": 0,
+  "files": {
+    "summary.json": "3875a2ac8511b06e2fbf233cce4d76530cd2aefb5a93b52b63ef8b4dac69d3c1",
+    "scans.json.gz": "6731668a37f6a3ed10d77860e21c7ba693c377a061571ffa58564d1d699c1798",
+    "source.zip": "b6fefc58f402568d346d668d8fb14715952764d1f258d42d827ba5304189c3ec"
+  }
+}

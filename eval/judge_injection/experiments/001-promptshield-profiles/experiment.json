@@ -1,0 +1,13 @@
+{
+  "experiment": 1,
+  "title": "PromptShield profiles on original frozen cases",
+  "status": "completed",
+  "captured_date": "2026-10-07",
+  "source_commit": "18c7abe7e6fde30800e5517c25f4b8b8c579c4ab",
+  "fixture_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+  "artifact_directory": "../../reports/promptshield-team-report-v1",
+  "artifact_manifest_sha256": "77579a5282a97d713f0f8225630d33b59c27e97886fcd0ad38fd0a95b98694ff",
+  "completed_scans": 560,
+  "judge_calls": 0,
+  "generality": "Not established: exposed templates and in-sample calibration."
+}

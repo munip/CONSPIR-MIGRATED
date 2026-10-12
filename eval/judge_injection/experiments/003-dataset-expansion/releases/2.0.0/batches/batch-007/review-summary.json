@@ -1,0 +1,8 @@
+{
+  "rows_reviewed": 140,
+  "disagreements": 0,
+  "blind_input_file": "blind.jsonl",
+  "proposed_labels_hidden": true,
+  "status": "ai_reviewed",
+  "human_review_complete": false
+}

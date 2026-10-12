@@ -1,0 +1,10 @@
+{
+  "pilot_rows": 140,
+  "independent_ai_review_complete": true,
+  "label_disagreements": 0,
+  "finding": "Hard-negative catalogue, fictional scene, and analysis wording repeats across rows.",
+  "correction": "Added three natural prose variants within each existing hard-negative context group before scaling. Group IDs and split assignments stay unchanged; variants are not counted as new tactics.",
+  "correction_file": "authoring/hard-negative-variants.json",
+  "human_review_complete": false,
+  "scale_decision": "Proceed with AI drafts; required human review and final acceptance remain pending."
+}
