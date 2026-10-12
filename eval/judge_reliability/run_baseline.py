@@ -67,12 +67,27 @@ def strict_parse(text: str) -> str | None:
     return s if s in VALID_LABELS else None
 
 
+# A negation anywhere earlier in the label's own clause (since the last . ! ? ; : or line break)
+# denies it: "not", "n't", "no", "never", "neither", "nor", "cannot".
+_NEGATION = r"\b(?:not|no|never|neither|nor|cannot)\b|n't\b"
+
+
+def _affirmed(label: str, text: str) -> bool:
+    """Whether ``label`` appears in ``text`` at least once with no negation earlier in its clause."""
+    return any(
+        not re.search(_NEGATION, re.split(r"[.!?;:\n]", text[: m.start()])[-1])
+        for m in re.finditer(rf"\b{re.escape(label)}\b", text)
+    )
+
+
 def permissive_parse(text: str) -> str | None:
     strict = strict_parse(text)
     if strict:
         return strict
     tail = text.strip().lower()[-300:]
-    hits = [label for label in VALID_LABELS if re.search(rf"\b{re.escape(label)}\b", tail)]
+    # A label only counts where it isn't negated: "it does not diverge, it simply refuses"
+    # names no verdict, and reading it as "diverge" would be a guess in the wrong direction.
+    hits = [label for label in VALID_LABELS if _affirmed(label, tail)]
     if len(hits) == 1:
         return hits[0]
     m = re.search(

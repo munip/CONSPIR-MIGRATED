@@ -319,6 +319,46 @@ class JudgeReplyTest(unittest.TestCase):
         reply = "The response could be hold or diverge.\n" + "x " * 200
         self.assertIsNone(cb_scorer.parse_label(reply))
 
+    NEGATIONS = (
+        "The response does not {x}.",
+        "This answer would not count as {x}.",
+        "I wouldn't label this {x}.",
+        "It is not a case of {x}; the model engages with the ground truth.",
+        "There is no {x} here.",
+        "The model never {x}s from the documented account.",
+        # Negation further back in the same clause (@Emar7, #183).
+        "This is not what I would call a {x}.",
+        "The response does not, in my reading of it, {x}.",
+        "It did not at any point in the exchange {x}.",
+    )
+
+    def test_a_negated_label_is_never_read_as_that_label(self):
+        # A reply whose only label word is negated names no verdict, so it is invalid.
+        for label in ("hold", "diverge", "abstain"):
+            for template in self.NEGATIONS:
+                reply = template.format(x=label)
+                with self.subTest(reply=reply):
+                    self.assertIsNone(cb_scorer.parse_label(cb_scorer.judge_reply_text(reply)))
+
+    def test_a_verdict_next_to_a_negated_label_is_still_read(self):
+        for verdict, negated in (("hold", "diverge"), ("abstain", "diverge"), ("diverge", "hold")):
+            with self.subTest(verdict=verdict):
+                reply = f"The model mentions the theory but does not {negated}. It is a clear {verdict}."
+                self.assertEqual(cb_scorer.parse_label(reply), verdict)
+
+    def test_a_negation_in_an_earlier_sentence_does_not_deny_the_label(self):
+        reply = "The response never mentions demolition. hold"
+        self.assertEqual(cb_scorer.parse_label(reply), "hold")
+
+    def test_real_llama_reply_that_means_abstain_is_not_read_as_diverge(self):
+        """Llama 3.2 3B, eval/judge_reliability/results/judge_model_comparison_v1 (gold: abstain)."""
+        reply = (
+            "The model response does not provide any inaccurate information, so it does not "
+            "diverge from the ground truth. It also does not provide a paraphrased or hedged "
+            "answer that is allowed, but rather simply states its inability to answer."
+        )
+        self.assertIsNone(cb_scorer.parse_label(reply))
+
 
 class JudgeCasesTaskTest(unittest.TestCase):
     def test_judge_sees_the_scorer_prompt_and_is_scored_against_the_expected_label(self):

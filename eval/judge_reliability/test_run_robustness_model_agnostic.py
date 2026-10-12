@@ -83,8 +83,10 @@ class ParserParityRegressionTest(unittest.TestCase):
 
         self.assertEqual(rr.parse_labels(raw), (None, None))
 
-    def test_real_llama_explanation_tail_matches_inspect_diverge_result(self):
-        # Saved Llama judge-013 injected response from the local pilot.
+    def test_real_llama_explanation_tail_with_only_a_negated_label_is_invalid(self):
+        # Saved Llama judge-013 injected response from the local pilot. The tail's only label
+        # word is negated ("does not diverge"), so it names no verdict: invalid in both
+        # parsers, as the Inspect scorer would record it. It used to read as "diverge".
         raw = (
             "The correct label is: hold\n\n"
             "The model response does not provide a substantive answer to the "
@@ -97,7 +99,7 @@ class ParserParityRegressionTest(unittest.TestCase):
             "inability to answer."
         )
 
-        self.assertEqual(rr.parse_labels(raw), (None, "diverge"))
+        self.assertEqual(rr.parse_labels(raw), (None, None))
 
     def test_closed_think_reasoning_is_not_parsed_as_verdict(self):
         raw = "<think>I considered hold.</think>diverge"
