@@ -20,7 +20,7 @@ import json
 import random
 import re
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -58,6 +58,8 @@ def rows_from_log(log) -> list[dict]:
             "id": str(sample.id),
             "epoch": sample.epoch,
             "trajectory": str(score.value).split(TURN_SEPARATOR),
+            "invalid_reasons": (score.metadata or {}).get("invalid_reasons") or [],
+            "truncated_turns": (score.metadata or {}).get("truncated_turns") or [],
             "cluster": metadata.get("claim_id") or f"item:{sample.id}",
             **{field: metadata.get(field) for field in BREAKDOWNS},
         })
@@ -231,10 +233,38 @@ def headline(rows) -> dict:
     return result
 
 
+def invalid_turns(rows) -> dict:
+    """Invalid turns counted by reason, over every turn in the log.
+
+    The headline ``invalid_rate`` counts trajectories with any invalid turn; this counts
+    the turns themselves and says why, so a run can be checked against a per-reason bar.
+    A turn from a log made before reasons were recorded is counted as ``unrecorded``.
+    ``truncated_graded`` counts cut-off replies that were sent to the judge anyway
+    (``grade_truncated``), which appear in the rates and would otherwise be invisible.
+    """
+    total = sum(len(r["trajectory"]) for r in rows)
+    by_reason, truncated_graded = Counter(), 0
+    for row in rows:
+        reasons = row.get("invalid_reasons") or []
+        for index, label in enumerate(row["trajectory"]):
+            if label == INVALID:
+                reason = reasons[index] if index < len(reasons) else None
+                by_reason[reason or "unrecorded"] += 1
+            elif index in (row.get("truncated_turns") or []):
+                truncated_graded += 1
+    return {
+        "turns": total,
+        "invalid": _rate(sum(by_reason.values()), total),
+        "by_reason": {reason: _rate(count, total) for reason, count in sorted(by_reason.items())},
+        "truncated_graded": _rate(truncated_graded, total),
+    }
+
+
 def summarize_rows(rows) -> dict:
     later_pressure = [r for r in rows if r["epoch"] != 1 and len(r["trajectory"]) > 1]
     return {
         "headline": headline(rows),
+        "invalid_turns": invalid_turns(rows),
         "repeated_sampling": repeated_sampling(rows),
         "pressure_repeats": pressure_rates(later_pressure) if later_pressure else None,
         "breakdowns": {
@@ -288,6 +318,11 @@ def csv_rows(model, summary) -> list[dict]:
     add("all", "completion_rate", _rate(cover["completed"], cover["planned"]))
     for name, metric in (summary["repeated_sampling"] or {}).items():
         add("all", name, metric)
+    turns = summary["invalid_turns"]
+    add("all", "invalid_turn_rate", turns["invalid"])
+    for reason, metric in turns["by_reason"].items():
+        add("all", f"invalid_turn_rate[{reason}]", metric)
+    add("all", "truncated_graded_turn_rate", turns["truncated_graded"])
     for field, groups in summary["breakdowns"].items():
         for value, group in groups.items():
             for name, metric in group.items():
@@ -325,7 +360,18 @@ def main(argv=None):
     for path in args.logs:
         json_path = report(path, args.out)
         print(json_path)
-        cover = json.loads(json_path.read_text(encoding="utf-8"))["coverage"]
+        summary = json.loads(json_path.read_text(encoding="utf-8"))
+        cover, turns = summary["coverage"], summary["invalid_turns"]
+        if turns["invalid"]["count"] or turns["truncated_graded"]["count"]:
+            reasons = ", ".join(f"{m['count']} {reason}" for reason, m in turns["by_reason"].items())
+            graded = turns["truncated_graded"]["count"]
+            print(
+                f"note: {path.name}: {turns['invalid']['count']} of {turns['turns']} turns invalid"
+                + (f" ({reasons})" if reasons else "")
+                + (f"; {graded} cut-off replies were graded" if graded else "")
+                + ".",
+                file=sys.stderr,
+            )
         if cover["errored"] or cover["completed"] < cover["planned"]:
             ids = ", ".join(f"{s['id']} (epoch {s['epoch']})" for s in cover["errored_samples"])
             print(

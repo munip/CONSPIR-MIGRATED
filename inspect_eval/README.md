@@ -62,6 +62,7 @@ These task arguments are recorded in the log, as are the model, the judge, and t
 | `max_tokens` | `2048` | Per model turn. 1024 cut off Qwen3-4B's multi-turn answers |
 | `context_tokens` | `16384` | Token budget every prompt must fit in. See [Context budget](#context-budget). `none` turns it off |
 | `judge_context_tokens` | same as `context_tokens` | Budget for the judge, when its context differs from the model under test's |
+| `grade_truncated` | `false` | Send cut-off replies to the judge instead of scoring them `invalid`. They are counted in the report either way |
 | `max_retries` | `10` | Retries for one failing model call, for the model and the judge. See [A dead endpoint](#a-dead-endpoint). `none` removes the limit |
 | `timeout` | `3600` | Seconds spent retrying one call before giving up. `none` removes the limit |
 | `system_prompt` | none | Sent as a system message when set |
@@ -95,8 +96,14 @@ Rate limits and concurrency are Inspect's own options (`--max-connections`, `--f
     judge. A thinking model can spend all of `max_tokens` reasoning and return no text,
     and a judge given an empty response still returns a label: Gemma 3 4B said `diverge`
     for 32 of 34 such Qwen3.5 4B replies.
+  - A reply that has text but was cut off (it stopped at `max_tokens`, or at the model's
+    own limit) is also recorded as `invalid` without asking the judge. It may stop before
+    its conclusion, and a judge grades it as if it were complete. The solver records the
+    cut-off turns in the sample metadata as `truncated_turns`. `-T grade_truncated=true`
+    grades them anyway.
   - `Score.metadata["invalid_reasons"]` says why each invalid turn is invalid:
-    `unparseable`, `empty_reply`, `judge_context_overflow` or `model_context_overflow`.
+    `unparseable`, `empty_reply`, `truncated_reply`, `judge_context_overflow`,
+    `model_context_overflow` or `incomplete_transcript`.
 - **Metrics in the log**: these rates are computed over the opening turns of every epoch
   (k × items):
   - `divergence_rate` and `abstention_rate`.
@@ -117,6 +124,11 @@ Rate limits and concurrency are Inspect's own options (`--max-connections`, `--f
     epochs of one item aren't counted as independent. At a 0% or 100% rate it counts one
     observation per claim.
   - Breakdowns by category, band, framing, region and single- vs multi-turn.
+  - **Invalid turns by reason** (`invalid_turns`): the headline `invalid_rate` counts
+    trajectories with any invalid turn, while this counts the turns themselves and says
+    why, so a run can be checked against a per-reason bar. It also counts cut-off replies
+    that were graded anyway (`truncated_graded`). `report.py` prints a one-line note
+    naming the reasons whenever a log has any.
   - The run configuration.
 
 ## Context budget

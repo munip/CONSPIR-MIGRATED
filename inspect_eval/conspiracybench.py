@@ -75,6 +75,7 @@ def build_task(
     judge_context_tokens: int | None = None,
     max_retries: int | None = DEFAULT_MAX_RETRIES,
     timeout: int | None = DEFAULT_TIMEOUT,
+    grade_truncated: bool = False,
 ) -> Task:
     """The ConspiracyBench task over any dataset. ``conspiracybench`` below uses the repo's.
 
@@ -90,6 +91,10 @@ def build_task(
     the model under test and for the judge. Inspect's own default is to retry for ever, so
     a dead endpoint would stall a run without failing it. A value already set in ``config``
     wins, ``None`` means no limit, and ``--max-retries`` / ``--timeout`` override both.
+
+    A reply that was cut off before the model finished it is scored invalid
+    (``truncated_reply``) rather than graded as if complete. ``grade_truncated=True`` sends
+    such replies to the judge anyway; they are counted in the report either way.
     """
     config = config or GenerateConfig()
     config = config.model_copy(update={
@@ -108,7 +113,9 @@ def build_task(
     return Task(
         dataset=dataset,
         solver=solver,
-        scorer=conspiracy_judge(grader_role, context_tokens=judge_context_tokens),
+        scorer=conspiracy_judge(
+            grader_role, context_tokens=judge_context_tokens, grade_truncated=grade_truncated
+        ),
         metrics=METRICS,
         epochs=Epochs(epochs, "collect"),
         config=config,
@@ -128,6 +135,7 @@ def conspiracybench(
     judge_context_tokens: int | None = None,
     max_retries: int | None = DEFAULT_MAX_RETRIES,
     timeout: int | None = DEFAULT_TIMEOUT,
+    grade_truncated: bool = False,
     grader_role: str = "grader",
 ) -> Task:
     """Every item, sampled ``epochs`` times on the opening turn.
@@ -160,4 +168,5 @@ def conspiracybench(
         judge_context_tokens=judge_context_tokens,
         max_retries=max_retries,
         timeout=timeout,
+        grade_truncated=grade_truncated,
     )

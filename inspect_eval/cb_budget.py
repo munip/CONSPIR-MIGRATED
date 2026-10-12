@@ -47,6 +47,15 @@ INCOMPLETE_TRANSCRIPT = "incomplete_transcript"
 # The model under test gave no reply text, e.g. a thinking model whose reasoning used the
 # whole max_tokens. There is nothing to grade, and judges label it confidently anyway.
 EMPTY_REPLY = "empty_reply"
+# The reply has text but was cut off before the model finished it.
+TRUNCATED_REPLY = "truncated_reply"
+
+# Sample metadata key: the turns whose reply was cut off, recorded by the solver.
+TRUNCATED_TURNS = "truncated_turns"
+
+# Inspect stop reasons that mean the reply ended because it ran out of room, not because the
+# model finished: the task's max_tokens, or the model's own context limit.
+CUT_OFF_STOP_REASONS = ("max_tokens", "model_length")
 
 
 async def fits(model: Model, prompt, reply_tokens: int, context_tokens: int | None) -> bool:

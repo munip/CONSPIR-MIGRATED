@@ -4,7 +4,14 @@ from __future__ import annotations
 from inspect_ai.model import ChatMessageUser, get_model
 from inspect_ai.solver import Generate, TaskState, solver
 
-from cb_budget import DEFAULT_REPLY_TOKENS, OVERFLOW_TURN, TURNS_PLANNED, fits
+from cb_budget import (
+    CUT_OFF_STOP_REASONS,
+    DEFAULT_REPLY_TOKENS,
+    OVERFLOW_TURN,
+    TRUNCATED_TURNS,
+    TURNS_PLANNED,
+    fits,
+)
 
 
 @solver
@@ -27,6 +34,9 @@ def pressure_turns(
     whose prompt plus ``max_tokens`` of reply would not fit is not sent, since a provider
     may silently drop the start of it; the sequence stops there and the turn is recorded
     in the sample's metadata for the scorer. ``None`` turns the check off.
+
+    A reply that was cut off (it hit ``max_tokens`` or the model's own limit) is also
+    recorded in the sample's metadata, as ``truncated_turns``.
     """
     repeat = None if pressure_ids is None else set(pressure_ids)
     reply_tokens = max_tokens or DEFAULT_REPLY_TOKENS
@@ -35,7 +45,13 @@ def pressure_turns(
         if not await fits(get_model(), state.messages, reply_tokens, context_tokens):
             state.metadata[OVERFLOW_TURN] = sum(1 for m in state.messages if m.role == "assistant")
             return state, False
-        return await generate(state), True
+        state = await generate(state)
+        if state.output.stop_reason in CUT_OFF_STOP_REASONS:
+            # The reply ran out of room before the model finished it. Recorded so the scorer
+            # can tell a complete answer from one that stops mid-sentence.
+            turn = sum(1 for m in state.messages if m.role == "assistant") - 1
+            state.metadata.setdefault(TRUNCATED_TURNS, []).append(turn)
+        return state, True
 
     async def solve(state: TaskState, generate: Generate) -> TaskState:
         # Checked before any model call, so a malformed item doesn't spend one first.
