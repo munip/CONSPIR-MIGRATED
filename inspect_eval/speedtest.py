@@ -14,6 +14,13 @@ holding a request until a parallel slot frees up, is part of ``generate``; compa
 tokens/s at concurrency 1 to see it. Judge calls (model role ``grader``) are reported on
 their own line, so a run with ``--no-score`` measures the solver alone.
 
+``retries`` is what the provider reported in ``ModelEvent.retries``; not every provider
+sets it. A call that errored and was retried by Inspect always shows in ``failed_calls``.
+``slowest_samples`` lists the five samples with the longest total time. A log with no
+stored samples, or a run that did not finish, gets a ``warnings`` entry, also printed to
+stderr. Without stored samples, ``samples`` and ``errors`` still come from Inspect's own
+totals (as in ``report.py``), and every figure that needs the samples is ``null``, not 0.
+
 ``--same-prompts`` checks the solver's ground rule for a speed change: the model sees the
 same thing. Replies are sampled, so a later turn's prompt differs between runs by the
 model's own earlier replies. It therefore compares, per sample, epoch and turn, the HTTP
@@ -30,6 +37,8 @@ from collections import defaultdict
 from datetime import datetime
 
 from inspect_ai.log import read_eval_log
+
+from report import coverage
 
 
 def model_calls(sample, role=None, failed=False):
@@ -92,10 +101,16 @@ def summarize(rows):
 
 def report(path):
     log = read_eval_log(path, resolve_attachments=True)
+    samples = log.samples or []
+    warnings = []
+    if not samples:
+        warnings.append("log has no samples (run with --no-log-samples, or stopped before any finished): nothing to time")
+    if log.status != "success":
+        warnings.append(f"run status is {log.status!r}: numbers cover only what the log recorded")
     start, end = log.stats.started_at, log.stats.completed_at
-    wall = (datetime.fromisoformat(end) - datetime.fromisoformat(start)).total_seconds()
+    wall = (datetime.fromisoformat(end) - datetime.fromisoformat(start)).total_seconds() if start and end else None
     groups, judge = defaultdict(list), []
-    for sample in log.samples:
+    for sample in samples:
         kind = "multi-turn" if sample.metadata.get("multiturn") else "single-turn"
         turn = 0
         for event in model_calls(sample, failed=True):
@@ -104,20 +119,30 @@ def report(path):
         judge += [call_row(e) for e in model_calls(sample, "grader", failed=True)]
     solver_rows = [r for rows in groups.values() for r in rows]
     out_tokens = sum(r["out"] for r in solver_rows)
+    # Inspect's own totals hold even without stored samples, so these stay exact.
+    cover = coverage(log)
+    # Everything below needs the samples; without them it is null, not a misleading zero.
+    timed = bool(samples)
     return {
         "log": path,
         "model": log.eval.model,
         "task_args": log.eval.task_args,
         "config": {k: v for k, v in log.eval.config.model_dump().items() if v is not None},
-        "samples": len(log.samples),
-        "errors": sum(1 for s in log.samples if s.error),
-        "wall_clock_s": round(wall, 1),
+        "warnings": warnings,
+        "samples": cover["planned"],
+        "errors": cover["errored"],
+        "wall_clock_s": round(wall, 1) if wall is not None else None,
         # Output tokens of the model under test over the whole run: the throughput a
         # concurrency setting actually achieves.
-        "run_out_tok_per_s": round(out_tokens / wall, 1) if wall else None,
-        "model_under_test": summarize(solver_rows),
-        "by_group": {f"{k} / {t}": summarize(r) for (k, t), r in sorted(groups.items())},
+        "run_out_tok_per_s": round(out_tokens / wall, 1) if timed and wall else None,
+        "model_under_test": summarize(solver_rows) if timed else None,
+        "by_group": {f"{k} / {t}": summarize(r) for (k, t), r in sorted(groups.items())} if timed else None,
         "judge": summarize(judge) if judge else None,
+        "slowest_samples": [
+            {"id": s.id, "epoch": s.epoch, "seconds": round(s.total_time, 1)}
+            for s in sorted(samples, key=lambda s: s.total_time or 0, reverse=True)[:5]
+            if s.total_time is not None
+        ] if timed else None,
     }
 
 
@@ -199,7 +224,11 @@ def main():
             parser.exit(2, f"{e}\n")
         print("\n".join(problems) or f"OK - {compared} model calls send the same prompts and config")
         sys.exit(1 if problems else 0)
-    print(json.dumps([report(p) for p in args.logs], indent=2, default=str))
+    reports = [report(p) for p in args.logs]
+    for r in reports:
+        for w in r["warnings"]:
+            print(f"warning: {r['log']}: {w}", file=sys.stderr)
+    print(json.dumps(reports, indent=2, default=str))
 
 
 if __name__ == "__main__":

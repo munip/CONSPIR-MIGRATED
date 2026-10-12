@@ -1,9 +1,14 @@
 """Tests for speedtest.py's prompt check. No model calls; request bodies are shaped like
 the ones Inspect logs for Ollama's OpenAI-compatible endpoint."""
+import tempfile
 import unittest
 from types import SimpleNamespace
 
-from speedtest import chat_call, request_key
+from inspect_ai import Task, eval
+from inspect_ai.dataset import Sample
+from inspect_ai.solver import generate
+
+from speedtest import chat_call, report, request_key
 
 REPLY = {"role": "assistant", "content": "Oswald.", "reasoning": "Thinking..."}
 
@@ -52,6 +57,32 @@ class ChatCallTest(unittest.TestCase):
         for call in (None, SimpleNamespace(request={"input": []}, response={"output": []})):
             with self.assertRaisesRegex(ValueError, "OpenAI-compatible"):
                 chat_call(SimpleNamespace(call=call))
+
+
+def mock_log(log_samples=True):
+    """A real log from a two-sample mockllm run, with or without stored samples."""
+    task = Task(dataset=[Sample(input="a", id="a"), Sample(input="b", id="b")], solver=generate())
+    with tempfile.TemporaryDirectory() as d:
+        [log] = eval(task, model="mockllm/model", log_dir=d, log_samples=log_samples, display="none")
+        return report(log.location)
+
+
+class ReportTest(unittest.TestCase):
+    def test_run_with_samples_has_no_warning_and_lists_slowest(self):
+        r = mock_log()
+        self.assertEqual(r["warnings"], [])
+        self.assertEqual(r["samples"], 2)
+        self.assertEqual(sorted(s["id"] for s in r["slowest_samples"]), ["a", "b"])
+
+    def test_log_without_samples_warns_and_reports_null_not_zero(self):
+        r = mock_log(log_samples=False)
+        self.assertEqual(len(r["warnings"]), 1)
+        self.assertIn("no samples", r["warnings"][0])
+        # Exact from Inspect's totals, even with no stored samples.
+        self.assertEqual((r["samples"], r["errors"]), (2, 0))
+        # What needs the samples is unknown, not zero.
+        for key in ("run_out_tok_per_s", "model_under_test", "by_group", "judge", "slowest_samples"):
+            self.assertIsNone(r[key], key)
 
 
 if __name__ == "__main__":

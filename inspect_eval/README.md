@@ -226,7 +226,13 @@ makes no model calls, so any log can be rechecked later.
 - **Per log**, it prints the wall clock and run throughput, and the model-under-test calls
   split by single- vs multi-turn item and opening vs pressure turn: calls, failed calls,
   retries, tokens in and out, turns that hit `max_tokens`, **empty answers**, latency,
-  and how long each call spent generating versus waiting inside Inspect.
+  and how long each call spent generating versus waiting inside Inspect. It also lists
+  the five slowest samples.
+  - `retries` is what the provider reported, and not every provider sets it. A call that
+    errored and was retried by Inspect always counts in `failed_calls`.
+  - A log with no stored samples, or a run that didn't finish, prints a warning. Without
+    stored samples, `samples` and `errors` come from Inspect's own totals and every
+    figure that needs the samples is `null`, never a misleading 0.
 - **`--same-prompts`** compares the HTTP request body each turn sent to the provider, byte
   for byte, after checking that every earlier reply in it is the reply the model actually
   gave in that run. It exits non-zero on any difference. A speed change must pass it.
@@ -267,7 +273,9 @@ turns):
   That changes what the model does, so it is a different benchmark condition, not a
   speed setting.
 - **Recommended for Qwen3.5 4B on Ollama:** `--max-connections 1`, and `-T max_tokens=8192`
-  if the benchmark keeps thinking on. Turning thinking off is 5.5× faster than that, but it
+  if the benchmark keeps thinking on. The task's own retry limits (`max_retries` 10,
+  `timeout` 3600, see [A dead endpoint](#a-dead-endpoint)) still apply on top of this.
+  Turning thinking off is 5.5× faster than that, but it
   measures a different model behaviour, so it's a decision for the benchmark, not for the
   solver. llama.cpp's own `llama-server` with `-np 4` batches this model (1.25× aggregate
   throughput on the same GGUF), but outputs then depend on what else is in the batch, even
