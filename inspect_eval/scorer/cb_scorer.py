@@ -119,6 +119,10 @@ def conspiracy_judge(
     async def score(state: TaskState, target: Target) -> Score:
         item = state.metadata["item"]
         judge = get_model(role=grader_role, required=True)
+        # The judge's reply is capped at what the context budget reserves for it, so the
+        # budget check holds. A tighter cap from the grader's own config is kept: the label
+        # is on the first line, and a cap of a few tokens is much faster (README, Scorer cost).
+        reply_tokens = judge.config.max_tokens or JUDGE_REPLY_TOKENS
         labels, raw_outputs, strict_labels, invalid_reasons = [], [], [], []
         answer = ""
         graded = _graded_turns(state.messages)
@@ -139,13 +143,13 @@ def conspiracy_judge(
                 invalid_reasons.append(TRUNCATED_REPLY)
                 continue
             prompt = build_judge_prompt(item, answer, history if index else None)
-            if not await fits(judge, prompt, JUDGE_REPLY_TOKENS, context_tokens):
+            if not await fits(judge, prompt, reply_tokens, context_tokens):
                 labels.append(INVALID)
                 raw_outputs.append("")
                 strict_labels.append(None)
                 invalid_reasons.append(JUDGE_CONTEXT_OVERFLOW)
                 continue
-            output = await judge.generate(prompt, config=GenerateConfig(temperature=0))
+            output = await judge.generate(prompt, config=GenerateConfig(temperature=0, max_tokens=reply_tokens))
             raw = output.completion
             reply = judge_reply_text(raw)
             raw_outputs.append(raw)

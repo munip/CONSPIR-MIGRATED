@@ -267,7 +267,8 @@ turns):
   this architecture (`model architecture does not currently support parallel requests`).
   With Inspect's default of 10 connections, the queue outlasts the OpenAI client's 600 s
   timeout: 51 requests failed and were retried. Use **`--max-connections 1`**. It removes
-  every timeout at the same throughput.
+  every timeout, and it is faster too: 20–28% less wall clock on the M3 Pro, and 4% on a
+  4-vCPU CPU machine (#117), because extra connections only queue at the server.
 - **`--reasoning-effort none` doesn't reach Ollama.** Inspect's `ollama` provider drops
   `none`, so thinking stays on. `--extra-body '{"reasoning_effort":"none"}'` turns it off.
   That changes what the model does, so it is a different benchmark condition, not a
@@ -280,6 +281,65 @@ turns):
   solver. llama.cpp's own `llama-server` with `-np 4` batches this model (1.25× aggregate
   throughput on the same GGUF), but outputs then depend on what else is in the batch, even
   at temperature 0.
+
+## Scorer cost
+
+Grade a fixed solver log with `inspect score`, so the judge is timed on its own, and compare
+two gradings of the same log with `--same-labels`:
+
+```bash
+.venv/bin/inspect score logs/<solver>.eval --model-role grader=ollama/cb-qwen3-4b --output-file graded/base.eval
+.venv/bin/inspect score logs/<solver>.eval --output-file graded/fast.eval \
+  --model-role 'grader={"model": "ollama/cb-qwen3-4b", "max_tokens": 16, "cache": true}'
+.venv/bin/python inspect_eval/speedtest.py graded/base.eval graded/fast.eval     # the "judge" entry
+.venv/bin/python inspect_eval/speedtest.py --same-labels graded/base.eval graded/fast.eval
+```
+
+`--same-labels` compares every turn's label and every judge prompt, and exits non-zero on a
+difference. A change that shouldn't affect grading has to pass it; for one that might, the
+agreement it prints is the number to report, next to `judge_cases.py`.
+
+What it found with Qwen3-4B-Instruct-2507 as the judge (the local judge recommended in
+`eval/judge_reliability/results/judge_model_comparison_v1/`), on Ollama 0.35.1 on an Apple
+M3 Pro 18 GB, grading two k = 1 solver logs of Qwen3.5 4B (68 turns each):
+
+| Change | How | Thinking-on log | Thinking-off log | Labels |
+|---|---|---|---|---|
+| None | `--model-role grader=...` | 270 s | 307 s | |
+| Reply capped at 16 tokens | `"max_tokens": 16` in the grader config | 213 s | | 68/68 identical |
+| 2 Ollama slots | `OLLAMA_NUM_PARALLEL=2`, `"max_connections": 2` | 251 s | | 68/68 identical |
+| 4 Ollama slots | `OLLAMA_NUM_PARALLEL=4`, `"max_connections": 4` | 362 s | | 68/68 identical |
+| Cache, grading the same log again | `"cache": true` | 2 s | | 68/68 identical |
+| Cap 16 + 2 slots + cache | all three | 216 s | 190 s | 68/68 identical on both |
+
+- **The judge reads far more than it writes.** About 1,330 tokens in per call (830 on an
+  opening turn, 2,000 on a later one, which carries the exchange) against 37 out. The
+  label is always on the first line (68/68); the rest is an optional justification, up to
+  378 tokens.
+- **Capping the reply** at 16 tokens keeps every label and saves about a fifth of the
+  time. `judge_cases.py` gives the same 23/26, case for case, with and without the cap. The
+  justification is gone from `Score.explanation`, so leave the cap off when the reasons
+  are wanted for auditing labels.
+- **The judge's reply is always capped at `JUDGE_REPLY_TOKENS` (256)**, the room the
+  context budget reserves for it, unless the grader config sets a tighter cap. Before, it
+  was uncapped, and a 378-token reply could overflow a prompt the budget had let through.
+  At 256, 4 of 68 replies were cut, with the labels unchanged. On the 150 real-transcript
+  units of the validity set (#208), 32 of Qwen3-4B's replies ran past 256 tokens, and in all
+  32 the label is on the first line, so the cap can't remove it. Gemma 3 4B, Llama 3.2 3B
+  and Qwen3.5 9B never went past 256.
+- **More Ollama slots help only while the model stays on the GPU.** Each slot reserves the
+  full 16k context: at 4 slots the judge needed 12 GB, spilled 10% onto the CPU and got
+  slower. Check `ollama ps` shows `100% GPU`.
+- **Caching** makes grading the same transcripts again nearly free (`cache` in the grader
+  config, Inspect's own cache), which is what comparing judges or report settings does.
+- `report.py` gives identical tables for the baseline, the capped and the combined gradings.
+
+On the 39-item corpus measured here, a k = 5 run was 296 judge calls: about 20 minutes at
+the defaults and 14 to 16 with the cap and 2 slots, against roughly 8 hours of solver time
+(Speed test, above). The corpus has grown since, so scale by judge calls: about 4 s each at
+the defaults and 3.2 s with the cap and 2 slots (4.5 s and 2.8 s on the thinking-off log).
+For one run the judge is a small share; the saving matters most when the same transcripts
+are graded many times.
 
 ## Why the score is a string like `hold>hold>diverge`
 

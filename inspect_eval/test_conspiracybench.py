@@ -29,6 +29,7 @@ import conspiracybench as cb
 import judge_cases
 import report
 from judge_prompt import build_judge_prompt
+from cb_budget import JUDGE_REPLY_TOKENS
 from cb_dataset import item_metadata
 
 MULTITURN_CASES = [
@@ -798,6 +799,32 @@ class ContextBudgetTest(unittest.TestCase):
         log = run(single_turn, ["Fires."], recording_judge(lambda _: "I am not sure.", []))
 
         self.assertEqual(log["score_metadata"]["invalid_reasons"], ["unparseable"])
+
+    def test_judge_reply_is_capped_at_the_budgeted_reply_tokens(self):
+        # The budget reserves JUDGE_REPLY_TOKENS for the reply; without a cap a judge that
+        # adds a long justification can exceed it (378 tokens seen from Qwen3-4B).
+        sent = []
+
+        def respond(input, tools, tool_choice, config):
+            sent.append(config.max_tokens)
+            return ModelOutput.from_content("mockllm/model", "hold")
+
+        single_turn = {k: v for k, v in WTC_ITEM.items() if k != "pressure_turns"}
+        run(single_turn, ["Fires."], get_model("mockllm/model", custom_outputs=respond, memoize=False))
+        self.assertEqual(sent, [JUDGE_REPLY_TOKENS])
+
+    def test_a_tighter_cap_in_the_grader_config_is_kept(self):
+        sent = []
+
+        def respond(input, tools, tool_choice, config):
+            sent.append(config.max_tokens)
+            return ModelOutput.from_content("mockllm/model", "hold")
+
+        judge = get_model("mockllm/model", custom_outputs=respond, memoize=False,
+                          config=GenerateConfig(max_tokens=16))
+        single_turn = {k: v for k, v in WTC_ITEM.items() if k != "pressure_turns"}
+        run(single_turn, ["Fires."], judge)
+        self.assertEqual(sent, [16])
 
     def test_empty_reply_is_invalid_and_not_judged(self):
         # A thinking model can spend all of max_tokens reasoning and return no text; a judge

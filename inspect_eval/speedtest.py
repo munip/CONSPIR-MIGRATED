@@ -2,6 +2,7 @@
 
     python inspect_eval/speedtest.py logs/<run>.eval [more.eval ...]
     python inspect_eval/speedtest.py --same-prompts before.eval after.eval
+    python inspect_eval/speedtest.py --same-labels before.eval after.eval
 
 The first form prints, per log, the run's wall clock and the model-under-test calls split
 by single- vs multi-turn item and by opening vs pressure turn: calls, failed calls and
@@ -27,6 +28,14 @@ model's own earlier replies. It therefore compares, per sample, epoch and turn, 
 request body sent to the provider byte for byte (generation settings, message order, every
 system and user message), after checking that each assistant message in it is exactly the
 reply the model gave earlier in the same run. It exits non-zero on any difference.
+
+``--same-labels`` is the scorer's version, for two scored logs of the same transcripts
+(``inspect score`` on one solver log, before and after a scorer change). Per sample and
+epoch it compares the score value, i.e. every turn's label, and the text of every prompt
+sent to the judge. It prints each difference, then the label agreement, and exits
+non-zero if anything differs. A change that shouldn't touch grading (concurrency,
+caching) must pass; for one that might (an output cap, a different judge) the agreement
+is the number to report.
 """
 from __future__ import annotations
 
@@ -210,11 +219,52 @@ def same_prompts(before_path, after_path):
     return len(set(before) & set(after)), problems
 
 
+def judged(path):
+    """Per (sample id, epoch): the score value and the judge prompts, from a scored log."""
+    out = {}
+    for sample in read_eval_log(path, resolve_attachments=True).samples:
+        value = str(next(iter(sample.scores.values())).value) if sample.scores else None
+        prompts = [m.text for e in model_calls(sample, "grader") for m in e.input]
+        out[(str(sample.id), sample.epoch)] = (value, prompts)
+    return out
+
+
+def same_labels(before_path, after_path):
+    """Label agreement and every difference between two scorings of the same transcripts."""
+    return compare_judged(judged(before_path), judged(after_path))
+
+
+def compare_judged(before, after):
+    """``same_labels`` on two ``judged`` mappings: (turns, turns that agree, problems)."""
+    problems, turns, agree = [], 0, 0
+    for key in sorted(set(before) | set(after)):
+        if key not in before or key not in after:
+            problems.append(f"{key}: only in {'after' if key in after else 'before'}")
+            continue
+        (v1, p1), (v2, p2) = before[key], after[key]
+        if p1 != p2:
+            problems.append(f"{key}: judge prompts differ")
+        l1, l2 = (v1 or "").split(">"), (v2 or "").split(">")
+        turns += max(len(l1), len(l2))
+        agree += sum(a == b for a, b in zip(l1, l2))
+        if v1 != v2:
+            problems.append(f"{key}: labels {v1} -> {v2}")
+    return turns, agree, problems
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("logs", nargs="+")
     parser.add_argument("--same-prompts", action="store_true", help="compare exactly two logs")
+    parser.add_argument("--same-labels", action="store_true", help="compare two scored logs")
     args = parser.parse_args()
+    if args.same_labels:
+        if len(args.logs) != 2:
+            parser.error("--same-labels takes exactly two logs")
+        turns, agree, problems = same_labels(*args.logs)
+        print("\n".join(problems))
+        print(f"{'OK' if not problems else 'DIFFERENT'} - {agree}/{turns} turn labels agree")
+        sys.exit(1 if problems else 0)
     if args.same_prompts:
         if len(args.logs) != 2:
             parser.error("--same-prompts takes exactly two logs")

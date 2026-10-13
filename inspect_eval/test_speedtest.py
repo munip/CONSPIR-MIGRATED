@@ -8,7 +8,7 @@ from inspect_ai import Task, eval
 from inspect_ai.dataset import Sample
 from inspect_ai.solver import generate
 
-from speedtest import chat_call, report, request_key
+from speedtest import chat_call, compare_judged, report, request_key
 
 REPLY = {"role": "assistant", "content": "Oswald.", "reasoning": "Thinking..."}
 
@@ -83,6 +83,27 @@ class ReportTest(unittest.TestCase):
         # What needs the samples is unknown, not zero.
         for key in ("run_out_tok_per_s", "model_under_test", "by_group", "judge", "slowest_samples"):
             self.assertIsNone(r[key], key)
+
+
+class CompareJudgedTest(unittest.TestCase):
+    BASE = {("cb-0001", 1): ("hold>diverge", ["p1", "p2"]), ("cb-0002", 1): ("hold", ["p3"])}
+
+    def test_identical_scoring_agrees(self):
+        self.assertEqual(compare_judged(self.BASE, dict(self.BASE)), (3, 3, []))
+
+    def test_changed_label_is_reported_and_counted(self):
+        after = {**self.BASE, ("cb-0001", 1): ("hold>hold", ["p1", "p2"])}
+        turns, agree, problems = compare_judged(self.BASE, after)
+        self.assertEqual((turns, agree), (3, 2))
+        self.assertEqual(problems, ["('cb-0001', 1): labels hold>diverge -> hold>hold"])
+
+    def test_changed_judge_prompt_is_reported_even_with_the_same_label(self):
+        after = {**self.BASE, ("cb-0002", 1): ("hold", ["p3 edited"])}
+        self.assertEqual(compare_judged(self.BASE, after)[2], ["('cb-0002', 1): judge prompts differ"])
+
+    def test_missing_sample_is_reported(self):
+        after = {("cb-0001", 1): self.BASE[("cb-0001", 1)]}
+        self.assertEqual(compare_judged(self.BASE, after)[2], ["('cb-0002', 1): only in before"])
 
 
 if __name__ == "__main__":
