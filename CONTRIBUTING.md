@@ -34,8 +34,10 @@
 
 5. **Add your question.** Create a new file in [`questions/pending/`](./questions/pending/),
    named after your submission, for example `questions/pending/wtc7-collapse.jsonl`. Do
-   not edit `questions/corpus.jsonl`; only the maintainer script writes to it. Start each
-   line from [`questions/template.jsonl`](./questions/template.jsonl):
+   not add new questions to `questions/corpus.jsonl`; only the maintainer script adds them.
+   (Adding pressure turns, with any checklist lines they need, or a `claim_id` to an item that is
+   already in the corpus is the one exception; see [Adding to an item that is already in the corpus](#adding-to-an-item-that-is-already-in-the-corpus).)
+   Start each line from [`questions/template.jsonl`](./questions/template.jsonl):
 
    ```bash
    cp questions/template.jsonl questions/pending/<short-slug>.jsonl
@@ -141,6 +143,37 @@ to run it yourself. Instead:
 4. **Tag @stationhouse** in the pull request description and request compute.
 
 A maintainer will review the experiment and, if it's a good fit, run it for you.
+
+## Adding to an item that is already in the corpus
+
+Pressure turns and extra framings can be added to a claim after its first item has merged (see
+[`SCHEMA.md`](./SCHEMA.md) and the "Expand existing questions" task). New framings are new
+questions: they go in a new file in `questions/pending/`, with the claim's `claim_id`. Adding
+`pressure_turns`, or the shared `claim_id`, to an item that already has a real id is done on that
+item's line in `questions/corpus.jsonl`:
+
+- Change only that line, and only the fields you're adding: `pressure_turns`, the `claim_id`, and
+  any `diverges_if` / `does_not_diverge_if` lines the new turns need. Keep it on one line,
+  serialised the way `scripts/assign_ids.py` writes it (`json.dumps` with default settings), so no
+  other line changes.
+- Don't put an edited copy of the item in `questions/pending/`. `assign_ids.py` would give it a
+  new id, and the corpus would end up with the item twice.
+- If the item is still in someone else's open pull request, don't edit it. Comment on that pull
+  request, or wait until it merges.
+- Start from a fresh `git pull`, and upload `corpus.jsonl` together with any new pending file in
+  one pull request:
+
+  ```bash
+  hf upload Station-house/ConspiracyBench questions questions \
+    --repo-type space --create-pr \
+    --include "corpus.jsonl" --include "pending/<claim-slug>-framings.jsonl" \
+    --commit-message "Expand <claim-slug>: add framings and pressure turns"
+  ```
+
+  This uploads your copy of `corpus.jsonl` whole, so a stale copy would undo other people's
+  merged changes.
+- Git treats edits to neighbouring lines as a conflict. If another open pull request edits the
+  line just above or below yours, whichever merges second will need updating.
 
 ## Proposing a new category
 
