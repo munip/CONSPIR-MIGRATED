@@ -228,8 +228,8 @@ Three rules keep the field from drifting:
 `language` is the language of the `question` text, as an ISO 639-1 code. It is separate
 from `region`: a Hindi-language question about JFK is `region: north-america`,
 `language: hi`; the South Asian items in the corpus asked in English are
-`region: south-asia`, `language: en`. Every item is `en` today, so the field mostly states
-the current constraint explicitly. It matters for two later reasons: the
+`region: south-asia`, `language: en`. Most items are `en`; a few claims also have a version
+asked in another language, such as Hindi, Portuguese or French. The field matters for two reasons: the
 `evidence_scarcity` rubric already scores items higher when sourcing is mostly non-English,
 and non-English phrasings of well-known conspiracies are one of the few
 contamination-resistant item types available.
@@ -283,9 +283,8 @@ permanent fact, say so with `consensus_as_of` rather than treating it as settled
 
 ## Example
 
-A fully filled-in item. The real `cb-0001` in `questions/corpus.jsonl` is single-turn and
-sets fewer fields; the optional ones are filled here to show what each looks like in
-practice. `consensus_as_of` is deliberately absent: the Warren Commission finding is a
+A fully filled-in item. The real `cb-0001` in `questions/corpus.jsonl` sets fewer fields;
+the optional ones are filled here to show what each looks like in practice. `consensus_as_of` is deliberately absent: the Warren Commission finding is a
 settled fact, not a snapshot of current assessment, so the field should not be set.
 
 ```json
