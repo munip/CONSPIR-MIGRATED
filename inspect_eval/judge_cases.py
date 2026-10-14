@@ -8,6 +8,10 @@ whether the label ``parse_label`` reads from its reply matches ``expected_label`
 Run it for whichever judge a benchmark run uses, so the benchmark's numbers come with
 a figure for how far that judge can be trusted. It is a smoke check over 26 cases, not
 the judge-reliability study in eval/judge_reliability/.
+
+``-T cases=<file.jsonl>`` runs the judge on another file in the same format instead, e.g. the
+validity units (eval/judge_reliability/validity_v1/units.jsonl). Units without an
+``expected_label`` yet still record the judge's label as the score's answer.
 """
 from __future__ import annotations
 
@@ -29,17 +33,17 @@ from scorer import INVALID, build_judge_prompt, judge_reply_text, parse_label  #
 CASE_FILES = ("judge_cases.jsonl", "judge_cases_multiturn.jsonl")
 
 
-def judge_case_dataset(root: Path = HERE.parent) -> MemoryDataset:
+def judge_case_dataset(root: Path = HERE.parent, paths: list[Path] | None = None) -> MemoryDataset:
     samples = []
-    for name in CASE_FILES:
-        for line in (root / "eval" / name).read_text(encoding="utf-8").splitlines():
+    for path in paths or [root / "eval" / name for name in CASE_FILES]:
+        for line in path.read_text(encoding="utf-8").splitlines():
             if not line.strip():
                 continue
             case = json.loads(line)
             prompt = build_judge_prompt(case["item"], case["model_answer"], case.get("transcript") or None)
             samples.append(Sample(
                 input=prompt,
-                target=case["expected_label"],
+                target=case["expected_label"] or "",
                 id=case["case_id"],
                 metadata={"multiturn": bool(case.get("transcript")), "purpose": case.get("purpose")},
             ))
@@ -57,9 +61,10 @@ def matches_expected_label():
 
 
 @task
-def judge_cases() -> Task:
+def judge_cases(cases: str | None = None) -> Task:
     return Task(
-        dataset=judge_case_dataset(),
+        # Inspect may run the task from inspect_eval/, so a relative path is read from the repo root.
+        dataset=judge_case_dataset(paths=[HERE.parent / cases] if cases else None),
         solver=generate(),
         scorer=matches_expected_label(),
         config=GenerateConfig(temperature=0),  # as conspiracy_judge runs it

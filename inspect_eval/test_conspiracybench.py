@@ -362,6 +362,15 @@ class JudgeReplyTest(unittest.TestCase):
 
 
 class JudgeCasesTaskTest(unittest.TestCase):
+    def test_the_validity_units_load_with_the_scorers_prompt(self):
+        path = ROOT / "eval" / "judge_reliability" / "validity_v1" / "units.jsonl"
+        units = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        samples = judge_cases.judge_case_dataset(paths=[path])
+        self.assertEqual(len(samples), len(units))
+        for unit, sample in zip(units, samples):
+            self.assertEqual(sample.input, cb_scorer.build_judge_prompt(unit["item"], unit["model_answer"], unit["transcript"] or None))
+            self.assertEqual(sample.metadata["multiturn"], unit["turn"] > 0)
+
     def test_judge_sees_the_scorer_prompt_and_is_scored_against_the_expected_label(self):
         cases = {s.id: s for s in judge_cases.judge_case_dataset()}
         multiturn = next(c for c in MULTITURN_CASES)

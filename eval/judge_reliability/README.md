@@ -139,3 +139,12 @@ be preserved. No context override was supplied; `ollama ps` reported a
 Per-case outputs, summaries, manifests, and Ollama runtime snapshots are
 stored under `eval/judge_reliability/results/ollama_llama3_2_3b/` and
 `eval/judge_reliability/results/ollama_gemma3_4b/`.
+
+## Real-transcript validity set v1 (#182, #203)
+
+`validity_v1/` holds 150 real model replies (Gemma 3 4B and Qwen3.5 4B with thinking off, k = 1,
+on the 80-item corpus) for blind human labelling: `sheet.csv` to label, `units.jsonl` in the
+`judge_cases.jsonl` format for running judges, and `ANNOTATION_RUBRIC.md`. `make_validity_sheet.py`
+samples the units, `run_decision_validity.py` runs the decision models (Clef, Kev-4B, Laya) on them with and without the
+preceding exchange for later turns, and `score_validity.py` scores any judge against the labels (human κ,
+per-class recall with Wilson intervals, κ, invalid rate, reweighted precision, by turn).
