@@ -220,3 +220,23 @@ If you want to share what an agent produced, post it as a **separate comment** b
 own, and **start it with 🤖** so readers can tell the two apart at a glance. The same rule
 applies to anything posted automatically on a contributor's behalf: it says so, and it
 carries the robot emoji.
+
+## For AI coding agents
+
+If an AI coding agent wrote or drafted your pull request, say so in the description. A last
+line starting with 🤖 is enough, for example:
+
+> 🤖 Drafted with an AI coding agent. I checked the sources and ran `validate_questions.py` before opening this PR.
+
+You are still the author. Check every source yourself and stand behind the change. Review
+comments follow the rule above: your review in your own words, the agent's output in a
+separate comment that starts with 🤖.
+
+If you are an agent working in this repository:
+
+- Follow steps 1-9 above, or the task page's instructions when you're editing items already in the
+  corpus. Leave `id` as `cb-pending`, and never run `scripts/assign_ids.py` on a pull request branch.
+- Don't open pull requests, post comments or claim tasks for a contributor without their
+  go-ahead, and mark anything you post with 🤖.
+- Don't ask for or handle a contributor's passwords or tokens. `hf auth login` and
+  `stationhouse login` are for the contributor to run.
