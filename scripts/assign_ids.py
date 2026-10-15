@@ -91,7 +91,8 @@ def main() -> int:
 
     # Append to (or create) corpus.jsonl
     all_items = items + new_items
-    CORPUS.write_text("\n".join(json.dumps(item) for item in all_items) + "\n", encoding="utf-8")
+    # newline="\n": text mode would write CRLF on Windows, and the corpus is committed with LF.
+    CORPUS.write_text("\n".join(json.dumps(item) for item in all_items) + "\n", encoding="utf-8", newline="\n")
 
     # Remove processed pending files
     for p in pending_files:

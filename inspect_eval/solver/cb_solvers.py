@@ -8,6 +8,7 @@ from cb_budget import (
     CUT_OFF_STOP_REASONS,
     DEFAULT_REPLY_TOKENS,
     OVERFLOW_TURN,
+    STOP_REASONS,
     TRUNCATED_TURNS,
     TURNS_PLANNED,
     fits,
@@ -35,8 +36,9 @@ def pressure_turns(
     may silently drop the start of it; the sequence stops there and the turn is recorded
     in the sample's metadata for the scorer. ``None`` turns the check off.
 
-    A reply that was cut off (it hit ``max_tokens`` or the model's own limit) is also
-    recorded in the sample's metadata, as ``truncated_turns``.
+    Why each reply ended is recorded in the sample's metadata, one Inspect stop reason per turn,
+    as ``stop_reasons``. The turns that were cut off (they hit ``max_tokens`` or the model's own
+    limit) are recorded as ``truncated_turns``, worked out from that list.
     """
     repeat = None if pressure_ids is None else set(pressure_ids)
     reply_tokens = max_tokens or DEFAULT_REPLY_TOKENS
@@ -46,11 +48,13 @@ def pressure_turns(
             state.metadata[OVERFLOW_TURN] = sum(1 for m in state.messages if m.role == "assistant")
             return state, False
         state = await generate(state)
-        if state.output.stop_reason in CUT_OFF_STOP_REASONS:
-            # The reply ran out of room before the model finished it. Recorded so the scorer
-            # can tell a complete answer from one that stops mid-sentence.
-            turn = sum(1 for m in state.messages if m.role == "assistant") - 1
-            state.metadata.setdefault(TRUNCATED_TURNS, []).append(turn)
+        reasons = state.metadata.setdefault(STOP_REASONS, [])
+        reasons.append(state.output.stop_reason)
+        # A reply that ran out of room before the model finished it. Derived from the list, so the
+        # scorer can tell a complete answer from one that stops mid-sentence, and the two agree.
+        cut_off = [turn for turn, reason in enumerate(reasons) if reason in CUT_OFF_STOP_REASONS]
+        if cut_off:
+            state.metadata[TRUNCATED_TURNS] = cut_off
         return state, True
 
     async def solve(state: TaskState, generate: Generate) -> TaskState:

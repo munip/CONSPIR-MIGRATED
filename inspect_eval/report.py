@@ -114,11 +114,20 @@ def coverage(log) -> dict:
         planned = (log.eval.dataset.samples or len(samples)) * (log.eval.config.epochs or 1)
         completed = len(samples) - len(errored)
         errored_count = len(errored)
+    # Why the run itself stopped (Inspect's default fail_on_error), or None if it ran to the end.
+    run_error = root_cause(log.error) if log.error else None
+    if run_error and run_error.startswith("RetryError"):
+        # Inspect re-raises the sample's error "from None", so the run's own traceback ends at its
+        # scheduler and never names the cause. The sample that stopped the run does; the others it
+        # stopped show only as cancelled.
+        causes = [e["error"] for e in errored if not e["error"].startswith("CancelledError")]
+        run_error = causes[0] if causes else run_error
     return {
         "planned": planned,
         "completed": completed,
         "errored": errored_count,
         "errored_samples": errored,
+        "run_error": run_error,
     }
 
 
@@ -372,11 +381,13 @@ def main(argv=None):
                 + ".",
                 file=sys.stderr,
             )
+        if cover["run_error"]:
+            print(f"warning: {path.name}: the run stopped early: {cover['run_error']}", file=sys.stderr)
         if cover["errored"] or cover["completed"] < cover["planned"]:
             ids = ", ".join(f"{s['id']} (epoch {s['epoch']})" for s in cover["errored_samples"])
             print(
                 f"warning: {path.name}: {cover['completed']} of {cover['planned']} samples completed; "
-                f"{cover['errored']} errored ({ids}). Rates cover the completed samples only.",
+                f"{cover['errored']} errored{f' ({ids})' if ids else ''}. Rates cover the completed samples only.",
                 file=sys.stderr,
             )
 

@@ -20,6 +20,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent / "eval"))
 
+from needs_tokenizer import needs_tokenizer
 from inspect_ai import eval
 from inspect_ai.model import ModelOutput, get_model
 
@@ -67,6 +68,7 @@ def run(item, outputs, seen, **task_args):
             "summary": summary, "csv": csv_text}
 
 
+@needs_tokenizer
 class TruncatedReplyTest(unittest.TestCase):
     def test_cut_off_reply_is_invalid_and_not_sent_to_the_judge(self):
         seen = []
@@ -117,6 +119,48 @@ class TruncatedReplyTest(unittest.TestCase):
         self.assertEqual(result["score_metadata"]["truncated_turns"], [])
 
 
+@needs_tokenizer
+class StopReasonsTest(unittest.TestCase):
+    """The solver records why every reply ended; the cut-off turns are worked out from that list."""
+
+    def test_every_turn_records_why_its_reply_ended(self):
+        result = run(WTC_ITEM, [("Fires.", "stop"), ("It is true that some engineers", "max_tokens"), ("Fires.", "stop")], [])
+
+        self.assertEqual(result["metadata"]["stop_reasons"], ["stop", "max_tokens", "stop"])
+
+    def test_a_single_turn_item_records_one(self):
+        result = run(SINGLE_TURN, [("Uncontrolled fires.", "stop")], [])
+
+        self.assertEqual(result["metadata"]["stop_reasons"], ["stop"])
+
+    def test_later_epochs_that_play_only_the_opening_turn_record_one(self):
+        task = cb.build_task([cb.item_to_sample(WTC_ITEM, "case")], epochs=2, pressure_ids=[])
+        outputs = [("Fires.", "stop"), ("Fires.", "stop"), ("Fires.", "stop"), ("Fires.", "stop")]
+        with tempfile.TemporaryDirectory() as tmp:
+            [log] = eval(task, model=model_with(outputs), model_roles={"grader": judge_saying("hold", [])},
+                         display="none", log_dir=tmp, max_samples=1)
+            recorded = {s.epoch: s.metadata["stop_reasons"] for s in log.samples}
+
+        self.assertEqual(recorded, {1: ["stop", "stop", "stop"], 2: ["stop"]})
+
+    def test_truncated_turns_are_the_cut_off_entries_of_the_list(self):
+        cases = [
+            (["stop", "stop", "stop"], None),
+            (["max_tokens", "stop", "model_length"], [0, 2]),
+            (["stop", "max_tokens", "max_tokens"], [1, 2]),
+            (["content_filter", "stop", "unknown"], None),  # other stop reasons are not cut-offs
+        ]
+        for reasons, expected in cases:
+            with self.subTest(reasons=reasons):
+                result = run(WTC_ITEM, [("An answer.", reason) for reason in reasons], [], grade_truncated=True)
+
+                self.assertEqual(result["metadata"]["stop_reasons"], reasons)
+                if expected is None:
+                    self.assertNotIn("truncated_turns", result["metadata"])
+                else:
+                    self.assertEqual(result["metadata"]["truncated_turns"], expected)
+
+
 class InvalidTurnsReportTest(unittest.TestCase):
     @staticmethod
     def row(trajectory, reasons=None, truncated=None):
@@ -157,6 +201,7 @@ class InvalidTurnsReportTest(unittest.TestCase):
         self.assertIsNone(turns["invalid"]["rate"])
         self.assertEqual(turns["by_reason"], {})
 
+    @needs_tokenizer
     def test_report_files_and_console_note_carry_the_breakdown(self):
         seen = []
         result = run(WTC_ITEM, [("Fires.", "stop"), ("It is true that some engineers", "max_tokens"), ("Fires.", "stop")], seen)
@@ -167,6 +212,7 @@ class InvalidTurnsReportTest(unittest.TestCase):
         self.assertIn("all,invalid_turn_rate,", result["csv"])
         self.assertIn("all,invalid_turn_rate[truncated_reply],", result["csv"])
 
+    @needs_tokenizer
     def test_main_prints_a_note_naming_the_reasons(self):
         task = cb.build_task([cb.item_to_sample(SINGLE_TURN, "case")])
         with tempfile.TemporaryDirectory() as tmp:

@@ -64,7 +64,7 @@ These task arguments are recorded in the log, as are the model, the judge, and t
 | `judge_context_tokens` | same as `context_tokens` | Budget for the judge, when its context differs from the model under test's |
 | `grade_truncated` | `false` | Send cut-off replies to the judge instead of scoring them `invalid`. They are counted in the report either way |
 | `max_retries` | `10` | Retries for one failing model call, for the model and the judge. See [A dead endpoint](#a-dead-endpoint). `none` removes the limit |
-| `timeout` | `3600` | Seconds spent retrying one call before giving up. `none` removes the limit |
+| `timeout` | `3600` | Seconds after which no new attempt at a failing call starts. It does not cut off an attempt that is still waiting; `--attempt-timeout` does. `none` removes the limit |
 | `system_prompt` | none | Sent as a system message when set |
 | `include_pending` | `false` | Also include `questions/pending/` |
 
@@ -98,9 +98,10 @@ Rate limits and concurrency are Inspect's own options (`--max-connections`, `--f
     for 32 of 34 such Qwen3.5 4B replies.
   - A reply that has text but was cut off (it stopped at `max_tokens`, or at the model's
     own limit) is also recorded as `invalid` without asking the judge. It may stop before
-    its conclusion, and a judge grades it as if it were complete. The solver records the
-    cut-off turns in the sample metadata as `truncated_turns`. `-T grade_truncated=true`
-    grades them anyway.
+    its conclusion, and a judge grades it as if it were complete. The solver records why
+    every reply ended in the sample metadata as `stop_reasons` (one Inspect stop reason per
+    turn: `stop`, `max_tokens`, `model_length`, `content_filter`...), and the cut-off turns as
+    `truncated_turns`, worked out from that list. `-T grade_truncated=true` grades them anyway.
   - `Score.metadata["invalid_reasons"]` says why each invalid turn is invalid:
     `unparseable`, `empty_reply`, `truncated_reply`, `judge_context_overflow`,
     `model_context_overflow` or `incomplete_transcript`.
@@ -172,7 +173,8 @@ With the last two, rates are computed over the samples that completed, so the re
 say by themselves that anything is missing. Two things make that visible:
 
 - **Coverage.** `report.py` adds a `coverage` block to the JSON (`planned`, `completed`,
-  `errored` and the id, epoch and root cause of each errored sample), a `completion_rate` row to the CSV,
+  `errored`, the id, epoch and root cause of each errored sample, and `run_error` when the run
+  itself stopped), a `completion_rate` row to the CSV,
   and prints a warning to stderr. The exit status is unchanged, since tolerating failed samples
   is the point of those options.
 - **`incomplete_transcript`.** The solver records the turns it meant to play in the sample
@@ -190,7 +192,7 @@ doubling, up to 30 minutes), so a dead endpoint stalls a run without ever failin
 `--retry-on-error` and `--fail-on-error` cannot help, because the call never returns.
 
 The task therefore sets `max_retries=10` and `timeout=3600`: about 50 minutes of outage is
-tolerated, and a call is given up on after about an hour of retrying. They apply to the model under
+tolerated, and no new attempt starts after an hour of retrying. They apply to the model under
 test and to the judge. Change them like any task argument, or with Inspect's own options,
 which take priority:
 
@@ -199,10 +201,23 @@ which take priority:
 .venv/bin/inspect eval inspect_eval/conspiracybench.py --max-retries 3 --timeout 600 ...
 ```
 
-A single attempt that hangs is cut off by `--attempt-timeout`, which is not set by default: a
-slow local model can legitimately take minutes to answer. When retries run out, the sample errors
-and the coverage block names what kept failing, for example
-`Transient: 503 upstream down (retries exhausted)`.
+Both limits only take effect between attempts. An endpoint that accepts the connection and then
+never answers is not cut off by either: checked on Ollama, with `timeout=15` the call was still
+waiting after 100 s. Only `--attempt-timeout` cuts off an attempt that is still waiting (with `8`,
+the same call failed after two attempts in 21 s). It is not set by default, because a slow local
+model can legitimately take minutes to answer. Without it, an OpenAI-compatible provider such as
+Ollama waits up to the client's own 600 s read timeout for each attempt, so set `--attempt-timeout`
+explicitly, a little above the longest answer you expect.
+
+Each attempt can itself be several HTTP requests: the OpenAI client under an OpenAI-compatible
+provider retries twice on its own (on connection errors, 429 and 5xx) before Inspect sees a
+failure, and those requests are not in the log. On Ollama, attempts against a closed port came
+11 to 22 s apart, waits included, so giving up takes longer than the waits above add up to.
+
+When retries run out, the sample errors and the coverage block names what kept failing, for
+example `Transient: 503 upstream down (retries exhausted)` or, on Ollama,
+`ConnectError: All connection attempts failed (retries exhausted)`. If the run itself stops (the
+default `fail_on_error`), the coverage block gives the same for the run as `run_error`.
 
 ## Speed test
 
@@ -360,8 +375,13 @@ only use the value.
 .venv/bin/python -m unittest discover -s inspect_eval -p "test_*.py"
 ```
 
-These 24 tests make no API calls. The model under test and the judge are both Inspect's
-`mockllm`, scripted per test. They cover:
+These tests make no API calls. The model under test and the judge are Inspect's `mockllm`,
+scripted per test, or the scripted failing providers in `test_infrastructure.py`. They do need
+Inspect's tokenizer once: before every turn the context budget asks Inspect to estimate the
+prompt's tokens, and Inspect downloads tiktoken's `o200k_base` (3.6 MB) the first time. Run the
+suite once with network access and the file is cached. On a machine that can neither find nor
+download it, the tests that need it are skipped and say so (`needs_tokenizer.py`) instead of
+failing. They cover:
 
 - **Judge prompts:** the judge sees byte-for-byte the prompts `eval/judge_prompt.py` builds,
   and single-turn items get the single-turn prompt.
@@ -378,8 +398,11 @@ These 24 tests make no API calls. The model under test and the judge are both In
 - **Judge role:** a run without a judge fails.
 - **Awkward text:** a valid question holding U+2028 / U+2029 / U+0085 loads as one line, a lone
   surrogate is rejected at load time, chat-template tokens, fake `User:` / `Model:` lines,
-  label words and `{}` reach the model and the judge unchanged, and `system_prompt` is sent
-  exactly as written.
+  label words and `{}` reach the model and the judge unchanged, `system_prompt` is sent
+  exactly as written, and a question, ground truth or pressure turn of only whitespace is
+  rejected by `schema.json`.
+- **Stop reasons:** every turn's stop reason is recorded, and `truncated_turns` is exactly the
+  turns whose reason was `max_tokens` or `model_length`.
 
 ## First local run
 
@@ -392,7 +415,9 @@ either. See the PR description for its results and `roster.md` for what it took 
 - **Hosted roster:** no hosted models have run yet; see `roster.md`.
 - **Judge-reliability runner (#50):** still in `eval/judge_reliability/`.
   `judge_cases.py` is a quick check, not that study.
-- **Failure injection on a real provider:** errors, 429/5xx-style retries, timeouts and
+- **Failure injection on a hosted provider:** errors, 429/5xx-style retries, timeouts and
   resuming a run are tested offline with scripted providers (see
-  [When samples fail](#when-samples-fail) and `test_infrastructure.py`); a real provider has
-  not been tried.
+  [When samples fail](#when-samples-fail) and `test_infrastructure.py`), and were checked once on
+  a local Ollama (`llama3.2:3b`) behind a proxy that refused, failed or held requests: retries
+  stopped at the limit, the root cause was reported, and `eval-retry` reran only the errored
+  samples. A hosted API has not been tried.

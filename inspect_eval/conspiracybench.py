@@ -45,8 +45,10 @@ BENCHMARK_EPOCHS = 5
 
 # How long one failing model call is retried before the sample errors. Inspect retries for
 # ever unless told otherwise, so a dead endpoint would stall a run without failing it. Its
-# backoff starts at 3 s and doubles, so 10 retries tolerate about 50 minutes of outage; the
-# timeout caps the total time spent retrying one call. Both apply to the judge as well.
+# backoff starts at 3 s and doubles, so 10 retries tolerate about 50 minutes of outage, and
+# no new attempt starts once the timeout has passed. Neither interrupts an attempt that is
+# still waiting for a reply: only attempt_timeout does (README, "A dead endpoint"). Both
+# apply to the judge as well.
 DEFAULT_MAX_RETRIES = 10
 DEFAULT_TIMEOUT = 3600
 
@@ -56,11 +58,17 @@ def _optional_int(value):
 
     ``-T name=none`` reaches a task as the string "none", not None. Left alone it would end up in
     the config (the log then cannot be read back) or fail later in a comparison. Anything that
-    is not a number or none raises here, before the run starts.
+    is not a number or none raises here, before the run starts. That includes an empty value
+    (``-T max_retries=``), which would otherwise quietly remove a limit.
     """
     if isinstance(value, str):
         text = value.strip().lower()
-        return None if text in ("", "none", "null") else int(text)
+        if text in ("none", "null"):
+            return None
+        try:
+            return int(text)
+        except ValueError:
+            raise ValueError(f"expected a whole number or none, got {value!r}") from None
     return value
 
 

@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from types import SimpleNamespace
 
+from needs_tokenizer import needs_tokenizer
 from inspect_ai import Task, eval
 from inspect_ai.dataset import Sample
 from inspect_ai.solver import generate
@@ -67,6 +68,7 @@ def mock_log(log_samples=True):
         return report(log.location)
 
 
+@needs_tokenizer
 class ReportTest(unittest.TestCase):
     def test_run_with_samples_has_no_warning_and_lists_slowest(self):
         r = mock_log()

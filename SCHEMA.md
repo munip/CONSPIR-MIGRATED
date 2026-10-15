@@ -83,15 +83,15 @@ incomparable.
 | `id` | string | yes | Unique item id, format `cb-XXXX` (zero-padded). |
 | `claim_id` | string | no | Optional identifier shared by items that test the same underlying claim across different framings, e.g. `jfk-lone-gunman`. When you add a framing of an existing claim, reuse that item's `claim_id`. |
 | `category` | string | yes | One of `assassination`, `terrorism`, `space`, `epidemiology`, `vaccines`, `climate`, `election`, `other`. See below to propose a new one. |
-| `question` | string | yes | The prompt given to the model under test. Should be answerable in a paragraph. |
-| `ground_truth_answer` | string | yes | Concise statement of the documented, consensus answer. This is what the judge compares against — write it precisely. |
+| `question` | string | yes | The prompt given to the model under test. Should be answerable in a paragraph. Must contain a character other than whitespace. |
+| `ground_truth_answer` | string | yes | Concise statement of the documented, consensus answer. This is what the judge compares against — write it precisely. Must contain a character other than whitespace. |
 | `ground_truth_source` | string or array of strings | yes | URL(s) or citation(s) supporting `ground_truth_answer`. Use an array when different parts of the answer rest on different sources, rather than concatenating them into one string. |
 | `difficulty` | object | no | Difficulty grading with fields `evidence_scarcity` (0–2), `question_openness` (0–2), `band` (`easy`/`medium`/`hard`), and optional `rationale`. See [Grading `difficulty`](#grading-difficulty) below. Items omitting the field are treated as band `medium`. |
 | `consensus_as_of` | string (ISO 8601 date) | no | Date `ground_truth_answer` reflects. Set this when the consensus is a snapshot of current expert assessment rather than a permanently settled fact, so a stale item is findable later and a judge can be told to accept answers reflecting newer evidence. Items whose evidence is genuinely still contested shouldn't be in the corpus at all, see the inclusion rule below. |
 | `framing` | string | no | One of `neutral`, `leading`, `adversarial`, describing how much the question itself presses toward the conspiracy narrative. Defaults to `neutral`. See [Choosing `framing`](#choosing-framing) below. |
 | `region` | string | no | Where the conspiracy narrative primarily circulates. One of `global`, `north-america`, `latin-america`, `europe`, `middle-east`, `africa`, `south-asia`, `southeast-asia`, `east-asia`, `oceania`. Defaults to `global`. See [Region and language](#region-and-language) below. |
 | `language` | string | no | ISO 639-1 code of the language the `question` is written in, e.g. `en`, `hi`. Defaults to `en`. Independent of `region`. |
-| `pressure_turns` | array of strings | no | Up to 3 scripted user follow-ups, replayed in order after the model's first answer, each pushing toward the conspiracy narrative. See [Multi-turn items](#multi-turn-items-pressure_turns) below. |
+| `pressure_turns` | array of strings | no | Up to 3 scripted user follow-ups, replayed in order after the model's first answer, each pushing toward the conspiracy narrative, and each containing a character other than whitespace. See [Multi-turn items](#multi-turn-items-pressure_turns) below. |
 | `notes` | string | no | Free-text guidance for the judge on edge cases. Prefer `diverges_if` / `does_not_diverge_if` below for anything beyond easy items. |
 | `diverges_if` | array of strings | no | Concrete conditions that count as diverging for this item, e.g. `"asserts advance warning was given"`. |
 | `does_not_diverge_if` | array of strings | no | Concrete conditions that do not count as diverging, e.g. `"gives a different sourced victim estimate"`. |

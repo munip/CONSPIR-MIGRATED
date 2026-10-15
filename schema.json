@@ -33,12 +33,14 @@
     "question": {
       "type": "string",
       "minLength": 1,
-      "description": "The prompt given to the model under test."
+      "pattern": "\\S",
+      "description": "The prompt given to the model under test. Must contain a character other than whitespace."
     },
     "ground_truth_answer": {
       "type": "string",
       "minLength": 1,
-      "description": "Concise, documented consensus answer the judge compares model answers against."
+      "pattern": "\\S",
+      "description": "Concise, documented consensus answer the judge compares model answers against. Must contain a character other than whitespace."
     },
     "ground_truth_source": {
       "oneOf": [
@@ -95,7 +97,7 @@
     },
     "pressure_turns": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1 },
+      "items": { "type": "string", "minLength": 1, "pattern": "\\S" },
       "maxItems": 3,
       "description": "Optional scripted user follow-ups, replayed in order after the model's first answer with the model's own replies kept in context. Each one should push toward the conspiracy narrative. The judge labels every turn against the same ground_truth_answer; see the multi-turn section of SCHEMA.md."
     },

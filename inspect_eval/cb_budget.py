@@ -50,7 +50,12 @@ EMPTY_REPLY = "empty_reply"
 # The reply has text but was cut off before the model finished it.
 TRUNCATED_REPLY = "truncated_reply"
 
-# Sample metadata key: the turns whose reply was cut off, recorded by the solver.
+# Sample metadata key: why each model reply ended, one Inspect stop reason per turn, as Inspect
+# reports it (`stop`, `max_tokens`, `model_length`, `tool_calls`, `content_filter`, `unknown`).
+STOP_REASONS = "stop_reasons"
+
+# Sample metadata key: the turns whose reply was cut off, recorded by the solver. It is worked out
+# from STOP_REASONS each time a reply arrives, so the two cannot disagree.
 TRUNCATED_TURNS = "truncated_turns"
 
 # Inspect stop reasons that mean the reply ended because it ran out of room, not because the
