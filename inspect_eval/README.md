@@ -403,6 +403,15 @@ failing. They cover:
   rejected by `schema.json`.
 - **Stop reasons:** every turn's stop reason is recorded, and `truncated_turns` is exactly the
   turns whose reason was `max_tokens` or `model_length`.
+- **Well-formed data** (`test_unusual_inputs.py`): the whole corpus at k = 5 keeps every sample id
+  unique, runs every item k times and sends every pressure turn verbatim and in order. The
+  longest item in the corpus, non-English text, emoji, quotes, Markdown, and items with no or
+  every optional field arrive at the model and the judge unchanged.
+- **Unusual replies** (`test_unusual_inputs.py`): a refusal is graded like any answer; a reply
+  with no text (a content filter, or reasoning that used the whole budget) is invalid and not
+  judged; a separate reasoning block is not shown to the judge; reasoning left inline as
+  `<think>...</think>` does not break the run and the transcript keeps the reply as given; and
+  `>` or label words inside a reply do not change the trajectory.
 
 ## First local run
 
