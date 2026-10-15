@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Run decision-model judges (Clef, Kev-4B, Laya) on the real-transcript validity units (#182, #203).
+"""Run decision-model judges (Clef, Kev-4B, Laya, pplx-decider) on the real-transcript validity units (#182, #203).
 
-    python eval/judge_reliability/run_decision_validity.py --judge clef|kev|laya \
+    python eval/judge_reliability/run_decision_validity.py --judge clef|kev|laya|pplx \
         --units eval/judge_reliability/validity_v1/units.jsonl \
         --output-dir eval/judge_reliability/results/<judge>_validity_v1 --inspect-only | --run
 
@@ -29,6 +29,10 @@ No judge truncates: a unit longer than the judge's input limit is recorded as an
   English checkpoint reads only 512 tokens, and windowing would score fragments of a reply, so
   neither is used. Laya's card reports lower accuracy past ~4k tokens; score_validity.py reports
   long units separately.
+- pplx: ``perplexity-ai/pplx-decider-v1.1-27b`` (@vaisakhi, #203), CUDA, through the ``autojev``
+  code in its repo. It takes a text state, so the state dict is rendered as JSON; it rejects
+  inputs over 8,192 tokens rather than truncating. Its ``predict`` returns one probability per
+  candidate; confidence uses Kev's definition, (p_max - 1/K) / (1 - 1/K).
 """
 from __future__ import annotations
 
@@ -80,6 +84,7 @@ def plan(units: list[dict[str, Any]], model_id: str) -> list[dict[str, Any]]:
 KEV = {"repo": "jaredpalmer/kev-4b", "revision": "6cfce5c2fa4b4bd64026336ab649c5ca78857d52"}  # as in #173
 LAYA = {"repo": "convaiinnovations/laya", "revision": "7b928d828b7b0e022f929d9bd2e44165aa270148",  # as in #173
         "subfolder": "multilingual", "max_len": 8192}
+PPLX = {"repo": "perplexity-ai/pplx-decider-v1.1-27b", "revision": "14c9d90137962d300f3de95633f7b6535e80c5ce"}
 
 
 def load_judge(args: argparse.Namespace) -> tuple[Any, dict[str, Any]]:
@@ -123,6 +128,31 @@ def load_judge(args: argparse.Namespace) -> tuple[Any, dict[str, Any]]:
 
         return infer, {**KEV, "backend": model.backend, "dtype": model.dtype, "device": args.device}
 
+    if args.judge == "pplx":
+        from huggingface_hub import snapshot_download
+
+        checkpoint = Path(snapshot_download(PPLX["repo"], revision=PPLX["revision"]))
+        sys.path.insert(0, str(checkpoint / "source" / "src"))
+        from autojev.model import DecisionModel
+
+        model = DecisionModel(checkpoint, device=args.device)
+
+        def infer(request):
+            question = request["questions"]["verdict"]
+            row = {"state": json.dumps(request["state"], ensure_ascii=False, indent=1), "question": question}
+            raw = model.predict([row])[0]  # raises on inputs over its 8,192-token limit
+            names = list(question["criteria"])
+            values = [float(raw[n]) for n in names] if isinstance(raw, dict) else [float(v) for v in raw]
+            total = sum(values)
+            probs = {n: v / total for n, v in zip(names, values)}
+            choice = max(probs, key=probs.get)
+            k = len(names)
+            confidence = (probs[choice] - 1 / k) / (1 - 1 / k)
+            return (*clef.parse_clef_response({"answers": {"verdict": {
+                "type": "choice", "choice": choice, "confidence": confidence, "probabilities": probs}}}), None)
+
+        return infer, {**PPLX, "device": args.device}
+
     from laya.agent import load
 
     agent = load(LAYA["repo"], device=args.device, revision=LAYA["revision"], subfolder=LAYA["subfolder"])
@@ -138,7 +168,7 @@ def load_judge(args: argparse.Namespace) -> tuple[Any, dict[str, Any]]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--judge", choices=("clef", "kev", "laya"), default="clef")
+    ap.add_argument("--judge", choices=("clef", "kev", "laya", "pplx"), default="clef")
     ap.add_argument("--units", required=True)
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--model-id", default=clef.DEFAULT_MODEL_ID, help="clef only")

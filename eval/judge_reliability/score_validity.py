@@ -20,6 +20,12 @@ Written before any labels exist, so the analysis is fixed in advance:
 4. **Precision** on this set is inflated by the oversampling of diverge and abstain, so it is
    also reported reweighted to ``--class-mix``, the class mix of a real run (@Emar7, #182):
    precision_c = recall_c * pi_c / sum_k P(predicted c | true k) * pi_k.
+5. **Rates:** each judge's share of each label next to the humans' share on the same units. A judge
+   that over-calls diverge shifts the published rate even with good recall (@Emar7, #203).
+6. **Architectures from #203:** ``--jury`` (a strict majority of several judges) and ``--cascade``
+   (a decision model's label where its confidence is at least tau, else a chat judge's). Tau is
+   chosen by 5-fold cross-validation, so the cascade isn't tuned on the units it is scored on
+   (@Emar7, #203). This rule was fixed on Oct 15, before any labels were seen.
 
 Prediction files are JSONL with ``unit_id`` and ``choice`` (null or anything else = invalid),
 as run_decision_validity.py writes them, or Inspect logs of inspect_eval/judge_cases.py run with
@@ -31,6 +37,7 @@ import argparse
 import csv
 import json
 import math
+import random
 from collections import Counter, defaultdict
 from itertools import combinations
 from pathlib import Path
@@ -60,7 +67,8 @@ def kappa(a: list[str], b: list[str]) -> float:
 
 
 def read_sheet(path: Path) -> dict[str, str]:
-    with path.open(encoding="utf-8", newline="") as f:
+    # Spreadsheet apps sometimes save in a legacy encoding; only the ASCII id and label columns are read.
+    with path.open(encoding="utf-8-sig", errors="replace", newline="") as f:
         return {r["unit_id"]: r[LABEL_COL].strip().lower() for r in csv.DictReader(f) if r[LABEL_COL].strip()}
 
 
@@ -96,6 +104,10 @@ def judge_block(pred: dict[str, str | None], ref: dict[str, str], mix: dict[str,
             rate = {t: confusion[t][c] / sum(confusion[t].values()) if sum(confusion[t].values()) else 0.0 for t in LABELS}
             denom = sum(rate[t] * mix.get(t, 0.0) for t in LABELS)
             out["precision"][c]["reweighted"] = rate[c] * mix.get(c, 0.0) / denom if denom else math.nan
+    # A judge that over- or under-calls a class shifts the published rate even with good recall
+    # (@Emar7, #203), so each judge's rate on these units is reported next to the humans'.
+    out["rate"] = {c: {"judge": got.count(c) / len(got) if got else math.nan,
+                       "human": gold.count(c) / len(gold) if gold else math.nan} for c in LABELS}
     return out
 
 
@@ -112,15 +124,45 @@ def jury_vote(members: list[dict[str, str | None]]) -> dict[str, str | None]:
     return out
 
 
-def load_preds(path: Path) -> tuple[dict[str, dict[str, str | None]], dict[str, dict[str, int]]]:
-    """Predictions per judge name, and the judge's input tokens per unit where the file records them."""
+TAUS = [i / 20 for i in range(21)]
+FOLDS = 5
+
+
+def cascade(decision: dict[str, str | None], confidence: dict[str, float], chat: dict[str, str | None],
+            ref: dict[str, str], seed: int = 0) -> tuple[dict[str, str | None], list[float]]:
+    """Laura's two-level judge (#203 architecture c): the decision model's label where its confidence
+    is at least tau, else the chat judge's. Fixed before any labels were seen (@Emar7, #203 point 3):
+    tau is chosen from TAUS by FOLDS-fold cross-validation on the reference units, maximising kappa
+    on the other folds (ties: the lower tau, so fewer escalations), and every reference unit gets
+    the label from the tau chosen without it. Units outside the reference use the median tau."""
+    def label(u, tau):
+        return decision.get(u) if confidence.get(u, -1.0) >= tau and decision.get(u) in LABELS else chat.get(u)
+
+    units = sorted(u for u in ref if u in decision and u in chat)
+    random.Random(seed).shuffle(units)
+    out, taus = {}, []
+    for k in range(FOLDS):
+        held = units[k::FOLDS]
+        train = [u for u in units if u not in set(held)]
+        tau = max(TAUS, key=lambda t: (kappa([ref[u] for u in train], [label(u, t) or "invalid" for u in train]), -t))
+        taus.append(tau)
+        out.update({u: label(u, tau) for u in held})
+    median_tau = sorted(taus)[len(taus) // 2] if taus else 1.0
+    for u in set(decision) | set(chat):
+        out.setdefault(u, label(u, median_tau))
+    return out, taus
+
+
+def load_preds(path: Path) -> tuple[dict, dict, dict]:
+    """Per judge name: predictions, and the input tokens and confidence per unit where the file records them."""
     if path.suffix == ".eval":  # an inspect_eval/judge_cases.py run with -T cases=<units.jsonl>
         from inspect_ai.log import read_eval_log
 
         log = read_eval_log(str(path))
-        return {log.eval.model: {str(s.id): next(iter(s.scores.values())).answer for s in log.samples}}, {}
+        return {log.eval.model: {str(s.id): next(iter(s.scores.values())).answer for s in log.samples}}, {}, {}
     by_variant: dict[str, dict[str, str | None]] = defaultdict(dict)
     tokens: dict[str, dict[str, int]] = defaultdict(dict)
+    confidence: dict[str, dict[str, float]] = defaultdict(dict)
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.strip():
             row = json.loads(line)
@@ -128,7 +170,9 @@ def load_preds(path: Path) -> tuple[dict[str, dict[str, str | None]], dict[str, 
             by_variant[name][row["unit_id"]] = row.get("choice")
             if row.get("input_tokens") is not None:
                 tokens[name][row["unit_id"]] = row["input_tokens"]
-    return dict(by_variant), dict(tokens)
+            if row.get("confidence") is not None:
+                confidence[name][row["unit_id"]] = row["confidence"]
+    return dict(by_variant), dict(tokens), dict(confidence)
 
 
 def main() -> int:
@@ -141,6 +185,8 @@ def main() -> int:
     ap.add_argument("--key", help="key.csv from make_validity_sheet.py: also split every judge by source model (#203 gate 1)")
     ap.add_argument("--jury", action="append", default=[], metavar="NAME=JUDGE,JUDGE,...",
                     help="also score a majority vote of these judges (names as printed); no majority = invalid")
+    ap.add_argument("--cascade", action="append", default=[], metavar="NAME=DECISION_JUDGE,CHAT_JUDGE",
+                    help="also score a two-level judge; tau is chosen by cross-validation (see cascade())")
     ap.add_argument("--out", help="write the full results as JSON here")
     args = ap.parse_args()
 
@@ -168,9 +214,11 @@ def main() -> int:
             source = {r["unit_id"]: r["model"] for r in csv.DictReader(f)}
         scopes += [(f"source={m}", lambda u, m=m: source.get(u) == m) for m in sorted(set(source.values()))]
     all_preds: dict[str, dict[str, str | None]] = {}
+    all_confidence: dict[str, dict[str, float]] = {}
     for p in args.pred:
-        preds, tokens = load_preds(Path(p))
+        preds, tokens, confidence = load_preds(Path(p))
         all_preds.update(preds)
+        all_confidence.update(confidence)
         for name, pred in preds.items():
             judge_scopes = list(scopes)
             if name in tokens:
@@ -181,6 +229,14 @@ def main() -> int:
                 scope: judge_block(pred, {u: l for u, l in ref.items() if keep(u)}, mix)
                 for scope, keep in judge_scopes
             }
+    for spec in args.cascade:
+        name, members = spec.split("=", 1)
+        decision_name, chat_name = members.split(",")
+        pred, taus = cascade(all_preds[decision_name], all_confidence.get(decision_name, {}), all_preds[chat_name], ref)
+        results["judges"][f"cascade:{name}"] = {
+            scope: judge_block(pred, {u: l for u, l in ref.items() if keep(u)}, mix) for scope, keep in scopes
+        }
+        results["judges"][f"cascade:{name}"]["all"]["fold_taus"] = taus
     for spec in args.jury:
         name, members = spec.split("=", 1)
         pred = jury_vote([all_preds[m] for m in members.split(",")])

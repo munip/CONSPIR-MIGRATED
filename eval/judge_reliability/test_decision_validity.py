@@ -54,7 +54,7 @@ class DecisionAdapterTest(unittest.TestCase):
     REQUEST = validity.build_request(LATER, "preceding_exchange", clef.DEFAULT_MODEL_ID)
 
     def tearDown(self):
-        for name in ("laya", "laya.agent", "kev", "kev.api", "kev.checkpoint", "kev.model", "torch"):
+        for name in ("autojev", "autojev.model", "huggingface_hub", "laya", "laya.agent", "kev", "kev.api", "kev.checkpoint", "kev.model", "torch"):
             sys.modules.pop(name, None)
 
     def laya(self, truncated):
@@ -123,6 +123,25 @@ class DecisionAdapterTest(unittest.TestCase):
         # criteria order is hold, diverge, abstain, so the largest probability (index 2) is abstain
         self.assertEqual(infer(self.REQUEST)[:3], ("abstain", 0.4, {"hold": 0.1, "diverge": 0.2, "abstain": 0.7}))
 
+    def test_pplx_normalises_its_candidate_probabilities_and_keeps_the_label_order(self):
+        seen = {}
+
+        class DecisionModel:
+            def __init__(self, path, device): pass
+            def predict(self, rows):
+                seen["row"] = rows[0]
+                return [[0.2, 0.2, 0.6]]  # unnormalised, in criteria order: hold, diverge, abstain
+
+        fake_sdk({"huggingface_hub": {"snapshot_download": lambda repo, revision: "/tmp/pplx"},
+                  "autojev": {}, "autojev.model": {"DecisionModel": DecisionModel}})
+        infer, _ = validity.load_judge(argparse.Namespace(judge="pplx", device="cuda"))
+        choice, confidence, probs, _ = infer(self.REQUEST)
+        self.assertEqual(choice, "abstain")
+        self.assertAlmostEqual(sum(probs.values()), 1.0)
+        self.assertAlmostEqual(confidence, (0.6 - 1 / 3) / (1 - 1 / 3))
+        self.assertEqual(seen["row"]["question"], self.REQUEST["questions"]["verdict"])
+        self.assertIn("candidate_response", seen["row"]["state"])
+
     def test_kev_fails_a_unit_it_would_truncate(self):
         with self.assertRaises(ValueError):
             self.kev(truncated=True)(self.REQUEST)
@@ -136,7 +155,7 @@ class LongInputScopeTest(unittest.TestCase):
             p.write_text("\n".join(json.dumps(r) for r in (
                 {"unit_id": "u1", "variant": "no_context", "choice": "hold", "input_tokens": 100},
                 {"unit_id": "u2", "variant": "no_context", "choice": "hold", "input_tokens": 5000})), encoding="utf-8")
-            preds, tokens = sv.load_preds(p)
+            preds, tokens, _ = sv.load_preds(p)
         self.assertEqual(tokens["laya/no_context"], {"u1": 100, "u2": 5000})
         self.assertEqual(preds["laya/no_context"], {"u1": "hold", "u2": "hold"})
 

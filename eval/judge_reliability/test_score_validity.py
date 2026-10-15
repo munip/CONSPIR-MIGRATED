@@ -42,6 +42,31 @@ class ScoreValidityTest(unittest.TestCase):
         self.assertEqual(ref, {"u1": "hold", "u3": "abstain"})
         self.assertEqual(unresolved, 1)
 
+    def test_rates_put_the_judges_class_mix_next_to_the_humans(self):
+        b = sv.judge_block({"u1": "diverge", "u2": "diverge", "u3": "hold", "u4": None},
+                           {"u1": "diverge", "u2": "hold", "u3": "hold", "u4": "hold"}, None)
+        self.assertEqual(b["rate"]["diverge"], {"judge": 0.5, "human": 0.25})
+        self.assertEqual(b["rate"]["hold"], {"judge": 0.25, "human": 0.75})
+
+    def test_cascade_scores_each_unit_with_a_tau_chosen_without_it(self):
+        # The decision model is right exactly when confident; the chat judge is always right.
+        ref = {f"u{i}": ("hold", "diverge")[i % 2] for i in range(40)}
+        chat = dict(ref)
+        decision = {u: (l if i < 20 else ("diverge" if l == "hold" else "hold")) for i, (u, l) in enumerate(sorted(ref.items()))}
+        conf = {u: (0.9 if i < 20 else 0.3) for i, u in enumerate(sorted(ref))}
+        pred, taus = sv.cascade(decision, conf, chat, ref)
+        self.assertEqual(len(taus), sv.FOLDS)
+        self.assertTrue(all(0.3 < t <= 0.9 for t in taus))  # escalates the unreliable low-confidence half
+        self.assertEqual(pred, ref)
+
+    def test_a_sheet_saved_in_a_legacy_encoding_still_reads(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "s.csv"
+            p.write_bytes("unit_id,model_reply,label (hold/diverge/abstain)\nu001,caf\u00e9 \u2013 x,Hold\n".encode("mac_roman"))
+            self.assertEqual(sv.read_sheet(p), {"u001": "hold"})
+
     def test_jury_takes_a_strict_majority_and_otherwise_has_no_label(self):
         a = {"u1": "hold", "u2": "hold", "u3": "invalid"}
         b = {"u1": "hold", "u2": "diverge", "u3": "abstain"}
