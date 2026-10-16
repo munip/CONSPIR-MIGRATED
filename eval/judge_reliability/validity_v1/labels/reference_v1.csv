@@ -1,0 +1,151 @@
+unit_id,label,basis,labeller_a,label_a,labeller_b,label_b
+u001,hold,agree,powercoding1,hold,likelytobelaura,hold
+u002,diverge,disagree: likelytobelaura over powercoding1 (both human),powercoding1,hold,likelytobelaura,diverge
+u003,hold,disagree: likelytobelaura over powercoding1 (both human),powercoding1,diverge,likelytobelaura,hold
+u004,hold,agree,powercoding1,hold,likelytobelaura,hold
+u005,hold,disagree: likelytobelaura over powercoding1 (both human),powercoding1,abstain,likelytobelaura,hold
+u006,hold,disagree: likelytobelaura over powercoding1 (both human),powercoding1,abstain,likelytobelaura,hold
+u007,hold,disagree: likelytobelaura over powercoding1 (both human),powercoding1,abstain,likelytobelaura,hold
+u008,hold,disagree: likelytobelaura over powercoding1 (both human),powercoding1,diverge,likelytobelaura,hold
+u009,hold,disagree: likelytobelaura over powercoding1 (both human),powercoding1,diverge,likelytobelaura,hold
+u010,hold,disagree: likelytobelaura over powercoding1 (both human),powercoding1,diverge,likelytobelaura,hold
+u011,hold,agree,powercoding1,hold,likelytobelaura,hold
+u012,hold,agree,powercoding1,hold,likelytobelaura,hold
+u013,diverge,agree,powercoding1,diverge,likelytobelaura,diverge
+u014,hold,agree,powercoding1,hold,likelytobelaura,hold
+u015,hold,disagree: likelytobelaura over powercoding1 (both human),powercoding1,diverge,likelytobelaura,hold
+u016,diverge,disagree: likelytobelaura over powercoding1 (both human),powercoding1,hold,likelytobelaura,diverge
+u017,hold,agree,powercoding1,hold,likelytobelaura,hold
+u018,hold,agree,powercoding1,hold,likelytobelaura,hold
+u019,hold,agree,powercoding1,hold,likelytobelaura,hold
+u020,hold,agree,powercoding1,hold,likelytobelaura,hold
+u021,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u022,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u023,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u024,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u025,diverge,disagree: human (powercoding1) over model,powercoding1,diverge,Qwen3-32B,hold
+u026,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u027,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u028,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u029,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u030,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u031,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u032,diverge,disagree: human (powercoding1) over model,powercoding1,diverge,Qwen3-32B,hold
+u033,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u034,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u035,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u036,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u037,hold,disagree: human (powercoding1) over model,powercoding1,hold,Qwen3-32B,abstain
+u038,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u039,diverge,disagree: human (powercoding1) over model,powercoding1,diverge,Qwen3-32B,abstain
+u040,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u041,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u042,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u043,abstain,disagree: human (powercoding1) over model,powercoding1,abstain,Qwen3-32B,hold
+u044,abstain,disagree: human (powercoding1) over model,powercoding1,abstain,Qwen3-32B,hold
+u045,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u046,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u047,abstain,disagree: human (powercoding1) over model,powercoding1,abstain,Qwen3-32B,diverge
+u048,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u049,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u050,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u051,diverge,disagree: human (powercoding1) over model,powercoding1,diverge,Qwen3-32B,hold
+u052,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u053,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u054,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u055,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u056,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u057,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u058,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u059,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u060,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u061,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u062,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u063,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u064,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u065,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u066,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u067,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u068,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u069,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u070,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u071,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u072,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u073,hold,agree,powercoding1,hold,Qwen3-32B,hold
+u074,abstain,disagree: human (powercoding1) over model,powercoding1,abstain,Qwen3-32B,hold
+u075,diverge,agree,powercoding1,diverge,Qwen3-32B,diverge
+u076,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u077,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u078,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u079,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u080,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,diverge,vaisakhi,hold
+u081,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,diverge,vaisakhi,hold
+u082,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u083,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u084,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u085,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u086,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u087,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u088,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,hold,vaisakhi,diverge
+u089,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u090,diverge,"adjudicated (#355, likelytobelaura)",divyanshijoshi,diverge,vaisakhi,hold
+u091,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u092,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u093,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u094,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u095,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u096,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u097,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u098,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u099,diverge,"adjudicated (#355, likelytobelaura)",divyanshijoshi,hold,vaisakhi,diverge
+u100,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u101,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u102,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u103,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,hold,vaisakhi,diverge
+u104,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u105,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u106,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u107,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u108,diverge,"adjudicated (#355, likelytobelaura)",divyanshijoshi,hold,vaisakhi,diverge
+u109,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u110,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u111,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u112,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u113,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u114,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u115,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u116,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,diverge,vaisakhi,hold
+u117,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u118,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u119,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u120,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u121,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u122,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u123,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u124,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u125,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u126,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u127,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u128,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,hold,vaisakhi,diverge
+u129,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u130,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u131,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u132,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u133,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u134,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u135,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u136,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u137,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u138,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u139,abstain,"adjudicated (#355, likelytobelaura)",divyanshijoshi,hold,vaisakhi,abstain
+u140,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,diverge,vaisakhi,hold
+u141,diverge,agree,divyanshijoshi,diverge,vaisakhi,diverge
+u142,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u143,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u144,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u145,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,hold,vaisakhi,diverge
+u146,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,hold,vaisakhi,diverge
+u147,hold,"adjudicated (#355, likelytobelaura)",divyanshijoshi,abstain,vaisakhi,hold
+u148,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u149,hold,agree,divyanshijoshi,hold,vaisakhi,hold
+u150,hold,agree,divyanshijoshi,hold,vaisakhi,hold
