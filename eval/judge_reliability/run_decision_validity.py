@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import platform
 import sys
 import time
 from pathlib import Path
@@ -177,6 +178,7 @@ def main() -> int:
     ap.add_argument("--dtype", choices=("bfloat16", "float16", "float32"), default="bfloat16", help="clef only")
     ap.add_argument("--max-length", type=int, default=16384, help="clef only")
     ap.add_argument("--limit", type=int, help="run only the first N calls (a smoke test; --run again resumes the rest)")
+    ap.add_argument("--warmup", type=int, default=0, help="untimed calls on the first N units before the timed run")
     mode = ap.add_mutually_exclusive_group(required=True)
     mode.add_argument("--inspect-only", action="store_true")
     mode.add_argument("--run", action="store_true")
@@ -195,22 +197,47 @@ def main() -> int:
         print(f"Wrote {out / 'plan.json'}. No model was downloaded or called.")
         return 0
 
+    import torch
+
+    cuda = torch.cuda.is_available()
+    if cuda:
+        torch.cuda.reset_peak_memory_stats()
+    session = {"session": time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()), "host": platform.node(),
+               "runtime": {**clef.runtime_metadata(torch, args.device, args.dtype if args.judge == "clef" else "model default"),
+                           "cuda": torch.version.cuda, "cudnn": torch.backends.cudnn.version() if cuda else None}}
+    started = time.perf_counter()
     infer, judge_manifest = load_judge(args)
+    session["load_seconds"] = time.perf_counter() - started
+    if cuda:
+        session["load_peak_gpu_memory_bytes"] = torch.cuda.max_memory_allocated()
     clef.write_json(out / "manifest.json", {
         "judge": args.judge, **judge_manifest,
         "units_file_sha256": clef.file_sha256(units_path), "runner_file_sha256": clef.file_sha256(Path(__file__)),
         "adapter_file_sha256": clef.file_sha256(HERE / "run_clef_preflight.py"), "suite_commit": clef.git_head(HERE.parents[1]),
     })
 
+    # Untimed warm-up on the first calls of the plan (the same calls for every judge), so one-off
+    # CUDA and kernel setup isn't counted against the first timed units. Outputs are discarded.
+    started = time.perf_counter()
+    for call in calls[: args.warmup]:
+        try:
+            infer(call["request"])
+        except Exception as exc:
+            print(f"warm-up {call['unit_id']} {call['variant']}: {type(exc).__name__}: {exc}")
+    session.update(warmup_calls=min(args.warmup, len(calls)), warmup_seconds=time.perf_counter() - started)
+
     results = out / "results.jsonl"
     done = set()
     if results.exists():
         done = {(r["unit_id"], r["variant"]) for r in map(json.loads, results.read_text(encoding="utf-8").splitlines())}
+    session["calls_run"] = 0
     with results.open("a", encoding="utf-8") as f:
         for i, call in enumerate(calls, 1):
             if (call["unit_id"], call["variant"]) in done:
                 continue
+            session["calls_run"] += 1
             row = {k: call[k] for k in ("unit_id", "turn", "variant")}
+            row["session"] = session["session"]
             started = time.perf_counter()
             try:
                 row["choice"], row["confidence"], row["probabilities"], row["input_tokens"] = infer(call["request"])
@@ -221,6 +248,12 @@ def main() -> int:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
             f.flush()
             print(f"[{i}/{len(calls)}] {row['unit_id']} {row['variant']}: {row.get('choice') or row['error']}")
+    if cuda:
+        session["peak_gpu_memory_bytes"] = torch.cuda.max_memory_allocated()
+        session["peak_gpu_memory_reserved_bytes"] = torch.cuda.max_memory_reserved()
+    # One line per process: a preempted and resumed run shows each session's load and warm-up.
+    with (out / "sessions.jsonl").open("a", encoding="utf-8") as f:
+        f.write(json.dumps(session) + "\n")
     return 0
 
 

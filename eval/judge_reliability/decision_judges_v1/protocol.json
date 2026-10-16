@@ -1,0 +1,49 @@
+{
+  "name": "Decision judges on the real-transcript validity set v1",
+  "discussion": "#203 (decision protocol), #208 (validity set), #323 (pplx adapter)",
+  "judges": ["clef", "kev", "laya", "pplx"],
+  "judge_order_note": "One fresh container (so one process) per judge, nothing else on its GPU. pplx sets process-wide torch options (8 CPU threads, cuDNN SDPA off), so judges must not share a process. On Modal the four run in parallel, each on its own container of the same spec.",
+  "units": {"path": "eval/judge_reliability/validity_v1/units.jsonl", "sha256": "aceff9f9b2d5ed9990d6e55b00a5e6d8e8dc24e25b4c9f0d4b5a4f91e6f4fa1d", "units": 150, "calls_per_judge": 244},
+  "hardware": {
+    "provider": "Modal (modal_app.py)",
+    "gpu": "H100! (1x NVIDIA H100 80GB HBM3; the ! stops Modal upgrading a call to an H200), driver 610.57.04",
+    "price_usd_per_hour": 5.35,
+    "price_note": "Modal list prices on 2026-10-15: H100 $0.001097/s ($3.95/h) + 8 cores x $0.0000131/s ($0.38/h) + 128 GiB x $0.00000222/s ($1.02/h). GPU alone is $3.95/h.",
+    "container": "8 CPUs, 128 GB RAM, image from env/requirements.txt installed with --no-deps, models on volume cb-judges-hf, results on volume cb-judges-results committed every 30 s",
+    "why": "Clef (55 GB) and pplx-decider (52 GB) are bf16 27B models whose loaders place the whole model on one device, so every judge needs one GPU with >= 80 GB."
+  },
+  "hardware_not_used": {
+    "note": "First planned on Vultr; Vultr refused the GH200 without a $50 cash deposit (credit doesn't count), so the run moved to Modal on 2026-10-15. vultr.py, deploy.sh, setup_host.sh, run_all.sh and pull_results.sh are kept for a self-hosted box.",
+    "provider": "Vultr",
+    "plan": "vbm-72c-480gb-gh200-gpu",
+    "region": "fra",
+    "gpu": "1x NVIDIA GH200 (96 GB HBM3), Grace Neoverse V2 72-core aarch64, 480 GB RAM",
+    "price_usd_per_hour": 1.99,
+    "billing": "hourly, preemptible only (Vultr lists no on-demand GH200); the runner resumes after a preemption",
+    "why": "Clef (55 GB) and pplx-decider (52 GB) are bf16 27B models whose loaders place the whole model on one device, so every judge needs one GPU with >= 80 GB. As of 2026-10-15 this is the only such Vultr plan in stock."
+  },
+  "software": {
+    "env": "decision_judges_v1/env (uv.lock sha256 b41591c0cc5bcc2da3a2705611a523edfd37992cb80b4674a5e9a475998fb923)",
+    "python": "3.12",
+    "torch": "2.14.0 (PyPI CUDA 13 build; NVIDIA driver >= 580)",
+    "transformers": "5.17.0",
+    "flash_linear_attention": "0.5.2",
+    "kev_override": "Kev declares torch<2.9; the env overrides it to 2.14.0. Kev passed the smoke test under the override, so env-kev (torch 2.8.0) was not used and all four judges ran in the same environment."
+  },
+  "runner": {
+    "script": "eval/judge_reliability/run_decision_validity.py",
+    "args": "--device cuda --warmup 3 --run",
+    "batch_size": 1,
+    "truncation": "none for any judge; an over-long unit is recorded as an error",
+    "clef": "dtype bfloat16, max_length 16384, revision 2f3de3dd85f379784083b0814d997ab627200f0c",
+    "kev": "jaredpalmer/kev-4b @ 6cfce5c2fa4b4bd64026336ab649c5ca78857d52, bfloat16, torch backend",
+    "laya": "convaiinnovations/laya @ 7b928d828b7b0e022f929d9bd2e44165aa270148, multilingual, max_len 8192",
+    "pplx": "perplexity-ai/pplx-decider-v1.1-27b @ 14c9d90137962d300f3de95633f7b6535e80c5ce, model default dtype, 8192-token limit",
+    "warmup": "the first 3 calls of the plan, untimed and discarded, in every process",
+    "models_predownloaded": "all four snapshots are fetched by setup_host.sh before any timed run, so download time is never counted"
+  },
+  "metrics": {
+    "validity": "score_validity.py, pre-registered (#208, #323): human kappa, per-class recall with Wilson intervals, kappa vs reference, invalid rate, reweighted precision, judge-vs-human rates, by turn and input size",
+    "speed": "speed_report.py: model load time, per-call latency (mean, p50, p90, p99, max) over timed successful calls, calls/s, input tokens/s where the judge reports tokens, peak GPU memory, mean GPU power and energy from nvidia-smi sampled every second, GPU time and cost at the hourly price"
+  }
+}

@@ -1,0 +1,29 @@
+# One environment for all four decision judges, so they run on the same Python, torch, CUDA
+# build, transformers and kernels. Versions follow pplx-decider's own pins (its source/pyproject.toml
+# at the pinned revision), the strictest of the four.
+[project]
+name = "conspiracybench-decision-judges-v1"
+version = "0.1.0"
+requires-python = "==3.12.*"
+dependencies = [
+    "torch==2.14.0",  # PyPI linux wheels are CUDA 13 builds (aarch64 and x86_64): driver >= 580
+    "torchvision==0.29.0",
+    "transformers==5.17.0",
+    "accelerate==1.15.0",
+    "safetensors==0.8.0",
+    "flash-linear-attention==0.5.2",  # Qwen3.5 linear-attention kernels, used by both Clef and pplx
+    "kernels==0.16.1",
+    "numpy==2.5.3",
+    "pillow==12.3.0",
+    "huggingface-hub",
+    "kev @ git+https://github.com/jaredpalmer/kev.git@5e42a7a03f28134853dd3ff77461457e921e5ec1",
+    "laya @ git+https://github.com/NandhaKishorM/laya.git@1adc59f7e371deb601fcfa18a14e25db238addcc",
+]
+
+[tool.uv]
+package = false
+# Kev declares torch<2.9. Overriding it keeps every judge on one torch build; the smoke test
+# checks that Kev still runs. If it doesn't, Kev falls back to ../env-kev (torch 2.8) and the
+# report says so.
+override-dependencies = ["torch==2.14.0"]
+environments = ["sys_platform == 'linux'"]

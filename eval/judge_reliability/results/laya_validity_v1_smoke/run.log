@@ -1,0 +1,7 @@
+
+=== 2026-10-16T03:47:59Z python /repo/suite/judge_reliability/run_decision_validity.py --judge laya --units /repo/suite/judge_reliability/validity_v1/units.jsonl --output-dir /results/laya_validity_v1_smoke --device cuda --warmup 3 --run --limit 3
+150 units -> 3 laya calls (1 later-turn units run twice)
+Fetching 5 files:   0%|          | 0/5 [00:00<?, ?it/s]Fetching 5 files: 100%|██████████| 5/5 [00:00<00:00, 450.15it/s]
+[1/3] u001 no_context: hold
+[2/3] u002 no_context: hold
+[3/3] u002 preceding_exchange: hold

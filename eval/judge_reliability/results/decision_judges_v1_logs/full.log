@@ -1,0 +1,26 @@
+✓ Initialized. View run at 
+https://modal.com/apps/likelytobelaura/main/ap-bEB5xE51XeCuVngoPY7Xr5
+✓ Created objects.
+├── ✓ Uploaded 
+│   /Users/laurabocek/ConspiracyBench/.claude/worktrees/decision-judges-gpu-run/
+│   eval/judge_reliability/decision_judges_v1/modal_app.py
+├── ✓ Uploaded 
+│   /Users/laurabocek/ConspiracyBench/.claude/worktrees/decision-judges-gpu-run/
+│   eval
+├── ✓ Uploaded 
+│   /Users/laurabocek/ConspiracyBench/.claude/worktrees/decision-judges-gpu-run/
+│   eval/judge_reliability/decision_judges_v1/env/requirements.txt
+├── ✓ Uploaded 
+│   /Users/laurabocek/ConspiracyBench/.claude/worktrees/decision-judges-gpu-run/
+│   eval/judge_reliability/decision_judges_v1/env-kev/requirements.txt
+├── ✓ Created Function fetch_models.
+├── ✓ Created Function run_judge.
+└── ✓ Created Function run_kev_torch28.
+{"judge": "clef", "stage": "full", "env": "env", "suite_commit": "d2f363132e42cac7dc1a2c54783b488237bb771e", "gpu_request": "H100!", "cpu": 8, "memory_mb": 131072, "modal_task_id": "ta-01M51DAAZSDEHXKHXTXQ3F8DNR", "started": "2026-10-16T03:50:32Z", "ended": "2026-10-16T03:53:50Z", "exit_status": 0, "rows": 244, "errors": 0}
+{"judge": "kev", "stage": "full", "env": "env", "suite_commit": "d2f363132e42cac7dc1a2c54783b488237bb771e", "gpu_request": "H100!", "cpu": 8, "memory_mb": 131072, "modal_task_id": "ta-01M51DAB0DQWB5SM9W1QK9WGJR", "started": "2026-10-16T03:50:34Z", "ended": "2026-10-16T03:52:40Z", "exit_status": 0, "rows": 244, "errors": 0}
+{"judge": "laya", "stage": "full", "env": "env", "suite_commit": "d2f363132e42cac7dc1a2c54783b488237bb771e", "gpu_request": "H100!", "cpu": 8, "memory_mb": 131072, "modal_task_id": "ta-01M51DAAZSH7HDWS6VQEFBJ6XR", "started": "2026-10-16T03:50:34Z", "ended": "2026-10-16T03:51:46Z", "exit_status": 0, "rows": 244, "errors": 0}
+{"judge": "pplx", "stage": "full", "env": "env", "suite_commit": "d2f363132e42cac7dc1a2c54783b488237bb771e", "gpu_request": "H100!", "cpu": 8, "memory_mb": 131072, "modal_task_id": "ta-01M51DAB0D647JYPA0XD20QWKR", "started": "2026-10-16T03:50:37Z", "ended": "2026-10-16T03:54:08Z", "exit_status": 0, "rows": 244, "errors": 0}
+Stopping app - local entrypoint completed.
+Runner terminated.
+✓ App completed. View run at 
+https://modal.com/apps/likelytobelaura/main/ap-bEB5xE51XeCuVngoPY7Xr5

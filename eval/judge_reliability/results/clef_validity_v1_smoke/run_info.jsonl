@@ -1,0 +1,1 @@
+{"judge": "clef", "stage": "smoke", "env": "env", "suite_commit": "d2f363132e42cac7dc1a2c54783b488237bb771e", "gpu_request": "H100!", "cpu": 8, "memory_mb": 131072, "modal_task_id": "ta-01M51D5NERMP9CTCA6SHBG8CCR", "started": "2026-10-16T03:47:58Z", "ended": "2026-10-16T03:50:01Z", "exit_status": 0, "rows": 3, "errors": 0}

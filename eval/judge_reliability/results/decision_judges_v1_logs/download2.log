@@ -1,0 +1,35 @@
+✓ Initialized. View run at 
+https://modal.com/apps/likelytobelaura/main/ap-Etil5Jt4gmLQcnWTMYUvqz
+✓ Created objects.
+├── ✓ Uploaded 
+│   /Users/laurabocek/ConspiracyBench/.claude/worktrees/decision-judges-gpu-run/
+│   eval/judge_reliability/decision_judges_v1/modal_app.py
+├── ✓ Uploaded 
+│   /Users/laurabocek/ConspiracyBench/.claude/worktrees/decision-judges-gpu-run/
+│   eval
+├── ✓ Uploaded 
+│   /Users/laurabocek/ConspiracyBench/.claude/worktrees/decision-judges-gpu-run/
+│   eval/judge_reliability/decision_judges_v1/env-kev/requirements.txt
+├── ✓ Uploaded 
+│   /Users/laurabocek/ConspiracyBench/.claude/worktrees/decision-judges-gpu-run/
+│   eval/judge_reliability/decision_judges_v1/env/requirements.txt
+├── ✓ Created Function run_kev_torch28.
+├── ✓ Created Function fetch_models.
+└── ✓ Created Function run_judge.
+
+[1AFetching 25 files:   0%|          | 0/25 [00:00<?, ?it/s]
+[1AFetching 25 files: 100%|██████████| 25/25 [00:00<00:00, 997.43it/s]
+
+[1AFetching 16 files:   0%|          | 0/16 [00:00<?, ?it/s]Fetching 16 files: 100%|██████████| 16/16 [00:00<00:00, 1240.80it/s]
+
+Cloudflare/clef@2f3de3dd -> /__modal/volumes/vo-Upqel23428HEmLZnDyZufA/hub/models--Cloudflare--clef/snapshots/2f3de3dd85f379784083b0814d997ab627200f0c
+jaredpalmer/kev-4b@6cfce5c2 -> /__modal/volumes/vo-Upqel23428HEmLZnDyZufA/hub/models--jaredpalmer--kev-4b/snapshots/6cfce5c2fa4b4bd64026336ab649c5ca78857d52
+convaiinnovations/laya@7b928d82 -> /__modal/volumes/vo-Upqel23428HEmLZnDyZufA/hub/models--convaiinnovations--laya/snapshots/7b928d828b7b0e022f929d9bd2e44165aa270148
+perplexity-ai/pplx-decider-v1.1-27b@14c9d901 -> /__modal/volumes/vo-Upqel23428HEmLZnDyZufA/hub/models--perplexity-ai--pplx-decider-v1.1-27b/snapshots/14c9d90137962d300f3de95633f7b6535e80c5ce
+[1AFetching 39 files:   0%|          | 0/39 [00:00<?, ?it/s]
+[1AFetching 39 files: 100%|██████████| 39/39 [00:00<00:00, 1530.64it/s]
+
+[1AFetching 48 files:   0%|          | 0/48 [00:00<?, ?it/s]Fetching 48 files: 100%|██████████| 48/48 [00:00<00:00, 1612.20it/s]
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/likelytobelaura/main/ap-Etil5Jt4gmLQcnWTMYUvqz

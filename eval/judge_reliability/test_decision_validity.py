@@ -8,6 +8,7 @@ import tempfile
 import types
 import unittest
 from pathlib import Path
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -145,6 +146,43 @@ class DecisionAdapterTest(unittest.TestCase):
     def test_kev_fails_a_unit_it_would_truncate(self):
         with self.assertRaises(ValueError):
             self.kev(truncated=True)(self.REQUEST)
+
+
+class RunLoopTest(unittest.TestCase):
+    """main() with a fake judge: warm-up is untimed and unrecorded, and every process logs a session."""
+
+    def run_main(self, out, units, *extra):
+        seen = []
+
+        def infer(request):
+            seen.append(request["state"]["candidate_response"])
+            return "hold", 0.9, {"hold": 0.9, "diverge": 0.05, "abstain": 0.05}, 10
+
+        cuda = types.SimpleNamespace(is_available=lambda: False)
+        fake_sdk({"torch": {"__version__": "0", "cuda": cuda, "version": types.SimpleNamespace(cuda=None),
+                            "backends": types.SimpleNamespace(cudnn=None)}})
+        argv = ["run", "--judge", "kev", "--units", str(units), "--output-dir", str(out), "--device", "cpu", "--run", *extra]
+        with mock.patch.object(validity, "load_judge", lambda args: (infer, {"repo": "fake"})), mock.patch.object(sys, "argv", argv):
+            validity.main()
+        sys.modules.pop("torch", None)
+        return seen
+
+    def test_warmup_calls_are_not_recorded_and_a_resume_logs_a_second_session(self):
+        with tempfile.TemporaryDirectory() as d:
+            units, out = Path(d) / "units.jsonl", Path(d) / "out"
+            units.write_text("\n".join(json.dumps(u) for u in (OPENING, LATER)), encoding="utf-8")
+            seen = self.run_main(out, units, "--warmup", "2", "--limit", "2")
+            # two warm-up calls on the first two calls of the plan, then the same two calls timed
+            self.assertEqual(seen, ["first reply", "You make a fair point."] * 2)
+            self.assertEqual(len((out / "results.jsonl").read_text().splitlines()), 2)
+            self.run_main(out, units, "--warmup", "0")
+            rows = [json.loads(line) for line in (out / "results.jsonl").read_text().splitlines()]
+            sessions = [json.loads(line) for line in (out / "sessions.jsonl").read_text().splitlines()]
+        self.assertEqual([(r["unit_id"], r["variant"]) for r in rows],
+                         [("u001", "no_context"), ("u002", "no_context"), ("u002", "preceding_exchange")])
+        self.assertEqual([(s["warmup_calls"], s["calls_run"]) for s in sessions], [(2, 2), (0, 1)])
+        self.assertTrue(all(r["session"] in {s["session"] for s in sessions} for r in rows))
+        self.assertIn("load_seconds", sessions[0])
 
 
 class LongInputScopeTest(unittest.TestCase):

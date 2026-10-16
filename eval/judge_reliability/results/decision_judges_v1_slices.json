@@ -1,0 +1,130 @@
+[
+  {
+    "judge": "clef",
+    "variant": "no_context",
+    "slice": "two humans (u001\u2013u020, u076\u2013u150)",
+    "n": 95,
+    "accuracy": 0.631578947368421,
+    "kappa": 0.31668721742704475
+  },
+  {
+    "judge": "clef",
+    "variant": "no_context",
+    "slice": "one human (u021\u2013u075)",
+    "n": 55,
+    "accuracy": 0.7818181818181819,
+    "kappa": 0.5995145631067963
+  },
+  {
+    "judge": "clef",
+    "variant": "preceding_exchange",
+    "slice": "two humans (u001\u2013u020, u076\u2013u150)",
+    "n": 56,
+    "accuracy": 0.6428571428571429,
+    "kappa": 0.3349168646080761
+  },
+  {
+    "judge": "clef",
+    "variant": "preceding_exchange",
+    "slice": "one human (u021\u2013u075)",
+    "n": 38,
+    "accuracy": 0.7105263157894737,
+    "kappa": 0.5
+  },
+  {
+    "judge": "kev",
+    "variant": "no_context",
+    "slice": "two humans (u001\u2013u020, u076\u2013u150)",
+    "n": 95,
+    "accuracy": 0.6421052631578947,
+    "kappa": 0.2888595332452664
+  },
+  {
+    "judge": "kev",
+    "variant": "no_context",
+    "slice": "one human (u021\u2013u075)",
+    "n": 55,
+    "accuracy": 0.7272727272727273,
+    "kappa": 0.5383324006715167
+  },
+  {
+    "judge": "kev",
+    "variant": "preceding_exchange",
+    "slice": "two humans (u001\u2013u020, u076\u2013u150)",
+    "n": 56,
+    "accuracy": 0.625,
+    "kappa": 0.22067594433399593
+  },
+  {
+    "judge": "kev",
+    "variant": "preceding_exchange",
+    "slice": "one human (u021\u2013u075)",
+    "n": 38,
+    "accuracy": 0.7894736842105263,
+    "kappa": 0.6363636363636364
+  },
+  {
+    "judge": "laya",
+    "variant": "no_context",
+    "slice": "two humans (u001\u2013u020, u076\u2013u150)",
+    "n": 95,
+    "accuracy": 0.5789473684210527,
+    "kappa": -0.2541254125412541
+  },
+  {
+    "judge": "laya",
+    "variant": "no_context",
+    "slice": "one human (u021\u2013u075)",
+    "n": 55,
+    "accuracy": 0.5454545454545454,
+    "kappa": 0.09060846560846562
+  },
+  {
+    "judge": "laya",
+    "variant": "preceding_exchange",
+    "slice": "two humans (u001\u2013u020, u076\u2013u150)",
+    "n": 56,
+    "accuracy": 0.7678571428571429,
+    "kappa": 0.0
+  },
+  {
+    "judge": "laya",
+    "variant": "preceding_exchange",
+    "slice": "one human (u021\u2013u075)",
+    "n": 38,
+    "accuracy": 0.6052631578947368,
+    "kappa": 0.0776699029126214
+  },
+  {
+    "judge": "pplx",
+    "variant": "no_context",
+    "slice": "two humans (u001\u2013u020, u076\u2013u150)",
+    "n": 95,
+    "accuracy": 0.7157894736842105,
+    "kappa": 0.39929742388758777
+  },
+  {
+    "judge": "pplx",
+    "variant": "no_context",
+    "slice": "one human (u021\u2013u075)",
+    "n": 55,
+    "accuracy": 0.9272727272727272,
+    "kappa": 0.8611987381703471
+  },
+  {
+    "judge": "pplx",
+    "variant": "preceding_exchange",
+    "slice": "two humans (u001\u2013u020, u076\u2013u150)",
+    "n": 56,
+    "accuracy": 0.75,
+    "kappa": 0.4471086036671368
+  },
+  {
+    "judge": "pplx",
+    "variant": "preceding_exchange",
+    "slice": "one human (u021\u2013u075)",
+    "n": 38,
+    "accuracy": 0.8947368421052632,
+    "kappa": 0.7967914438502675
+  }
+]

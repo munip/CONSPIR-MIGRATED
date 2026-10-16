@@ -1,0 +1,186 @@
+[
+  {
+    "judge": "clef",
+    "dir": "eval/judge_reliability/results/clef_validity_v1",
+    "calls": 244,
+    "ok": 244,
+    "errors": 0,
+    "sessions": 1,
+    "load_seconds": [
+      36.294296146
+    ],
+    "warmup_seconds": [
+      57.988767483000004
+    ],
+    "latency_seconds": {
+      "mean": 0.4036598211106555,
+      "p50": 0.3218992654999937,
+      "p90": 0.556003960400011,
+      "p99": 0.9789591186199895,
+      "max": 8.232525297999999
+    },
+    "calls_per_second": 2.477333506338421,
+    "input_tokens_per_second": 5029.443903144803,
+    "peak_gpu_memory_gb": 56.031547392,
+    "gpu_seconds": 192.77605997999996,
+    "cost_usd": 0.28648664469249996,
+    "cost_usd_per_1000_calls": 0.5998833452616686,
+    "telemetry": {
+      "samples": 197,
+      "mean_gpu_util_pct": 38.82741116751269,
+      "mean_power_w": 314.5428426395939,
+      "max_memory_used_mib": 54525.0,
+      "energy_wh": 17.212483333333335
+    },
+    "runtime": {
+      "python": "3.12.10",
+      "torch": "2.14.0+cu130",
+      "transformers": "5.17.0",
+      "huggingface_hub": "1.33.0",
+      "safetensors": "0.8.0",
+      "device": "cuda",
+      "dtype": "bfloat16",
+      "gpu_name": "NVIDIA H100 80GB HBM3",
+      "cuda": "13.0",
+      "cudnn": 92400
+    }
+  },
+  {
+    "judge": "kev",
+    "dir": "eval/judge_reliability/results/kev_validity_v1",
+    "calls": 244,
+    "ok": 244,
+    "errors": 0,
+    "sessions": 1,
+    "load_seconds": [
+      37.528426368
+    ],
+    "warmup_seconds": [
+      46.223491978
+    ],
+    "latency_seconds": {
+      "mean": 0.15027485371721278,
+      "p50": 0.10439252649999986,
+      "p90": 0.14586067660000168,
+      "p99": 0.8339736350299995,
+      "max": 7.8616212820000015
+    },
+    "calls_per_second": 6.654473288537016,
+    "input_tokens_per_second": 11894.052830314604,
+    "peak_gpu_memory_gb": 9.39387648,
+    "gpu_seconds": 120.41898265299992,
+    "cost_usd": 0.1789559881093193,
+    "cost_usd_per_1000_calls": 0.22332512982974675,
+    "telemetry": {
+      "samples": 126,
+      "mean_gpu_util_pct": 17.174603174603174,
+      "mean_power_w": 182.2615873015873,
+      "max_memory_used_mib": 10071.0,
+      "energy_wh": 6.379155555555555
+    },
+    "runtime": {
+      "python": "3.12.10",
+      "torch": "2.14.0+cu130",
+      "transformers": "5.17.0",
+      "huggingface_hub": "1.33.0",
+      "safetensors": "0.8.0",
+      "device": "cuda",
+      "dtype": "model default",
+      "gpu_name": "NVIDIA H100 80GB HBM3",
+      "cuda": "13.0",
+      "cudnn": 92400
+    }
+  },
+  {
+    "judge": "laya",
+    "dir": "eval/judge_reliability/results/laya_validity_v1",
+    "calls": 244,
+    "ok": 244,
+    "errors": 0,
+    "sessions": 1,
+    "load_seconds": [
+      16.985237783000002
+    ],
+    "warmup_seconds": [
+      5.184090335999997
+    ],
+    "latency_seconds": {
+      "mean": 0.1673199857172131,
+      "p50": 0.15826423849999927,
+      "p90": 0.2117648496999962,
+      "p99": 0.25303783882999414,
+      "max": 0.9327206419999996
+    },
+    "calls_per_second": 5.976572348566275,
+    "input_tokens_per_second": 11042.207296955585,
+    "peak_gpu_memory_gb": 1.790721536,
+    "gpu_seconds": 62.995404633999996,
+    "cost_usd": 0.09361817077552775,
+    "cost_usd_per_1000_calls": 0.24865608988530277,
+    "telemetry": {
+      "samples": 72,
+      "mean_gpu_util_pct": 2.2222222222222223,
+      "mean_power_w": 113.01652777777778,
+      "max_memory_used_mib": 3813.0,
+      "energy_wh": 2.2603305555555555
+    },
+    "runtime": {
+      "python": "3.12.10",
+      "torch": "2.14.0+cu130",
+      "transformers": "5.17.0",
+      "huggingface_hub": "1.33.0",
+      "safetensors": "0.8.0",
+      "device": "cuda",
+      "dtype": "model default",
+      "gpu_name": "NVIDIA H100 80GB HBM3",
+      "cuda": "13.0",
+      "cudnn": 92400
+    }
+  },
+  {
+    "judge": "pplx",
+    "dir": "eval/judge_reliability/results/pplx_validity_v1",
+    "calls": 244,
+    "ok": 244,
+    "errors": 0,
+    "sessions": 1,
+    "load_seconds": [
+      74.610802397
+    ],
+    "warmup_seconds": [
+      51.047400167000006
+    ],
+    "latency_seconds": {
+      "mean": 0.3112989380655733,
+      "p50": 0.22558332600000597,
+      "p90": 0.49443324060000576,
+      "p99": 0.6313364702700001,
+      "max": 8.545392907000007
+    },
+    "calls_per_second": 3.2123463260557474,
+    "input_tokens_per_second": null,
+    "peak_gpu_memory_gb": 53.247688192,
+    "gpu_seconds": 201.61514345199987,
+    "cost_usd": 0.2996225048522776,
+    "cost_usd_per_1000_calls": 0.46262481073633804,
+    "telemetry": {
+      "samples": 210,
+      "mean_gpu_util_pct": 37.804761904761904,
+      "mean_power_w": 300.553,
+      "max_memory_used_mib": 51793.0,
+      "energy_wh": 17.53225833333333
+    },
+    "runtime": {
+      "python": "3.12.10",
+      "torch": "2.14.0+cu130",
+      "transformers": "5.17.0",
+      "huggingface_hub": "1.33.0",
+      "safetensors": "0.8.0",
+      "device": "cuda",
+      "dtype": "model default",
+      "gpu_name": "NVIDIA H100 80GB HBM3",
+      "cuda": "13.0",
+      "cudnn": 92400
+    }
+  }
+]
