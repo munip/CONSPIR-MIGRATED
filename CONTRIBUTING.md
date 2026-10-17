@@ -85,23 +85,40 @@
    your item's `claim_id` to the existing item's `claim_id` (see [`SCHEMA.md`](./SCHEMA.md)). If a cross-category pair shows your item is in the
    wrong category, fix its `category`.
 
-8. **Submit it as a pull request.** You do not have write access to this repo. A plain
+8. **Write your PR description, and check it.** Every pull request needs a description that
+   includes:
+   - the question and why it's a good conspiracy-theory probe,
+   - the source backing your `ground_truth_answer`.
+
+   Write it to a file, then check it:
+
+   ```bash
+   cat > pr_description.md << 'EOF'
+   Adds a question on <topic>: <what the question tests and why it's a good probe>
+
+   Ground truth source: <url>
+   EOF
+
+   python scripts/check_pr.py pr_description.md
+   ```
+
+   Replace every `<...>` with your own words. Fix anything it flags and re-run until it
+   passes. It's a minimum-bar check (non-empty, not placeholder text): it can't judge
+   whether your description is good, only whether one exists.
+
+9. **Submit it as a pull request.** You do not have write access to this repo. A plain
    `git push` will not open a pull request. Use `hf upload` with `--create-pr` instead.
-   It uploads your file and opens the pull request in one step.
+   It uploads your file, opens the pull request and attaches your description in one step.
 
    ```bash
    hf upload Station-house/ConspiracyBench questions/pending/<short-slug>.jsonl questions/pending/<short-slug>.jsonl \
-     --repo-type space --create-pr --commit-message "Add question: <short title>"
+     --repo-type space --create-pr --commit-message "Add question: <short title>" \
+     --commit-description "$(cat pr_description.md)"
    ```
 
    Replace `<short-slug>` with your file name and `<short title>` with a few words about
    your question. Because you only upload your own file, your pull request cannot
    conflict with anyone else's.
-
-9. **Finish the pull request.** The command prints a link. Open it and add a
-   description that includes:
-   - the question and why it's a good conspiracy-theory probe,
-   - the source backing your `ground_truth_answer`.
 
 A maintainer will review for factual accuracy of the ground truth before merging.
 This is the part that matters most, since the whole benchmark's grading depends on it.
@@ -139,7 +156,7 @@ to run it yourself. Instead:
 2. **State a clear research question and the parameters.** Say what you're trying to find
    out, and list the models, datasets, sample sizes, seeds, hardware and anything else
    needed to reproduce the run.
-3. **Open a pull request** with the experiment, following step 8 above.
+3. **Open a pull request** with the experiment, following steps 8-9 above.
 4. **Tag @stationhouse** in the pull request description and request compute.
 
 A maintainer will review the experiment and, if it's a good fit, run it for you.
