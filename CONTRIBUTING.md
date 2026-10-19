@@ -147,19 +147,41 @@ it will ask you to run `login` yourself and only claims a task once you agree. C
 before claiming so you can coordinate with anyone already on the task. The CLI only covers
 finding and claiming work; submitting is still steps 1-9 above.
 
-## Contributing an experiment that needs a model or compute
+## Contributing an experiment
 
-If your experiment requires access to a model or compute you don't have, you don't need
-to run it yourself. Instead:
+Experiments go in [`experiment_requests/`](./experiment_requests/), whether you will run them
+yourself or need someone else's model or compute. If you don't have the access an experiment
+needs, you don't need to run it yourself: write it up, and a maintainer can run it for you.
 
-1. **Write the experiment.** Add the code, config or script needed to run it.
-2. **State a clear research question and the parameters.** Say what you're trying to find
-   out, and list the models, datasets, sample sizes, seeds, hardware and anything else
-   needed to reproduce the run.
-3. **Open a pull request** with the experiment, following steps 8-9 above.
-4. **Tag @stationhouse** in the pull request description and request compute.
+1. **Create a folder for it.** `experiment_requests/<task>/<short-slug>/`, named after the
+   experiment, for example `experiment_requests/judge_injection/injection-resistance/`.
+   Everything for the experiment goes inside it. Experiments can be grouped in sub-categories
+   by the task they belong to: use the task's folder if one exists here or in
+   [`completed_experiments/`](./completed_experiments/) (for example `judge_reliability/`,
+   `judge_injection/`, `stage2_pilot/`), create one for a new task, or leave out `<task>/`
+   if the experiment doesn't belong to a task.
+2. **Write `EXPERIMENT.md`.** State a clear research question and the parameters: what
+   you're trying to find out, and the models, datasets, sample sizes, seeds, hardware and
+   anything else needed to reproduce the run. Say what result would answer the question.
+3. **Add the code.** The code, config or scripts needed to run it, plus the exact commands.
+   Reference large inputs that are already in the repo by path rather than copying them.
+4. **Open a pull request** with the folder. Write and check your description as in step 8
+   above, then upload the whole folder:
 
-A maintainer will review the experiment and, if it's a good fit, run it for you.
+   ```bash
+   hf upload Station-house/ConspiracyBench experiment_requests/<task>/<short-slug> experiment_requests/<task>/<short-slug> \
+     --repo-type space --create-pr --commit-message "Experiment request: <short title>" \
+     --commit-description "$(cat pr_description.md)"
+   ```
+
+5. **If you need compute, tag @stationhouse** in the pull request description and say what
+   you need.
+
+A maintainer will review the experiment and, if it's a good fit, run it or give you what you
+need to run it. Once it has run and the results are merged, the folder moves to the same
+task folder in [`completed_experiments/`](./completed_experiments/), with a `RESULTS.md` next
+to the original `EXPERIMENT.md`. Results go in a pull request against the experiment's folder
+in `experiment_requests/`; a maintainer does the move.
 
 ## Adding to an item that is already in the corpus
 

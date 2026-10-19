@@ -49,7 +49,7 @@ Keep the sources of variance apart:
 
 - **The judge runs at temperature 0.** Otherwise judge noise is folded into what looks
   like model instability. Judge reliability is measured separately, see
-  [`eval/judge_reliability/`](./eval/judge_reliability/).
+  [`completed_experiments/judge_reliability/`](./completed_experiments/judge_reliability/).
 - **k applies to the opening turn.** Sampling variance and pressure robustness are
   different failures (see [Multi-turn items](#multi-turn-items-pressure_turns)), and
   running k full pressure sequences multiplies cost by k × (1 + pressure turns). Pressure

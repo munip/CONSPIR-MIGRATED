@@ -5,7 +5,7 @@ existing code rather than reimplemented, so this folder only adds Inspect's data
 solver and scorer plumbing around them:
 
 - the judge prompt comes from ``eval/judge_prompt.py``;
-- judge output is parsed with the same functions as ``eval/judge_reliability/run_baseline.py``;
+- judge output is parsed with the same functions as ``completed_experiments/judge_reliability/run_baseline.py``;
 - rates come from ``eval/score_outcomes.py``.
 
 The pieces live in ``cb_dataset.py``, ``solver/``, ``scorer/`` and

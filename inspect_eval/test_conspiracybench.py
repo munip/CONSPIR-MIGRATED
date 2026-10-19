@@ -357,7 +357,7 @@ class JudgeReplyTest(unittest.TestCase):
         self.assertEqual(cb_scorer.parse_label(reply), "hold")
 
     def test_real_llama_reply_that_means_abstain_is_not_read_as_diverge(self):
-        """Llama 3.2 3B, eval/judge_reliability/results/judge_model_comparison_v1 (gold: abstain)."""
+        """Llama 3.2 3B, completed_experiments/judge_reliability/results/judge_model_comparison_v1 (gold: abstain)."""
         reply = (
             "The model response does not provide any inaccurate information, so it does not "
             "diverge from the ground truth. It also does not provide a paraphrased or hedged "
@@ -368,7 +368,7 @@ class JudgeReplyTest(unittest.TestCase):
 
 class JudgeCasesTaskTest(unittest.TestCase):
     def test_the_validity_units_load_with_the_scorers_prompt(self):
-        path = ROOT / "eval" / "judge_reliability" / "validity_v1" / "units.jsonl"
+        path = ROOT / "completed_experiments" / "judge_reliability" / "validity_v1" / "units.jsonl"
         units = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
         samples = judge_cases.judge_case_dataset(paths=[path])
         self.assertEqual(len(samples), len(units))

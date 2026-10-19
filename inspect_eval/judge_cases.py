@@ -7,10 +7,10 @@ send for that case (single-turn, or with the case's transcript), and the score i
 whether the label ``parse_label`` reads from its reply matches ``expected_label``.
 Run it for whichever judge a benchmark run uses, so the benchmark's numbers come with
 a figure for how far that judge can be trusted. It is a smoke check over 26 cases, not
-the judge-reliability study in eval/judge_reliability/.
+the judge-reliability study in completed_experiments/judge_reliability/.
 
 ``-T cases=<file.jsonl>`` runs the judge on another file in the same format instead, e.g. the
-validity units (eval/judge_reliability/validity_v1/units.jsonl). Units without an
+validity units (completed_experiments/judge_reliability/validity_v1/units.jsonl). Units without an
 ``expected_label`` yet still record the judge's label as the score's answer.
 """
 from __future__ import annotations

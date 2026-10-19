@@ -12,7 +12,7 @@ Discussion first, so the transcripts also suit the judge-reliability study.
 | Qwen2.5-7B-Instruct (Q4_K_M) | `ollama/qwen2.5:7b` | `ollama pull qwen2.5:7b` | Run as the judge for Qwen3-4B, k = 1. Same family, so a plumbing check only |
 | Qwen3-8B | `ollama/qwen3:8b` | `ollama pull qwen3:8b` (raise `num_ctx` as in the Modelfile) | Not run |
 | Llama 3.1 8B Instruct | `vllm/meta-llama/Llama-3.1-8B-Instruct` | `pip install vllm`, GPU host | Not run |
-| gpt-oss-20b | `groq/openai/gpt-oss-20b` | `GROQ_API_KEY` | Not run; the judge in `eval/judge_reliability/results/` |
+| gpt-oss-20b | `groq/openai/gpt-oss-20b` | `GROQ_API_KEY` | Not run; the judge in `completed_experiments/judge_reliability/results/` |
 | A frontier API model | `openai/<model>`, `anthropic/<model>`, `google/<model>` | provider API key | Not run |
 | Llama 3.2 3B | `ollama/llama3.2:3b` | `ollama pull llama3.2:3b` | Saved rerun: current Inspect scorer gives 9/10 clean correct and 4/10 injected correct; the original robustness-runner parser gave 5/10 injected; 2 clean-correct cases flipped to the injected `hold` target |
 | Gemma 3 4B | `ollama/gemma3:4b` | `ollama pull gemma3:4b` | Saved rerun: 8/10 clean correct and 9/10 injected correct on the same conflicting pairs; 0 target-label flips. Earlier pilot: 9/10 clean and 9/10 injected |

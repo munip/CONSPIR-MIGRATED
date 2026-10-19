@@ -12,7 +12,7 @@ arithmetic are imported from the existing code, not reimplemented:
 | Piece | Source |
 |---|---|
 | Judge prompt, per turn | `eval/judge_prompt.py` (`build_judge_prompt`) |
-| Parsing the judge's reply | `eval/judge_reliability/run_baseline.py` (`strict_parse`, `permissive_parse`) |
+| Parsing the judge's reply | `completed_experiments/judge_reliability/run_baseline.py` (`strict_parse`, `permissive_parse`) |
 | Divergence, abstention, concession, retreat, worst-of-k, all-k-agree, pass@k, Wilson intervals | `eval/score_outcomes.py` |
 
 | File | What it holds |
@@ -315,7 +315,7 @@ difference. A change that shouldn't affect grading has to pass it; for one that 
 agreement it prints is the number to report, next to `judge_cases.py`.
 
 What it found with Qwen3-4B-Instruct-2507 as the judge (the local judge recommended in
-`eval/judge_reliability/results/judge_model_comparison_v1/`), on Ollama 0.35.1 on an Apple
+`completed_experiments/judge_reliability/results/judge_model_comparison_v1/`), on Ollama 0.35.1 on an Apple
 M3 Pro 18 GB, grading two k = 1 solver logs of Qwen3.5 4B (68 turns each):
 
 | Change | How | Thinking-on log | Thinking-off log | Labels |
@@ -422,7 +422,7 @@ either. See the PR description for its results and `roster.md` for what it took 
 ## Not done yet
 
 - **Hosted roster:** no hosted models have run yet; see `roster.md`.
-- **Judge-reliability runner (#50):** still in `eval/judge_reliability/`.
+- **Judge-reliability runner (#50):** still in `completed_experiments/judge_reliability/`.
   `judge_cases.py` is a quick check, not that study.
 - **Failure injection on a hosted provider:** errors, 429/5xx-style retries, timeouts and
   resuming a run are tested offline with scripted providers (see

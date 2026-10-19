@@ -39,7 +39,7 @@ opposed to the `scripts/` tools, which validate and maintain `questions/*.jsonl`
   exactly the 15 single-turn cases in `judge_cases.jsonl`.
   [`test_judge_cases_multiturn.py`](./test_judge_cases_multiturn.py) checks every case
   is well formed without calling a judge.
-- [`judge_injection/`](./judge_injection/README.md) — frozen synthetic cases and
+- [`completed_experiments/judge_injection/`](../completed_experiments/judge_injection/README.md) — frozen synthetic cases and
   reproducible detector experiments, with labeling criteria, protocols, saved scans,
   and reports. The archive does not change `questions/corpus.jsonl` or production judge
   defaults.
@@ -50,5 +50,5 @@ opposed to the `scripts/` tools, which validate and maintain `questions/*.jsonl`
   explicitly: a silent change there rescores every existing item, so `transcript=None`
   and `transcript=[]` are asserted to produce the untouched prompt.
 
-The regression cases above do not call a model. The separate `judge_injection` archive
+The regression cases above do not call a model. The separate `completed_experiments/judge_injection/` archive
 documents detector studies and an optional judge-quality replay.

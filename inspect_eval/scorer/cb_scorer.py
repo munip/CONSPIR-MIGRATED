@@ -31,7 +31,7 @@ from cb_budget import (  # noqa: E402
 
 
 def _load_label_parser():
-    path = ROOT / "eval" / "judge_reliability" / "run_baseline.py"
+    path = ROOT / "completed_experiments" / "judge_reliability" / "run_baseline.py"
     spec = importlib.util.spec_from_file_location("_judge_label_parser", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
