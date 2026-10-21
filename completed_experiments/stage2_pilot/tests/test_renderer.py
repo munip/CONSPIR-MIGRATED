@@ -4,6 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import jsonschema
+
 from completed_experiments.stage2_pilot.renderer import LedgerError, render_entry, render_ledger, write_candidates
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -24,6 +26,53 @@ class RendererTests(unittest.TestCase):
         self.assertEqual(len(item["pressure_turns"]), 1)
         self.assertNotIn("verification_status", item)
         self.assertNotIn("synthetic_fixture", item)
+
+    def test_consensus_as_of_is_preserved_in_rendered_jsonl(self):
+        entry = self.entry()
+        entry["consensus_as_of"] = "2026-09-26"
+        item = render_entry(entry, self.schema, allow_synthetic=True)
+        self.assertEqual(item["consensus_as_of"], "2026-09-26")
+
+        ledger = {"version": 1, "entries": [entry]}
+        rendered = render_ledger(ledger, self.schema, allow_synthetic=True)
+        line = rendered["synthetic-demo.jsonl"].decode("utf-8")
+        self.assertEqual(json.loads(line)["consensus_as_of"], "2026-09-26")
+
+    def test_consensus_as_of_is_omitted_when_absent(self):
+        item = render_entry(self.entry(), self.schema, allow_synthetic=True)
+        self.assertNotIn("consensus_as_of", item)
+
+    def test_invalid_consensus_as_of_is_rejected(self):
+        for invalid_date in ("2026-02-30", "not-a-date", None):
+            with self.subTest(value=invalid_date):
+                entry = self.entry()
+                entry["consensus_as_of"] = invalid_date
+                with self.assertRaises(jsonschema.ValidationError):
+                    render_entry(entry, self.schema, allow_synthetic=True)
+
+    def test_ground_truth_source_retains_urls_without_ledger_fields(self):
+        entry = self.entry()
+        entry["source_urls"].append("https://example.invalid/second-source")
+        entry["source_support"].append({
+            "source_url": "https://example.invalid/second-source",
+            "propositions": entry["factual_propositions"],
+        })
+        item = render_entry(entry, self.schema, allow_synthetic=True)
+        self.assertEqual(item["ground_truth_source"], entry["source_urls"])
+        self.assertNotIn("source_support", item)
+        self.assertNotIn("factual_propositions", item)
+        self.assertNotIn("verified_by", item)
+
+    def test_source_support_rejects_unknown_url_and_proposition(self):
+        for key, replacement, message in (
+            ("source_url", "https://example.invalid/unknown", "unknown URL"),
+            ("propositions", ["Unlisted proposition"], "unlisted proposition"),
+        ):
+            with self.subTest(field=key):
+                entry = self.entry()
+                entry["source_support"][0][key] = replacement
+                with self.assertRaisesRegex(LedgerError, message):
+                    render_entry(entry, self.schema, allow_synthetic=True)
 
     def test_repeat_render_is_byte_identical_and_newline_terminated(self):
         first = render_ledger(self.fixture, self.schema, allow_synthetic=True)

@@ -27,6 +27,12 @@ The six-draft integration test temporarily overrides review status in
 memory to check schema compatibility. It does not change the saved
 ledger or assert independent human verification.
 
+The optional `consensus_as_of` date is preserved in rendered candidates when
+provided by a ledger entry and validated against `schema.json`. Existing
+ledgers without this field produce the same output as before. Source URLs
+are carried into `ground_truth_source`; the ledger's proposition-to-source
+mappings are checked but are not part of the benchmark question schema.
+
 ## Review and export requirements
 
 Real-question exports require an inventory of the merged corpus and

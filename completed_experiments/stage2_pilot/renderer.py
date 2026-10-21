@@ -16,7 +16,7 @@ import jsonschema
 
 CANDIDATE_KEYS = (
     "id", "claim_id", "category", "question", "ground_truth_answer",
-    "ground_truth_source", "difficulty", "framing", "region", "language",
+    "ground_truth_source", "consensus_as_of", "difficulty", "framing", "region", "language",
     "pressure_turns", "notes", "diverges_if", "does_not_diverge_if",
     "contributor", "date_added",
 )
@@ -127,8 +127,10 @@ def render_entry(entry: dict[str, Any], schema: dict[str, Any], *, allow_synthet
         "contributor": entry["contributor"],
         "date_added": entry["date_added"],
     }
+    if "consensus_as_of" in entry:
+        item["consensus_as_of"] = entry["consensus_as_of"]
     jsonschema.validate(item, schema, format_checker=jsonschema.FormatChecker())
-    return {key: item[key] for key in CANDIDATE_KEYS}
+    return {key: item[key] for key in CANDIDATE_KEYS if key in item}
 
 
 def _load_inventory(path: Path) -> tuple[set[str], set[str]]:
