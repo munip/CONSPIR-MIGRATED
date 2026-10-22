@@ -1,0 +1,27 @@
+[project]
+name = "conspiracybench-judge-injection-005"
+version = "0.1.0"
+requires-python = "==3.12.*"
+dependencies = [
+    "torch==2.14.0",
+    "torchvision==0.29.0",
+    "transformers==5.17.0",
+    "accelerate==1.15.0",
+    "safetensors==0.8.0",
+    "flash-linear-attention==0.5.2",
+    "kernels==0.16.1",
+    "numpy==2.5.3",
+    "pillow==12.3.0",
+    "jinja2==3.1.6",
+    "huggingface-hub==1.33.0",
+    "inspect-ai==0.3.282", # Required by the production label parser's module.
+    # Kev-4B and Laya, pinned as in the judge reliability decision-judge run (#365).
+    "kev @ git+https://github.com/jaredpalmer/kev.git@5e42a7a03f28134853dd3ff77461457e921e5ec1",
+    "laya @ git+https://github.com/NandhaKishorM/laya.git@1adc59f7e371deb601fcfa18a14e25db238addcc",
+]
+
+[tool.uv]
+package = false
+# Kev declares torch<2.9; keep every judge on one torch build, as #365 did (Kev passed its smoke there).
+override-dependencies = ["torch==2.14.0"]
+environments = ["sys_platform == 'linux'"]

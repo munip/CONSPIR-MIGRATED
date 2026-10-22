@@ -1,0 +1,498 @@
+accelerate==1.15.0 ; sys_platform == 'linux'
+    # via
+    #   conspiracybench-judge-injection-005
+    #   kev
+    #   peft
+agent-client-protocol==0.12.1 ; sys_platform == 'linux'
+    # via inspect-ai
+aiobotocore==3.9.2 ; sys_platform == 'linux'
+    # via
+    #   inspect-ai
+    #   s3fs
+aiohappyeyeballs==2.7.1 ; sys_platform == 'linux'
+    # via aiohttp
+aiohttp==3.14.5 ; sys_platform == 'linux'
+    # via
+    #   aiobotocore
+    #   fsspec
+    #   s3fs
+aioitertools==0.13.0 ; sys_platform == 'linux'
+    # via aiobotocore
+aiosignal==1.4.0 ; sys_platform == 'linux'
+    # via aiohttp
+annotated-doc==0.0.5 ; sys_platform == 'linux'
+    # via
+    #   fastapi
+    #   typer
+annotated-types==0.8.0 ; sys_platform == 'linux'
+    # via pydantic
+anyio==4.15.1 ; sys_platform == 'linux'
+    # via
+    #   httpx
+    #   inspect-ai
+    #   starlette
+attrs==26.1.0 ; sys_platform == 'linux'
+    # via
+    #   aiohttp
+    #   jsonlines
+    #   jsonschema
+    #   referencing
+beautifulsoup4==4.15.0 ; sys_platform == 'linux'
+    # via inspect-ai
+boto3==1.43.106 ; sys_platform == 'linux'
+    # via inspect-ai
+botocore==1.43.106 ; sys_platform == 'linux'
+    # via
+    #   aiobotocore
+    #   boto3
+    #   s3transfer
+certifi==2026.7.22 ; sys_platform == 'linux'
+    # via
+    #   httpcore
+    #   httpx
+    #   requests
+cffi==2.1.1 ; platform_python_implementation != 'PyPy' and sys_platform == 'linux'
+    # via cryptography
+charset-normalizer==3.5.2 ; sys_platform == 'linux'
+    # via requests
+click==8.5.0 ; sys_platform == 'linux'
+    # via
+    #   huggingface-hub
+    #   inspect-ai
+    #   uvicorn
+cloudpickle==3.1.2 ; sys_platform == 'linux'
+    # via joblib
+cryptography==50.0.2 ; sys_platform == 'linux'
+    # via
+    #   pyopenssl
+    #   rfc3161-client
+    #   sigstore
+cuda-bindings==13.4.4 ; sys_platform == 'linux'
+    # via torch
+cuda-pathfinder==1.8.3 ; sys_platform == 'linux'
+    # via cuda-bindings
+cuda-toolkit==13.0.3.0 ; sys_platform == 'linux'
+    # via torch
+datasets==5.1.0 ; sys_platform == 'linux'
+    # via kev
+debugpy==1.8.22 ; sys_platform == 'linux'
+    # via inspect-ai
+dill==0.4.1 ; sys_platform == 'linux'
+    # via
+    #   datasets
+    #   multiprocess
+dnspython==2.9.0 ; sys_platform == 'linux'
+    # via email-validator
+docstring-parser==0.18.0 ; sys_platform == 'linux'
+    # via inspect-ai
+einops==0.8.2 ; sys_platform == 'linux'
+    # via fla-core
+email-validator==2.3.0 ; sys_platform == 'linux'
+    # via pydantic
+fastapi==0.156.1 ; sys_platform == 'linux'
+    # via inspect-ai
+filelock==4.2.0 ; sys_platform == 'linux'
+    # via
+    #   datasets
+    #   huggingface-hub
+    #   torch
+fla-core==0.5.2 ; sys_platform == 'linux'
+    # via flash-linear-attention
+flash-linear-attention==0.5.2 ; sys_platform == 'linux'
+    # via conspiracybench-judge-injection-005
+frozenlist==1.8.0 ; sys_platform == 'linux'
+    # via
+    #   aiohttp
+    #   aiosignal
+fsspec==2026.6.0 ; sys_platform == 'linux'
+    # via
+    #   datasets
+    #   huggingface-hub
+    #   inspect-ai
+    #   s3fs
+    #   torch
+    #   universal-pathlib
+h11==0.16.0 ; sys_platform == 'linux'
+    # via
+    #   httpcore
+    #   uvicorn
+hf-xet==1.7.0 ; (platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via huggingface-hub
+httpcore==1.0.9 ; sys_platform == 'linux'
+    # via httpx
+httpx==0.28.1 ; sys_platform == 'linux'
+    # via
+    #   huggingface-hub
+    #   inspect-ai
+huggingface-hub==1.33.0 ; sys_platform == 'linux'
+    # via
+    #   accelerate
+    #   conspiracybench-judge-injection-005
+    #   datasets
+    #   kernels
+    #   laya
+    #   peft
+    #   tokenizers
+    #   transformers
+id==1.6.1 ; sys_platform == 'linux'
+    # via sigstore
+idna==3.20 ; sys_platform == 'linux'
+    # via
+    #   anyio
+    #   email-validator
+    #   httpx
+    #   requests
+    #   yarl
+ijson==3.6.0 ; sys_platform == 'linux'
+    # via inspect-ai
+inspect-ai==0.3.282 ; sys_platform == 'linux'
+    # via conspiracybench-judge-injection-005
+jinja2==3.1.6 ; sys_platform == 'linux'
+    # via
+    #   conspiracybench-judge-injection-005
+    #   torch
+jmespath==1.1.0 ; sys_platform == 'linux'
+    # via
+    #   aiobotocore
+    #   boto3
+    #   botocore
+joblib==1.6.0 ; sys_platform == 'linux'
+    # via scikit-learn
+jsonlines==4.0.0 ; sys_platform == 'linux'
+    # via inspect-ai
+jsonpatch==1.36 ; sys_platform == 'linux'
+    # via inspect-ai
+jsonpath-ng==1.11.0 ; sys_platform == 'linux'
+    # via inspect-ai
+jsonpointer==3.4 ; sys_platform == 'linux'
+    # via jsonpatch
+jsonref==1.1.0 ; sys_platform == 'linux'
+    # via inspect-ai
+jsonschema==4.26.0 ; sys_platform == 'linux'
+    # via inspect-ai
+jsonschema-specifications==2025.9.1 ; sys_platform == 'linux'
+    # via jsonschema
+kernels==0.16.1 ; sys_platform == 'linux'
+    # via conspiracybench-judge-injection-005
+kernels-data==0.16.2 ; sys_platform == 'linux'
+    # via kernels
+kev @ git+https://github.com/jaredpalmer/kev.git@5e42a7a03f28134853dd3ff77461457e921e5ec1 ; sys_platform == 'linux'
+    # via conspiracybench-judge-injection-005
+laya @ git+https://github.com/NandhaKishorM/laya.git@1adc59f7e371deb601fcfa18a14e25db238addcc ; sys_platform == 'linux'
+    # via conspiracybench-judge-injection-005
+linkify-it-py==2.2.0 ; sys_platform == 'linux'
+    # via markdown-it-py
+markdown-it-py==4.2.0 ; sys_platform == 'linux'
+    # via
+    #   inspect-ai
+    #   mdit-py-plugins
+    #   rich
+    #   textual
+markupsafe==3.0.4 ; sys_platform == 'linux'
+    # via jinja2
+mdit-py-plugins==0.6.1 ; sys_platform == 'linux'
+    # via textual
+mdurl==0.1.2 ; sys_platform == 'linux'
+    # via markdown-it-py
+mmh3==5.3.1 ; sys_platform == 'linux'
+    # via inspect-ai
+mpmath==1.3.0 ; sys_platform == 'linux'
+    # via sympy
+multidict==6.9.1 ; sys_platform == 'linux'
+    # via
+    #   aiobotocore
+    #   aiohttp
+    #   yarl
+multiprocess==0.70.19 ; sys_platform == 'linux'
+    # via datasets
+narwhals==2.27.1 ; sys_platform == 'linux'
+    # via scikit-learn
+nest-asyncio2==1.7.4 ; sys_platform == 'linux'
+    # via inspect-ai
+networkx==3.7 ; sys_platform == 'linux'
+    # via torch
+numpy==2.5.3 ; sys_platform == 'linux'
+    # via
+    #   accelerate
+    #   conspiracybench-judge-injection-005
+    #   datasets
+    #   inspect-ai
+    #   kev
+    #   laya
+    #   pandas
+    #   peft
+    #   scikit-learn
+    #   scipy
+    #   torchvision
+    #   transformers
+nvidia-cublas==13.1.1.3 ; sys_platform == 'linux'
+    # via
+    #   cuda-toolkit
+    #   nvidia-cudnn-cu13
+    #   nvidia-cusolver
+nvidia-cuda-cupti==13.0.85 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cuda-nvrtc==13.0.88 ; sys_platform == 'linux'
+    # via
+    #   cuda-toolkit
+    #   nvidia-cublas
+nvidia-cuda-runtime==13.0.96 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cudnn-cu13==9.24.0.43 ; sys_platform == 'linux'
+    # via torch
+nvidia-cufft==12.0.0.61 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cufile==1.15.1.6 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-curand==10.4.0.35 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cusolver==12.0.4.66 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+nvidia-cusparse==12.6.3.3 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via
+    #   cuda-toolkit
+    #   nvidia-cusolver
+nvidia-cusparselt-cu13==0.8.1 ; sys_platform == 'linux'
+    # via torch
+nvidia-nccl-cu13==2.30.7 ; sys_platform == 'linux'
+    # via torch
+nvidia-nvjitlink==13.4.92 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via
+    #   cuda-toolkit
+    #   nvidia-cufft
+    #   nvidia-cusolver
+    #   nvidia-cusparse
+nvidia-nvshmem-cu13==3.4.5 ; sys_platform == 'linux'
+    # via torch
+nvidia-nvtx==13.0.85 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')
+    # via cuda-toolkit
+opentelemetry-api==1.45.1 ; sys_platform == 'linux'
+    # via fastapi
+packaging==26.3 ; sys_platform == 'linux'
+    # via
+    #   accelerate
+    #   datasets
+    #   huggingface-hub
+    #   kernels
+    #   peft
+    #   transformers
+pandas==3.1.0 ; sys_platform == 'linux'
+    # via datasets
+pathlib-abc==0.5.2 ; sys_platform == 'linux'
+    # via universal-pathlib
+peft==0.21.2 ; sys_platform == 'linux'
+    # via kev
+pillow==12.3.0 ; sys_platform == 'linux'
+    # via
+    #   conspiracybench-judge-injection-005
+    #   torchvision
+platformdirs==4.13.3 ; sys_platform == 'linux'
+    # via
+    #   inspect-ai
+    #   sigstore
+    #   textual
+propcache==0.5.4 ; sys_platform == 'linux'
+    # via
+    #   aiohttp
+    #   yarl
+psutil==7.2.2 ; sys_platform == 'linux'
+    # via
+    #   accelerate
+    #   inspect-ai
+    #   peft
+pyarrow==26.0.0 ; sys_platform == 'linux'
+    # via datasets
+pyasn1==0.6.4 ; sys_platform == 'linux'
+    # via sigstore
+pycparser==3.11 ; implementation_name != 'PyPy' and platform_python_implementation != 'PyPy' and sys_platform == 'linux'
+    # via cffi
+pydantic==2.14.1 ; sys_platform == 'linux'
+    # via
+    #   agent-client-protocol
+    #   fastapi
+    #   inspect-ai
+    #   kev
+    #   sigstore
+    #   sigstore-models
+    #   sigstore-rekor-types
+pydantic-core==2.50.1 ; sys_platform == 'linux'
+    # via pydantic
+pygments==2.21.0 ; sys_platform == 'linux'
+    # via
+    #   rich
+    #   textual
+pyjwt==2.15.1 ; sys_platform == 'linux'
+    # via sigstore
+pyopenssl==26.4.0 ; sys_platform == 'linux'
+    # via sigstore
+python-dateutil==2.9.0.post0 ; sys_platform == 'linux'
+    # via
+    #   aiobotocore
+    #   botocore
+    #   pandas
+python-dotenv==1.2.4 ; sys_platform == 'linux'
+    # via inspect-ai
+pyyaml==6.0.3 ; sys_platform == 'linux'
+    # via
+    #   accelerate
+    #   datasets
+    #   huggingface-hub
+    #   inspect-ai
+    #   kernels
+    #   peft
+    #   transformers
+referencing==0.37.0 ; sys_platform == 'linux'
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+regex==2026.9.29 ; sys_platform == 'linux'
+    # via
+    #   tiktoken
+    #   transformers
+requests==2.34.2 ; sys_platform == 'linux'
+    # via
+    #   sigstore
+    #   tiktoken
+rfc3161-client==1.0.9 ; sys_platform == 'linux'
+    # via sigstore
+rfc8785==0.1.4 ; sys_platform == 'linux'
+    # via sigstore
+rich==15.0.0 ; sys_platform == 'linux'
+    # via
+    #   inspect-ai
+    #   sigstore
+    #   textual
+    #   typer
+rpds-py==2026.9.1 ; sys_platform == 'linux'
+    # via
+    #   jsonschema
+    #   referencing
+s3fs==2026.6.0 ; sys_platform == 'linux'
+    # via inspect-ai
+s3transfer==0.19.3 ; sys_platform == 'linux'
+    # via boto3
+safetensors==0.8.0 ; sys_platform == 'linux'
+    # via
+    #   accelerate
+    #   conspiracybench-judge-injection-005
+    #   laya
+    #   peft
+    #   transformers
+scikit-learn==1.9.1 ; sys_platform == 'linux'
+    # via kev
+scipy==1.18.1 ; sys_platform == 'linux'
+    # via scikit-learn
+securesystemslib==1.5.1 ; sys_platform == 'linux'
+    # via tuf
+semver==3.1.0 ; sys_platform == 'linux'
+    # via inspect-ai
+setuptools==84.0.0 ; sys_platform == 'linux'
+    # via torch
+shellingham==1.5.4 ; sys_platform == 'linux'
+    # via typer
+shortuuid==1.0.13 ; sys_platform == 'linux'
+    # via inspect-ai
+sigstore==4.5.0 ; sys_platform == 'linux'
+    # via kernels
+sigstore-models==0.0.6 ; sys_platform == 'linux'
+    # via sigstore
+sigstore-rekor-types==0.0.18 ; sys_platform == 'linux'
+    # via sigstore
+six==1.17.0 ; sys_platform == 'linux'
+    # via python-dateutil
+sniffio==1.3.1 ; sys_platform == 'linux'
+    # via inspect-ai
+soupsieve==3.0.3 ; sys_platform == 'linux'
+    # via beautifulsoup4
+starlette==1.9.0 ; sys_platform == 'linux'
+    # via fastapi
+sympy==1.14.0 ; sys_platform == 'linux'
+    # via torch
+tenacity==9.2.1 ; sys_platform == 'linux'
+    # via inspect-ai
+textual==8.2.8 ; sys_platform == 'linux'
+    # via inspect-ai
+threadpoolctl==3.7.0 ; sys_platform == 'linux'
+    # via scikit-learn
+tiktoken==0.14.0 ; sys_platform == 'linux'
+    # via inspect-ai
+tokenizers==0.23.3 ; sys_platform == 'linux'
+    # via transformers
+tomlkit==0.15.1 ; sys_platform == 'linux'
+    # via kernels
+torch==2.14.0 ; sys_platform == 'linux'
+    # via
+    #   accelerate
+    #   conspiracybench-judge-injection-005
+    #   kev
+    #   laya
+    #   peft
+    #   torchvision
+torchvision==0.29.0 ; sys_platform == 'linux'
+    # via conspiracybench-judge-injection-005
+tqdm==4.70.1 ; sys_platform == 'linux'
+    # via
+    #   datasets
+    #   huggingface-hub
+    #   peft
+    #   transformers
+transformers==5.17.0 ; sys_platform == 'linux'
+    # via
+    #   conspiracybench-judge-injection-005
+    #   flash-linear-attention
+    #   kev
+    #   laya
+    #   peft
+triton==3.8.0 ; sys_platform == 'linux'
+    # via torch
+tuf==7.0.1 ; sys_platform == 'linux'
+    # via sigstore
+typer==0.27.3 ; sys_platform == 'linux'
+    # via transformers
+typing-extensions==4.16.0 ; sys_platform == 'linux'
+    # via
+    #   aiohttp
+    #   aiosignal
+    #   anyio
+    #   beautifulsoup4
+    #   fastapi
+    #   huggingface-hub
+    #   inspect-ai
+    #   opentelemetry-api
+    #   pydantic
+    #   pydantic-core
+    #   pyopenssl
+    #   referencing
+    #   sigstore-models
+    #   starlette
+    #   textual
+    #   torch
+    #   typing-inspection
+typing-inspection==0.4.4 ; sys_platform == 'linux'
+    # via
+    #   fastapi
+    #   pydantic
+universal-pathlib==0.3.10 ; sys_platform == 'linux'
+    # via inspect-ai
+urllib3==2.8.0 ; sys_platform == 'linux'
+    # via
+    #   botocore
+    #   id
+    #   requests
+    #   tuf
+uvicorn==0.54.0 ; sys_platform == 'linux'
+    # via inspect-ai
+wrapt==2.5.1 ; sys_platform == 'linux'
+    # via aiobotocore
+xxhash==4.0.2 ; sys_platform == 'linux'
+    # via datasets
+yarl==1.25.1 ; sys_platform == 'linux'
+    # via aiohttp
+zipfile-zstd==0.0.4 ; sys_platform == 'linux'
+    # via inspect-ai
+zipp==4.1.1 ; sys_platform == 'linux'
+    # via inspect-ai
+zstandard==0.25.0 ; sys_platform == 'linux'
+    # via
+    #   inspect-ai
+    #   zipfile-zstd

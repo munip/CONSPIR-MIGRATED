@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "experiment": "005-judge-injection-resistance",
+  "judge": "pplx",
+  "model_revision": "14c9d90137962d300f3de95633f7b6535e80c5ce",
+  "fixture_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+  "derived_cases_sha256": "428827302fbcb58346767a0dd4426365360272b11ef936427d068bc8a27df23f",
+  "case_order_sha256": "4656749db90c1f06080b9ce9e238eedf1b6af8ea131281630ca4ddb2c289b594",
+  "case_count": 231,
+  "configuration_sha256": "01b3aa5f1c238078537be38afb5894ea87679d84ff179de45146684f8be7f431",
+  "model_config": {
+    "model_id": "perplexity-ai/pplx-decider-v1.1-27b",
+    "revision": "14c9d90137962d300f3de95633f7b6535e80c5ce",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "context_tokens": 8192
+  },
+  "source_hashes": {
+    "runner_sha256": "8da79adfb22bd76d0279589739e544b332405c7e08066e4321dd56c7fa4782c4",
+    "protocol_sha256": "021403abde6f89d0aa6c8ed123b5386bafe61a8b449a4e8e4cb63ff532da7244",
+    "prompt_builder_sha256": "caabf5ebad6f11e9ca9ddc281450422a016eddb36ce87db833ee5de6d8166777",
+    "typed_adapter_sha256": "d1683db5c44bbb9b88ebe2df797bf0c2407be8b9cc5856156be6cf427883632b",
+    "clef_adapter_sha256": "59805f08142b1f1f577a512a63a593455b0e0554f2ff71a736c67a7df960a5cc",
+    "environment_sha256": "3f45e2748f671f8ff26a3a77d53fdc1a1b8b5b4286032a3baf6b1fb3f46d32c0",
+    "environment_lock_sha256": "c926021a163bd3027a4ae57df289550e2c8fd1a675f09cfb35bba26ca2c83e93"
+  },
+  "status": "complete",
+  "runtime_sessions": [
+    {
+      "session_id": "ef63ac74c34941ac86c8acc77fba53ce",
+      "started_at": "2026-10-22T18:57:52+00:00",
+      "host": "modal",
+      "host_platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+      "load_seconds": 53.297059,
+      "runtime": {
+        "repo": "perplexity-ai/pplx-decider-v1.1-27b",
+        "revision": "14c9d90137962d300f3de95633f7b6535e80c5ce",
+        "device": "cuda",
+        "seed": 0,
+        "cuda_device_index": 0,
+        "cuda_device_name": "NVIDIA H100 80GB HBM3",
+        "cuda_device_count": 1,
+        "free_vram_bytes_at_load": 84456964096,
+        "total_vram_bytes": 85009367040,
+        "torch_version": "2.14.0+cu130",
+        "cuda_version": "13.0",
+        "dtype": "bfloat16"
+      },
+      "load_error": null,
+      "requested_limit": 3
+    },
+    {
+      "session_id": "a3506093aa1c4b4a8f218df5bd36d20d",
+      "started_at": "2026-10-22T18:58:51+00:00",
+      "host": "modal",
+      "host_platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+      "load_seconds": 21.956884,
+      "runtime": {
+        "repo": "perplexity-ai/pplx-decider-v1.1-27b",
+        "revision": "14c9d90137962d300f3de95633f7b6535e80c5ce",
+        "device": "cuda",
+        "seed": 0,
+        "cuda_device_index": 0,
+        "cuda_device_name": "NVIDIA H100 80GB HBM3",
+        "cuda_device_count": 1,
+        "free_vram_bytes_at_load": 84456964096,
+        "total_vram_bytes": 85009367040,
+        "torch_version": "2.14.0+cu130",
+        "cuda_version": "13.0",
+        "dtype": "bfloat16"
+      },
+      "load_error": null,
+      "requested_limit": null
+    }
+  ],
+  "completed_rows": 231,
+  "inference_errors": 0
+}

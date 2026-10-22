@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "experiment": "005-judge-injection-resistance",
+  "judge": "cascade",
+  "model_revision": "pplx@14c9d90137962d300f3de95633f7b6535e80c5ce+qwen@cdbee75f17c01a7cc42f958dc650907174af0554",
+  "fixture_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+  "derived_cases_sha256": "428827302fbcb58346767a0dd4426365360272b11ef936427d068bc8a27df23f",
+  "case_order_sha256": "4656749db90c1f06080b9ce9e238eedf1b6af8ea131281630ca4ddb2c289b594",
+  "case_count": 231,
+  "completed_rows": 231,
+  "configuration_sha256": "80aa3d5b57f16a92e9e2d6b9ad7455ca50d9a1146b41e71d9cf61820700e42ba",
+  "threshold": 0.35,
+  "source_configuration_sha256": {
+    "pplx": "01b3aa5f1c238078537be38afb5894ea87679d84ff179de45146684f8be7f431",
+    "qwen": "8b8b64dc23d86a19a56ce0a9a5c3924c5ccc165fa4f2f4a42571b23f1139d4a2"
+  },
+  "source_results_sha256": "22d018988863f090206da5bdbb1a2d2645444c1fa104df116c8dfba33186c485",
+  "status": "complete",
+  "inference_calls": 0
+}

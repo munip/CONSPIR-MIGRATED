@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "experiment": "005-judge-injection-resistance",
+  "judge": "qwen",
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "fixture_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+  "derived_cases_sha256": "428827302fbcb58346767a0dd4426365360272b11ef936427d068bc8a27df23f",
+  "case_order_sha256": "4656749db90c1f06080b9ce9e238eedf1b6af8ea131281630ca4ddb2c289b594",
+  "case_count": 231,
+  "configuration_sha256": "8b8b64dc23d86a19a56ce0a9a5c3924c5ccc165fa4f2f4a42571b23f1139d4a2",
+  "model_config": {
+    "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "device": "cuda:0",
+    "dtype": "bfloat16",
+    "do_sample": false,
+    "attn_implementation": "sdpa",
+    "context_tokens": 16384,
+    "max_output_tokens": 256
+  },
+  "source_hashes": {
+    "runner_sha256": "8da79adfb22bd76d0279589739e544b332405c7e08066e4321dd56c7fa4782c4",
+    "protocol_sha256": "021403abde6f89d0aa6c8ed123b5386bafe61a8b449a4e8e4cb63ff532da7244",
+    "prompt_builder_sha256": "caabf5ebad6f11e9ca9ddc281450422a016eddb36ce87db833ee5de6d8166777",
+    "production_parser_sha256": "1cefa02b1c3398744cc612ff70d661d289add674f2a4a74c89ab2ccb222a8100",
+    "label_parser_sha256": "fb2088b67ac4d4bda76de48eac923c63432f555e96307a55c2f911137864785e",
+    "budget_source_sha256": "4af11f9aec8b276e87d75824a2b1b4133ffe53f37b318162f123005f71f68439",
+    "environment_sha256": "3f45e2748f671f8ff26a3a77d53fdc1a1b8b5b4286032a3baf6b1fb3f46d32c0",
+    "environment_lock_sha256": "c926021a163bd3027a4ae57df289550e2c8fd1a675f09cfb35bba26ca2c83e93"
+  },
+  "status": "complete",
+  "runtime_sessions": [
+    {
+      "session_id": "7e1a00dc0bae479989a5e9c571c627d8",
+      "started_at": "2026-10-22T18:55:45+00:00",
+      "host": "modal",
+      "host_platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+      "load_seconds": 51.655137,
+      "runtime": {
+        "seed": 0,
+        "cuda_device_index": 0,
+        "cuda_device_name": "NVIDIA H100 80GB HBM3",
+        "cuda_device_count": 1,
+        "free_vram_bytes_at_load": 84456964096,
+        "total_vram_bytes": 85009367040,
+        "torch_version": "2.14.0+cu130",
+        "cuda_version": "13.0",
+        "dtype": "bfloat16",
+        "runtime": "Transformers on CUDA",
+        "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+        "resolved_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "transformers_version": "5.17.0",
+        "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+        "context_tokens": 16384,
+        "max_output_tokens": 256,
+        "do_sample": false
+      },
+      "load_error": null,
+      "requested_limit": 3
+    },
+    {
+      "session_id": "2aea4f3dc91a423fa8c6d1a1f8ade467",
+      "started_at": "2026-10-22T18:56:01+00:00",
+      "host": "modal",
+      "host_platform": "Linux-4.19.0-gvisor-x86_64-with-glibc2.36",
+      "load_seconds": 10.645384,
+      "runtime": {
+        "seed": 0,
+        "cuda_device_index": 0,
+        "cuda_device_name": "NVIDIA H100 80GB HBM3",
+        "cuda_device_count": 1,
+        "free_vram_bytes_at_load": 84456964096,
+        "total_vram_bytes": 85009367040,
+        "torch_version": "2.14.0+cu130",
+        "cuda_version": "13.0",
+        "dtype": "bfloat16",
+        "runtime": "Transformers on CUDA",
+        "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+        "resolved_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+        "transformers_version": "5.17.0",
+        "chat_template_sha256": "64f85b198065d0fba2a81f37e10ed68161ce2c19a754c7100e67e0ca2ee9c326",
+        "context_tokens": 16384,
+        "max_output_tokens": 256,
+        "do_sample": false
+      },
+      "load_error": null,
+      "requested_limit": null
+    }
+  ],
+  "completed_rows": 231,
+  "inference_errors": 0
+}

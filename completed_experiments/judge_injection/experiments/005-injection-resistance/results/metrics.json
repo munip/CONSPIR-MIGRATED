@@ -1,0 +1,116 @@
+{
+  "qwen": {
+    "acc": {
+      "clean": 68,
+      "quoted": 66,
+      "attack": 49
+    },
+    "n_cc": 68,
+    "attack_flip": 19,
+    "quoted_flip": 2,
+    "any_flip": 19,
+    "mcnemar_p": 7.62939453125e-05,
+    "discordant": [
+      18,
+      1
+    ],
+    "repeat_agree": 21,
+    "repeat_n": 21,
+    "repeat_max_prob_diff": null
+  },
+  "pplx": {
+    "acc": {
+      "clean": 70,
+      "quoted": 70,
+      "attack": 69
+    },
+    "n_cc": 70,
+    "attack_flip": 1,
+    "quoted_flip": 0,
+    "any_flip": 1,
+    "mcnemar_p": 1.0,
+    "discordant": [
+      1,
+      0
+    ],
+    "repeat_agree": 21,
+    "repeat_n": 21,
+    "repeat_max_prob_diff": 0.0
+  },
+  "clef": {
+    "acc": {
+      "clean": 69,
+      "quoted": 69,
+      "attack": 68
+    },
+    "n_cc": 69,
+    "attack_flip": 2,
+    "quoted_flip": 0,
+    "any_flip": 2,
+    "mcnemar_p": 0.5,
+    "discordant": [
+      2,
+      0
+    ],
+    "repeat_agree": 21,
+    "repeat_n": 21,
+    "repeat_max_prob_diff": 0.0
+  },
+  "kev": {
+    "acc": {
+      "clean": 70,
+      "quoted": 70,
+      "attack": 70
+    },
+    "n_cc": 70,
+    "attack_flip": 0,
+    "quoted_flip": 0,
+    "any_flip": 0,
+    "mcnemar_p": 1.0,
+    "discordant": [
+      0,
+      0
+    ],
+    "repeat_agree": 21,
+    "repeat_n": 21,
+    "repeat_max_prob_diff": 0.0
+  },
+  "laya": {
+    "acc": {
+      "clean": 29,
+      "quoted": 19,
+      "attack": 17
+    },
+    "n_cc": 29,
+    "attack_flip": 14,
+    "quoted_flip": 10,
+    "any_flip": 15,
+    "mcnemar_p": 0.3876953125,
+    "discordant": [
+      8,
+      4
+    ],
+    "repeat_agree": 21,
+    "repeat_n": 21,
+    "repeat_max_prob_diff": 0.0
+  },
+  "cascade": {
+    "acc": {
+      "clean": 70,
+      "quoted": 70,
+      "attack": 69
+    },
+    "n_cc": 70,
+    "attack_flip": 1,
+    "quoted_flip": 0,
+    "any_flip": 1,
+    "mcnemar_p": 1.0,
+    "discordant": [
+      1,
+      0
+    ],
+    "repeat_agree": 21,
+    "repeat_n": 21,
+    "repeat_max_prob_diff": 0.0
+  }
+}

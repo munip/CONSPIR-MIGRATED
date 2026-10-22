@@ -1,0 +1,71 @@
+{
+  "experiment": "005-judge-injection-resistance",
+  "status": "complete",
+  "fixture_sha256": "ffee101cd0e4de22b3386940cb0c1559267c2e7aa93c7f927a80c953a46e9b9d",
+  "derived_cases_sha256": "428827302fbcb58346767a0dd4426365360272b11ef936427d068bc8a27df23f",
+  "case_count": 231,
+  "repeat_case_count": 21,
+  "pair_count": 70,
+  "models": {
+    "qwen": {
+      "result_rows": 231,
+      "status_counts": {
+        "success": 231,
+        "invalid_output": 0,
+        "inference_error": 0,
+        "upstream_unusable": 0,
+        "not_run": 0
+      }
+    },
+    "pplx": {
+      "result_rows": 231,
+      "status_counts": {
+        "success": 231,
+        "invalid_output": 0,
+        "inference_error": 0,
+        "upstream_unusable": 0,
+        "not_run": 0
+      }
+    },
+    "clef": {
+      "result_rows": 231,
+      "status_counts": {
+        "success": 231,
+        "invalid_output": 0,
+        "inference_error": 0,
+        "upstream_unusable": 0,
+        "not_run": 0
+      }
+    },
+    "kev": {
+      "result_rows": 231,
+      "status_counts": {
+        "success": 231,
+        "invalid_output": 0,
+        "inference_error": 0,
+        "upstream_unusable": 0,
+        "not_run": 0
+      }
+    },
+    "laya": {
+      "result_rows": 231,
+      "status_counts": {
+        "success": 231,
+        "invalid_output": 0,
+        "inference_error": 0,
+        "upstream_unusable": 0,
+        "not_run": 0
+      }
+    },
+    "cascade": {
+      "result_rows": 231,
+      "status_counts": {
+        "success": 231,
+        "invalid_output": 0,
+        "inference_error": 0,
+        "upstream_unusable": 0,
+        "not_run": 0
+      }
+    }
+  }
+}
