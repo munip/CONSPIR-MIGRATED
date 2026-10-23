@@ -1,0 +1,13 @@
+{
+  "judge": "laya",
+  "criteria": "rubric_v2",
+  "repo": "convaiinnovations/laya",
+  "revision": "7b928d828b7b0e022f929d9bd2e44165aa270148",
+  "subfolder": "multilingual",
+  "max_len": 8192,
+  "device": "cuda",
+  "units_file_sha256": "aceff9f9b2d5ed9990d6e55b00a5e6d8e8dc24e25b4c9f0d4b5a4f91e6f4fa1d",
+  "runner_file_sha256": "c5697d308e9e62ba79aa84488386808be625d6217a080b0eac0816543aae2ef0",
+  "adapter_file_sha256": "59805f08142b1f1f577a512a63a593455b0e0554f2ff71a736c67a7df960a5cc",
+  "suite_commit": null
+}

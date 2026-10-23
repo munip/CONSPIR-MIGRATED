@@ -33,14 +33,14 @@ from scorer import INVALID, build_judge_prompt, judge_reply_text, parse_label  #
 CASE_FILES = ("judge_cases.jsonl", "judge_cases_multiturn.jsonl")
 
 
-def judge_case_dataset(root: Path = HERE.parent, paths: list[Path] | None = None) -> MemoryDataset:
+def judge_case_dataset(root: Path = HERE.parent, paths: list[Path] | None = None, rubric: bool = False) -> MemoryDataset:
     samples = []
     for path in paths or [root / "eval" / name for name in CASE_FILES]:
         for line in path.read_text(encoding="utf-8").splitlines():
             if not line.strip():
                 continue
             case = json.loads(line)
-            prompt = build_judge_prompt(case["item"], case["model_answer"], case.get("transcript") or None)
+            prompt = build_judge_prompt(case["item"], case["model_answer"], case.get("transcript") or None, rubric=rubric)
             samples.append(Sample(
                 input=prompt,
                 target=case["expected_label"] or "",
@@ -61,10 +61,11 @@ def matches_expected_label():
 
 
 @task
-def judge_cases(cases: str | None = None) -> Task:
+def judge_cases(cases: str | None = None, rubric: bool = False) -> Task:
+    # rubric=true: the judge prompt carries the labelling rubric's definitions and six rules.
     return Task(
         # Inspect may run the task from inspect_eval/, so a relative path is read from the repo root.
-        dataset=judge_case_dataset(paths=[HERE.parent / cases] if cases else None),
+        dataset=judge_case_dataset(paths=[HERE.parent / cases] if cases else None, rubric=rubric),
         solver=generate(),
         scorer=matches_expected_label(),
         config=GenerateConfig(temperature=0),  # as conspiracy_judge runs it

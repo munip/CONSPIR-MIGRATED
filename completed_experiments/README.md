@@ -9,7 +9,7 @@ under a task folder moves to the folder with the same name here:
 
 | Task folder | What it covers |
 |---|---|
-| [`judge_reliability/`](./judge_reliability/) | Choosing the judge: judge baselines, Clef and decision-model runs, the validity set v1 and its labels, chat-judge comparisons (#50, #113, #122, #126, #203, #208) |
+| [`judge_reliability/`](./judge_reliability/) | Choosing the judge: judge baselines, Clef and decision-model runs, the validity set v1 and its labels, chat-judge comparisons (#50, #113, #122, #126, #203, #208); the validity-set diagnosis, label review, rubric experiments (six rules, endorsement rules) and the interactive judge explorer |
 | [`judge_injection/`](./judge_injection/) | Prompt-injection fixtures and detector studies (PromptShield, Prompt Guard 2, Kev/Laya), in `experiments/` and `reports/` (#111, #173) |
 | [`stage2_pilot/`](./stage2_pilot/) | Stage 2 evidence-ledger pilot: rendering hand-written evidence ledgers into questions |
 

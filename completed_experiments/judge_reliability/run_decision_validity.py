@@ -49,7 +49,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[1] / "eval"))  # judge_prompt.py
 
 import run_clef_preflight as clef  # noqa: E402
-from judge_prompt import _render_transcript  # noqa: E402
+from judge_prompt import RUBRICS, _render_transcript  # noqa: E402
 
 CONTEXT_SCOPE = (
     "Grade only candidate_response against the documented ground truth and item-specific "
@@ -60,10 +60,22 @@ CONTEXT_SCOPE = (
 )
 
 
-def build_request(unit: dict[str, Any], variant: str, model_id: str) -> dict[str, Any]:
+CRITERIA = ("v1", "rubric", "rubric_v2")
+
+
+def build_request(unit: dict[str, Any], variant: str, model_id: str, criteria: str = "v1") -> dict[str, Any]:
     request = clef.build_clef_request(
         {"item": unit["item"], "candidate_answer": unit["model_answer"]}, model_id
     )
+    if criteria in RUBRICS:
+        # The labelling rubric's label definitions and precedence rules (judge-rubric experiments:
+        # "rubric" = the six human rules, "rubric_v2" = endorsement-based). "v1" keeps the #126
+        # adapter's request unchanged.
+        labels, rule_list = RUBRICS[criteria]
+        verdict = request["questions"]["verdict"]
+        verdict["criteria"] = dict(labels)
+        rules = " ".join(f"({n}) {rule}" for n, rule in enumerate(rule_list, 1))
+        verdict["instructions"] += f" Apply these rules, in order: {rules}"
     if variant == "preceding_exchange":
         state = request["state"]
         state["grading_scope"] = CONTEXT_SCOPE
@@ -73,12 +85,12 @@ def build_request(unit: dict[str, Any], variant: str, model_id: str) -> dict[str
     return request
 
 
-def plan(units: list[dict[str, Any]], model_id: str) -> list[dict[str, Any]]:
+def plan(units: list[dict[str, Any]], model_id: str, criteria: str = "v1") -> list[dict[str, Any]]:
     calls = []
     for unit in units:
         for variant in ("no_context", "preceding_exchange") if unit["transcript"] else ("no_context",):
             calls.append({"unit_id": unit["case_id"], "turn": unit["turn"], "variant": variant,
-                          "request": build_request(unit, variant, model_id)})
+                          "request": build_request(unit, variant, model_id, criteria)})
     return calls
 
 
@@ -177,6 +189,9 @@ def main() -> int:
     ap.add_argument("--device", default="cuda", help="cuda, or mps on Apple silicon (kev, laya)")
     ap.add_argument("--dtype", choices=("bfloat16", "float16", "float32"), default="bfloat16", help="clef only")
     ap.add_argument("--max-length", type=int, default=16384, help="clef only")
+    ap.add_argument("--criteria", choices=CRITERIA, default="v1",
+                    help="v1: the #126 label criteria; rubric: the labelling rubric's definitions and six rules; "
+                         "rubric_v2: endorsement-based rules (wrong-but-not-conspiratorial and both-sides tours are hold)")
     ap.add_argument("--limit", type=int, help="run only the first N calls (a smoke test; --run again resumes the rest)")
     ap.add_argument("--warmup", type=int, default=0, help="untimed calls on the first N units before the timed run")
     mode = ap.add_mutually_exclusive_group(required=True)
@@ -186,7 +201,7 @@ def main() -> int:
 
     units_path = Path(args.units)
     units = [json.loads(line) for line in units_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    calls = plan(units, args.model_id)[: args.limit]
+    calls = plan(units, args.model_id, args.criteria)[: args.limit]
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
     later = sum(c["variant"] == "preceding_exchange" for c in calls)
@@ -211,7 +226,7 @@ def main() -> int:
     if cuda:
         session["load_peak_gpu_memory_bytes"] = torch.cuda.max_memory_allocated()
     clef.write_json(out / "manifest.json", {
-        "judge": args.judge, **judge_manifest,
+        "judge": args.judge, "criteria": args.criteria, **judge_manifest,
         "units_file_sha256": clef.file_sha256(units_path), "runner_file_sha256": clef.file_sha256(Path(__file__)),
         "adapter_file_sha256": clef.file_sha256(HERE / "run_clef_preflight.py"), "suite_commit": clef.git_head(HERE.parents[1]),
     })

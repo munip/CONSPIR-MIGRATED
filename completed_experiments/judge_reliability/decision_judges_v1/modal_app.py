@@ -61,8 +61,9 @@ def fetch_models() -> list[str]:
     return paths
 
 
-def _run(judge: str, stage: str, suite_commit: str, env: str) -> dict:
-    out = Path("/results") / (f"{judge}_validity_v1" + ("_smoke" if stage == "smoke" else ""))
+def _run(judge: str, stage: str, suite_commit: str, env: str, criteria: str = "v1", tag: str = "") -> dict:
+    suffix = "" if criteria == "v1" else f"_{criteria}"  # the judge-rubric experiment writes beside v1
+    out = Path("/results") / tag / (f"{judge}_validity_v1{suffix}" + ("_smoke" if stage == "smoke" else ""))
     out.mkdir(parents=True, exist_ok=True)
     started = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     (out / f"nvidia_smi_{started}.txt").write_text(subprocess.run(["nvidia-smi", "-q"], capture_output=True, text=True).stdout)
@@ -82,7 +83,7 @@ def _run(judge: str, stage: str, suite_commit: str, env: str) -> dict:
                             "--format=csv,nounits", "-l", "1"], stdout=telemetry)
     cmd = ["python", f"{REMOTE}/judge_reliability/run_decision_validity.py", "--judge", judge,
            "--units", f"{REMOTE}/judge_reliability/validity_v1/units.jsonl", "--output-dir", str(out),
-           "--device", "cuda", "--warmup", "3", "--run"] + (["--limit", "3"] if stage == "smoke" else [])
+           "--device", "cuda", "--warmup", "3", "--criteria", criteria, "--run"] + (["--limit", "3"] if stage == "smoke" else [])
     with open(out / "run.log", "a") as log:
         log.write(f"\n=== {started} {' '.join(cmd)}\n")
         log.flush()
@@ -91,7 +92,7 @@ def _run(judge: str, stage: str, suite_commit: str, env: str) -> dict:
     telemetry.close()
     (out / "pip_freeze.txt").write_text(subprocess.run(["uv", "pip", "freeze", "--system"], capture_output=True, text=True).stdout)
     rows = [json.loads(line) for line in (out / "results.jsonl").read_text().splitlines()] if (out / "results.jsonl").exists() else []
-    info = {"judge": judge, "stage": stage, "env": env, "suite_commit": suite_commit, "gpu_request": GPU, "cpu": CPU,
+    info = {"judge": judge, "stage": stage, "env": env, "criteria": criteria, "suite_commit": suite_commit, "gpu_request": GPU, "cpu": CPU,
             "memory_mb": MEMORY_MB, "modal_task_id": os.environ.get("MODAL_TASK_ID"), "started": started,
             "ended": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "exit_status": status,
             "rows": len(rows), "errors": sum(r.get("status") != "ok" for r in rows)}
@@ -104,8 +105,8 @@ def _run(judge: str, stage: str, suite_commit: str, env: str) -> dict:
 
 
 @app.function(image=image, gpu=GPU, cpu=CPU, memory=MEMORY_MB, volumes={"/hf": hf, "/results": results}, timeout=4 * 3600)
-def run_judge(judge: str, stage: str, suite_commit: str) -> dict:
-    return _run(judge, stage, suite_commit, "env")
+def run_judge(judge: str, stage: str, suite_commit: str, criteria: str = "v1", tag: str = "") -> dict:
+    return _run(judge, stage, suite_commit, "env", criteria, tag)
 
 
 @app.function(image=image_kev, gpu=GPU, cpu=CPU, memory=MEMORY_MB, volumes={"/hf": hf, "/results": results}, timeout=4 * 3600)
@@ -117,10 +118,10 @@ def _commit() -> str:
     return subprocess.run(["git", "-C", str(KIT), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
 
 
-def _stage(stage: str, judges: str) -> None:
+def _stage(stage: str, judges: str, criteria: str = "v1") -> None:
     commit = _commit()
     picked = [j for j in judges.split(",") if j]
-    for info in run_judge.starmap([(j, stage, commit) for j in picked], return_exceptions=True):
+    for info in run_judge.starmap([(j, stage, commit, criteria) for j in picked], return_exceptions=True):
         print(json.dumps(info, default=str))
 
 
@@ -131,13 +132,22 @@ def download():
 
 
 @app.local_entrypoint()
-def smoke(judges: str = ",".join(JUDGES)):
-    _stage("smoke", judges)
+def smoke(judges: str = ",".join(JUDGES), criteria: str = "v1"):
+    _stage("smoke", judges, criteria)
 
 
 @app.local_entrypoint()
-def full(judges: str = ",".join(JUDGES)):
-    _stage("full", judges)
+def full(judges: str = ",".join(JUDGES), criteria: str = "v1"):
+    _stage("full", judges, criteria)
+
+
+@app.local_entrypoint()
+def rerun(tag: str, stage: str = "full", judges: str = ",".join(JUDGES), criteria: str = "v1,rubric,rubric_v2"):
+    """Repeat every judge x criteria set into /results/<tag>/, one container each, all at once."""
+    commit = _commit()
+    jobs = [(j, stage, commit, c, tag) for c in criteria.split(",") if c for j in judges.split(",") if j]
+    for info in run_judge.starmap(jobs, return_exceptions=True):
+        print(json.dumps(info, default=str))
 
 
 @app.local_entrypoint()

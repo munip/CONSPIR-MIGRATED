@@ -1,0 +1,1 @@
+{"judge": "clef", "stage": "full", "env": "env", "criteria": "rubric", "suite_commit": "1c0df4e830f8f72c6f22de385a1ae5bef97a2aa6", "gpu_request": "H100!", "cpu": 8, "memory_mb": 131072, "modal_task_id": "ta-01M5B4EGJXDPMRYT8R72B91SKR", "started": "2026-10-19T22:27:56Z", "ended": "2026-10-19T22:31:03Z", "exit_status": 0, "rows": 244, "errors": 0}

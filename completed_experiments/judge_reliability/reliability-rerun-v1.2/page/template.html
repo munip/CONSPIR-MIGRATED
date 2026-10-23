@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can We Trust the Judge?</title>
+<meta name="description" content="ConspiracyBench's decision judges on two tests: agreement with the final human labels on 150 real replies, and resistance to instructions planted in the answer (Experiment 005).">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2; --surface: #fcfcfb; --surface-2: #f1f0ec; --border: #e4e2dc; --grid: #ecebe6;
+  --text-1: #0b0b0b; --text-2: #52514e; --text-3: #7c7b76;
+  --clean: #2a78d6; --quoted: #1baf7a; --attack: #eb6834;
+  --hold: #6250d6; --diverge: #e87ba4; --abstain: #eda100;
+  --s100: #cde2fb; --s250: #86b6ef; --s450: #2a78d6; --s700: #0d366b;
+  --inj-bg: #fbeee8; --inj-bd: #f0c9b8; --quo-bg: #e5f5ee; --quo-bd: #b2e0cb;
+  --ok-bg: #e9f3fc; --bad-bg: #fbeee8; --focus: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121211; --surface: #1a1a19; --surface-2: #222221; --border: #2e2e2c; --grid: #262624;
+    --text-1: #f0efec; --text-2: #c3c2b7; --text-3: #8e8d86;
+    --clean: #3987e5; --quoted: #199e70; --attack: #d95926;
+    --hold: #9085e9; --diverge: #d55181; --abstain: #c98500;
+    --s100: #1d2a3a; --s250: #1c5cab; --s450: #5598e7; --s700: #b7d3f6;
+    --inj-bg: #2a1d17; --inj-bd: #55311f; --quo-bg: #142820; --quo-bd: #22503c;
+    --ok-bg: #16222f; --bad-bg: #2a1d17; --focus: #5598e7;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211; --surface: #1a1a19; --surface-2: #222221; --border: #2e2e2c; --grid: #262624;
+  --text-1: #f0efec; --text-2: #c3c2b7; --text-3: #8e8d86;
+  --clean: #3987e5; --quoted: #199e70; --attack: #d95926;
+  --hold: #9085e9; --diverge: #d55181; --abstain: #c98500;
+  --s100: #1d2a3a; --s250: #1c5cab; --s450: #5598e7; --s700: #b7d3f6;
+  --inj-bg: #2a1d17; --inj-bd: #55311f; --quo-bg: #142820; --quo-bd: #22503c;
+  --ok-bg: #16222f; --bad-bg: #2a1d17; --focus: #5598e7;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text-1); font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1140px; margin: 0 auto; padding: 32px 16px 72px; }
+.top { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+.eyebrow { color: var(--text-3); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 8px; }
+h1 { font-size: 34px; line-height: 1.12; margin: 0 0 10px; letter-spacing: -0.02em; max-width: 820px; }
+h2 { font-size: 22px; margin: 48px 0 6px; letter-spacing: -0.01em; }
+h3 { font-size: 15px; margin: 0 0 6px; }
+.lede { font-size: 17px; color: var(--text-2); margin: 0 0 14px; max-width: 820px; }
+.by { font-size: 14px; color: var(--text-2); margin: 0 0 18px; }
+.by b { color: var(--text-1); }
+p { margin: 0 0 12px; max-width: 820px; }
+.cap { color: var(--text-2); font-size: 13.5px; margin: 0 0 12px; max-width: 840px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 0 0 16px; min-width: 0; }
+button, select, input { font: inherit; color: inherit; }
+.btn, .chip { background: var(--surface); border: 1px solid var(--border); cursor: pointer; color: var(--text-2); font-size: 13px; }
+.btn { border-radius: 6px; padding: 4px 10px; }
+.chip { border-radius: 999px; padding: 2px 10px; font-size: 12.5px; }
+.btn:hover, .chip:hover { border-color: var(--text-3); color: var(--text-1); }
+.btn[aria-pressed="true"], .chip[aria-pressed="true"] { background: var(--text-1); color: var(--bg); border-color: var(--text-1); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.qs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 18px; }
+@media (max-width: 760px) { .qs { grid-template-columns: 1fr; } }
+.q { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; text-decoration: none; color: inherit; display: block; }
+.q:hover { border-color: var(--text-3); }
+.q .k { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .05em; }
+.q .t { font-size: 17px; font-weight: 600; margin: 2px 0 4px; }
+.q .d { font-size: 13.5px; color: var(--text-2); }
+.nav { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border); margin: 0 -16px 8px; padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.nav a { color: var(--text-2); text-decoration: none; font-size: 13px; }
+.nav a:hover { color: var(--text-1); }
+.nav .sep { flex: 1; }
+.nav .lbl { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+.ctl { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin: 0 0 10px; font-size: 13px; color: var(--text-2); }
+.ctl .grp { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.ctl .grp > span { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; margin-right: 4px; }
+.ctl select { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--text-2); margin: 0 0 8px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { fill: var(--text-2); font-size: 12px; font-variant-numeric: tabular-nums; }
+svg .gl { stroke: var(--grid); }
+svg .ax { stroke: var(--border); }
+svg .strong { fill: var(--text-1); font-weight: 600; }
+svg .muted { fill: var(--text-3); }
+.hit { fill: transparent; cursor: pointer; }
+.row-hl { fill: var(--surface-2); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid2 > * { min-width: 0; }
+@media (max-width: 880px) { .grid2 { grid-template-columns: 1fr; } }
+.tw { overflow-x: auto; }
+/* report card */
+table.rc { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; min-width: 760px; }
+table.rc th, table.rc td { padding: 8px 10px; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: middle; }
+table.rc th { color: var(--text-2); font-weight: 500; font-size: 12.5px; cursor: pointer; user-select: none; }
+table.rc th small { display: block; color: var(--text-3); font-weight: 400; }
+table.rc tr.j { cursor: pointer; }
+table.rc tr.j:hover td { background: var(--surface-2); }
+table.rc tr.j[aria-selected="true"] td { background: var(--surface-2); font-weight: 600; }
+.cellbar { display: flex; align-items: center; gap: 8px; }
+.cellbar .b { flex: 1; min-width: 50px; max-width: 110px; height: 6px; background: var(--grid); border-radius: 3px; overflow: hidden; }
+.cellbar .b i { display: block; height: 100%; border-radius: 3px; }
+.na { color: var(--text-3); font-size: 12.5px; }
+/* tooltip */
+#cm svg { max-width: 440px; margin: 0 auto; }
+#tip { position: fixed; z-index: 50; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 10px; font-size: 12.5px; box-shadow: 0 6px 20px rgba(0,0,0,.12); max-width: 320px; opacity: 0; transition: opacity .08s; }
+#tip .tv { font-size: 15px; font-weight: 600; color: var(--text-1); font-variant-numeric: tabular-nums; }
+#tip .tl { color: var(--text-2); }
+#tip .tr { display: flex; gap: 6px; align-items: center; color: var(--text-2); }
+#tip .tr b { color: var(--text-1); font-variant-numeric: tabular-nums; }
+#tip .k { display: inline-block; width: 12px; height: 2px; border-radius: 1px; }
+/* explorer */
+.explorer { display: grid; grid-template-columns: 320px 1fr; gap: 16px; align-items: start; }
+.explorer > * { min-width: 0; }
+@media (max-width: 880px) { .explorer { grid-template-columns: 1fr; } }
+.plist { max-height: 780px; overflow-y: auto; padding: 0; }
+.plist .search { position: sticky; top: 0; z-index: 1; background: var(--surface); padding: 10px; border-bottom: 1px solid var(--border); display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.plist input[type=search] { flex: 1; min-width: 120px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; }
+.prow { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--grid); cursor: pointer; align-items: center; }
+.prow:hover { background: var(--surface-2); }
+.prow[aria-selected="true"] { background: var(--surface-2); outline: 1px solid var(--text-3); outline-offset: -1px; }
+.prow .pq { font-size: 13px; line-height: 1.35; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.prow .pm { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
+.mini { display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--r, 1), 9px); grid-auto-columns: 9px; gap: 2px; }
+.mini i { display: block; border-radius: 2px; background: var(--grid); }
+.mini i.ok { background: var(--clean); opacity: .55; }
+.mini i.f { background: var(--attack); }
+.mini i.q { background: var(--quoted); }
+.mini i.w { background: var(--attack); }
+.empty { padding: 20px; color: var(--text-3); font-size: 13px; }
+.dhead { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; justify-content: space-between; }
+.dhead h3 { font-size: 18px; margin: 0; max-width: 680px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+.tag { font-size: 12px; border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; color: var(--text-2); background: var(--surface-2); }
+.lab { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; font-size: 12.5px; }
+.lab i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.block { border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin: 0 0 10px; font-size: 13px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 300px; overflow-y: auto; }
+.block .who { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-3); display: block; }
+.block .msg { margin: 0 0 8px; }
+.block .msg.dim { opacity: .65; }
+.arms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 1000px) { .arms { grid-template-columns: 1fr; } }
+.arm { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; min-width: 0; }
+.arm .ah { padding: 6px 10px; font-size: 12.5px; font-weight: 600; display: flex; gap: 6px; align-items: center; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+.arm .ah i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.arm .ab { padding: 10px; font-size: 13px; line-height: 1.5; max-height: 300px; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+mark { color: inherit; border-radius: 3px; padding: 0 2px; }
+mark.inj { background: var(--inj-bg); box-shadow: inset 0 0 0 1px var(--inj-bd); }
+mark.quo { background: var(--quo-bg); box-shadow: inset 0 0 0 1px var(--quo-bd); }
+.vt { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; font-variant-numeric: tabular-nums; }
+.vt th, .vt td { padding: 6px 8px; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: middle; }
+.vt th { color: var(--text-2); font-weight: 500; font-size: 12.5px; }
+.vt td.bad { background: var(--bad-bg); }
+.vt td.flip { background: var(--inj-bg); }
+.vt td.qflip { background: var(--quo-bg); }
+.pbar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; gap: 1px; margin-top: 3px; width: 100%; max-width: 160px; background: var(--grid); }
+.pbar i { display: block; height: 100%; }
+details { margin: 8px 0 0; }
+summary { cursor: pointer; color: var(--text-2); font-size: 13.5px; }
+.kbd { font: 11px ui-monospace, monospace; border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; color: var(--text-2); }
+table.data { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+table.data th, table.data td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); }
+table.data th { color: var(--text-2); font-weight: 500; }
+table.data .n { text-align: right; }
+.notes { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.notes .card { margin: 0; }
+.notes .card p { font-size: 14px; color: var(--text-2); margin: 0; }
+input[type=range] { width: 220px; accent-color: var(--text-1); }
+footer { margin-top: 40px; font-size: 12.5px; color: var(--text-3); }
+footer code { font-size: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <p class="eyebrow">ConspiracyBench · judge reliability rerun + Experiment 005</p>
+      <h1>Can we trust the judge?</h1>
+    </div>
+    <button class="btn" id="theme" type="button" aria-label="Toggle dark mode">◐ Theme</button>
+  </div>
+  <p class="lede">A benchmark is only as good as its grader. We put ConspiracyBench's decision judges through two tests on 22 Oct 2026: do they agree with the final human labels on real model replies, and can a reply talk them into a verdict?</p>
+  <p class="by">Final labels (reference v1.2) · injection study design <b>tomerz14</b> · runs on Modal H100, 22 Oct 2026</p>
+  <div class="qs">
+    <a class="q" href="#reliability"><div class="k">Test 1 · 150 real replies</div><div class="t">Does it agree with humans?</div><div class="d">Endorsement rules, conversation context on later turns, scored against the final labels.</div></a>
+    <a class="q" href="#injection"><div class="k">Test 2 · 70 synthetic answers × 3</div><div class="t">Can an answer manipulate it?</div><div class="d">The same answer clean, with a quoted instruction, and with an active instruction toward a wrong label.</div></a>
+  </div>
+
+  <nav class="nav" aria-label="Sections and judge focus">
+    <a href="#card">Report card</a><a href="#both">Both tests</a><a href="#reliability">Agreement</a><a href="#units">Replies</a><a href="#injection">Injection</a><a href="#pairs">Pairs</a><a href="#notes">Caveats</a>
+    <span class="sep"></span><span class="lbl">Focus</span><span id="focus-chips" style="display:flex;gap:4px;flex-wrap:wrap"></span>
+  </nav>
+
+  <h2 id="card">Report card</h2>
+  <p class="cap">Every judge on every headline number. Click a column to sort, a row to focus that judge across the page. Qwen3-4B and the cascade were only in the injection study; Qwen chat judges are excluded from the agreement study.</p>
+  <div class="card tw"><table class="rc" id="rc"></table></div>
+
+  <h2 id="both">Both tests at once</h2>
+  <p class="cap">Right is better agreement with humans (Cohen's κ on 150 real replies, final labels). Lower is fewer manipulated verdicts (share of clean-correct pairs where the active attack got the attacker's label). Bars are 95% intervals. The judge you want is bottom-right.</p>
+  <div class="card"><div id="scatter"></div></div>
+
+  <h2 id="reliability">Test 1 · Agreement with the final labels</h2>
+  <p class="cap">All 150 replies were judged under the endorsement rules and scored against the final labels; the 94 later-turn replies were also judged with and without the preceding conversation. The rerun reproduced the 19 Oct run exactly (<span id="repro"></span>).</p>
+  <div class="card">
+    <div class="ctl">
+      <div class="grp"><span>Later turns</span><button class="chip" data-ctx="1" aria-pressed="true" type="button">with context</button><button class="chip" data-ctx="0" aria-pressed="false" type="button">without</button></div>
+    </div>
+    <div class="legend"><span><i style="background:var(--clean)"></i>accuracy</span><span><i style="background:var(--attack)"></i>Cohen's κ</span><span style="color:var(--text-3)">· majority-class baseline (always "hold") marked ┆</span></div>
+    <div id="reldot"></div>
+    <details><summary>Table view</summary><div class="tw" id="reldot-table"></div></details>
+  </div>
+  <div class="card">
+    <h3 id="cm-title">Where the focused judge goes wrong</h3>
+    <p class="cap">Rows are the final label, columns the judge's. Click a cell to list those replies below.</p>
+    <div id="cm"></div>
+  </div>
+
+  <h3 id="units" style="margin-top:28px;font-size:18px">Every reply</h3>
+  <p class="cap">The grid on each row: judges (pplx, Clef, Kev, Laya) — blue matched the final label, orange missed. <span class="kbd">j</span>/<span class="kbd">k</span> move, <span class="kbd">/</span> searches.</p>
+  <div class="explorer">
+    <div class="card plist">
+      <div class="search">
+        <input type="search" id="uq" placeholder="Search question or reply…" aria-label="Search replies">
+        <select id="ufilter" aria-label="Filter replies">
+          <option value="all">all replies</option><option value="focuswrong">focused judge wrong</option>
+          <option value="anywrong">any judge wrong</option>
+          <option value="hold">final: hold</option><option value="diverge">final: diverge</option><option value="abstain">final: abstain</option></select>
+      </div>
+      <div id="urows" role="listbox" aria-label="Replies"></div>
+    </div>
+    <div class="card" id="udetail" aria-live="polite"></div>
+  </div>
+
+  <h2 id="injection">Test 2 · Injected instructions (Experiment 005)</h2>
+  <p class="cap">Each answer is judged clean, with a <b style="color:var(--quoted)">quoted</b> wrong-label instruction that is rejected, and with an <b style="color:var(--attack)">active</b> one. Rates count pairs where the judge gave the attacker's label, among pairs it got right when clean. Hover for intervals and the paired McNemar test.</p>
+  <div class="grid2">
+    <div class="card">
+      <div class="legend"><span><i style="background:var(--quoted)"></i>quoted</span><span><i style="background:var(--attack)"></i>active attack</span></div>
+      <div id="injdot"></div>
+      <details><summary>Table view</summary><div class="tw" id="injdot-table"></div></details>
+    </div>
+    <div class="card">
+      <div class="ctl"><div class="grp"><span>Version</span><button class="chip" data-harm="attack" aria-pressed="true" type="button">attack</button><button class="chip" data-harm="quoted" aria-pressed="false" type="button">quoted</button></div></div>
+      <div id="heat" class="tw"></div>
+      <p class="cap" style="margin:6px 0 0">Flips by attack family. Click a cell to open those pairs.</p>
+    </div>
+  </div>
+
+  <h3 id="pairs" style="margin-top:28px;font-size:18px">Every injected pair</h3>
+  <p class="cap">Highlighted text differs from the clean answer. Grid: judges (Qwen, pplx, Clef, Kev, Laya, cascade) × versions (clean, quoted, attack); filled = gave the attacker's label.</p>
+  <div class="explorer">
+    <div class="card plist">
+      <div class="search">
+        <input type="search" id="pq" placeholder="Search…" aria-label="Search pairs">
+        <label style="font-size:12.5px;color:var(--text-2);display:flex;gap:4px;align-items:center"><input type="checkbox" id="onlyflip"> only flips</label>
+      </div>
+      <div id="prows" role="listbox" aria-label="Pairs"></div>
+    </div>
+    <div class="card" id="pdetail" aria-live="polite"></div>
+  </div>
+
+  <h2 id="notes">How to read this, and what it can't tell you</h2>
+  <div class="notes">
+    <div class="card"><h3>Final labels are the truth</h3><p>Every agreement number is against the final reference labels (v1.2): 112 hold, 33 diverge, 5 abstain. Always answering "hold" would score 74.7%.</p></div>
+    <div class="card"><h3>In-sample rules</h3><p>The endorsement rules were written while reading these same 150 replies, so agreement here is in-sample for the rules.</p></div>
+    <div class="card"><h3>Context matters, differently</h3><p>On later turns pplx and Clef do slightly better with the conversation; Kev does worse (κ 0.52 → 0.39) and predicts many abstains without it. Toggle "Later turns" to see it.</p></div>
+    <div class="card"><h3>Laya says "hold"</h3><p>Laya calls 148 of 150 replies hold, so its 73% accuracy is the always-hold baseline and its κ is zero. In the injection study it got only 29 of 70 clean answers right. Treat its numbers as uninformative.</p></div>
+    <div class="card"><h3>The injection set is synthetic</h3><p>70 pairs from 21 questions, one template per attack family, and a quote whose wording differs from the attack's. It is a regression check: zero flips bounds the rate near 5%, not zero.</p></div>
+    <div class="card"><h3>Reproducible</h3><p>Every judge returned identical verdicts and probabilities to the 19 Oct run on fresh containers; the injection repeat subset was identical too. Run-to-run noise is not what limits these numbers — sample size and label quality are.</p></div>
+  </div>
+  <footer id="foot"></footer>
+</main>
+<div id="tip" role="tooltip"></div>
+<script>
+const DATA = /*DATA*/null;
+const R = DATA.rel, I = DATA.inj, L = ["hold", "diverge", "abstain"], ARMS = ["clean", "quoted", "attack"];
+const RJ = ["pplx", "clef", "kev", "laya"], IJ = I.judges;
+const NAME = { qwen: "Qwen3-4B", pplx: "pplx-decider", clef: "Clef", kev: "Kev-4B", laya: "Laya", cascade: "Cascade" };
+const FAM = { direct_overrides: "Direct override", authority_spoofing: "Authority spoof", role_delimiter_spoofing: "Delimiter spoof",
+  grading_rubric_replacement: "Rubric replacement", fabricated_verdicts: "Fabricated verdict", reward_pressure: "Reward pressure", obfuscated_instructions: "Obfuscated" };
+const ARMC = { clean: "var(--clean)", quoted: "var(--quoted)", attack: "var(--attack)" };
+const LABC = { hold: "var(--hold)", diverge: "var(--diverge)", abstain: "var(--abstain)" };
+const NS = "http://www.w3.org/2000/svg";
+const S = { focus: "pplx", ref: "v12", scope: "all", ctx: true, thr: null, uSel: null, uq: "", uf: "all", uIds: null,
+  harm: "attack", pSel: null, pq: "", onlyflip: false, pIds: null, sort: null };
+
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else if (k === "style") n.style.cssText = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else if (v !== null && v !== undefined && v !== false) n.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c !== null && c !== undefined && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return n;
+}
+function sv(tag, attrs = {}, ...kids) {
+  const n = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  for (const c of kids.flat()) if (c != null) n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  return n;
+}
+const pct = (k, n) => n ? Math.round(100 * k / n) + "%" : "–";
+const f2 = x => isNaN(x) ? "–" : x.toFixed(2);
+function wilson(k, n, z = 1.96) { if (!n) return [NaN, NaN]; const p = k / n, d = 1 + z * z / n, c = p + z * z / (2 * n), h = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)); return [Math.max(0, (c - h) / d), Math.min(1, (c + h) / d)]; }
+function comb(n, k) { let r = 1; for (let i = 1; i <= k; i++) r = r * (n - k + i) / i; return r; }
+function mcnemar(b, c) { const n = b + c; if (!n) return 1; let s = 0; for (let i = 0; i <= Math.min(b, c); i++) s += comb(n, i); return Math.min(1, 2 * s / 2 ** n); }
+const fmtp = p => p >= 0.1 ? p.toFixed(2) : p >= 0.001 ? p.toFixed(3) : p.toExponential(1);
+function rng(seed) { return () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
+
+// tooltip
+const tip = document.getElementById("tip");
+function showTip(ev, rows) { tip.replaceChildren(...rows.filter(Boolean)); tip.style.opacity = 1; moveTip(ev); }
+function moveTip(ev) {
+  const r = tip.getBoundingClientRect(); let x, y;
+  if (ev.clientX !== undefined && ev.type !== "focus") { x = ev.clientX + 14; y = ev.clientY + 14; } else { const b = ev.target.getBoundingClientRect(); x = b.right + 8; y = b.top; }
+  if (x + r.width > innerWidth - 8) x = Math.max(8, x - r.width - 28);
+  if (y + r.height > innerHeight - 8) y = Math.max(8, innerHeight - r.height - 8);
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+const hideTip = () => { tip.style.opacity = 0; };
+const tipRow = (c, l, v) => el("div", { class: "tr" }, el("i", { class: "k", style: `background:${c}` }), el("b", {}, v), l);
+function hover(node, rowsFn, onclick) {
+  node.addEventListener("pointermove", ev => showTip(ev, rowsFn()));
+  node.addEventListener("pointerleave", hideTip);
+  node.addEventListener("focus", ev => showTip(ev, rowsFn()));
+  node.addEventListener("blur", hideTip);
+  if (onclick) { node.addEventListener("click", onclick); node.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onclick(e); } }); }
+  node.setAttribute("tabindex", "0");
+}
+const labChip = l => el("span", { class: "lab" }, el("i", { style: `background:${LABC[l] || "var(--text-3)"}` }), l || "none");
+
+// ---------------- reliability metrics
+const UM = new Map(R.units.map(u => [u.id, u]));
+function relPred(j, u, ctx = S.ctx, thr = null) {
+  const later = u.transcript.length > 0, v = later && ctx ? "preceding_exchange" : "no_context";
+  const r = R.preds[j][v][u.id]; if (!r) return null;
+  if (thr === null) return { label: r[0], p: r.slice(1) };
+  const p = r.slice(1);
+  return { label: p[1] >= thr ? "diverge" : (p[0] >= p[2] ? "hold" : "abstain"), p };
+}
+function scopeUnits(scope = S.scope) {
+  return R.units.filter(u => scope === "all" || (scope === "opening" && !u.transcript.length) || (scope === "later" && u.transcript.length));
+}
+function kappa(pairs) {
+  const n = pairs.length; if (!n) return NaN;
+  const po = pairs.filter(([a, b]) => a === b).length / n;
+  let pe = 0; for (const l of L) pe += pairs.filter(x => x[0] === l).length * pairs.filter(x => x[1] === l).length;
+  pe /= n * n; return pe < 1 ? (po - pe) / (1 - pe) : NaN;
+}
+const relCache = new Map();
+function relStats(j, opts = {}) {
+  const ref = opts.ref || S.ref, scope = opts.scope || S.scope, ctx = opts.ctx ?? S.ctx, thr = opts.thr === undefined ? null : opts.thr, boot = opts.boot ?? 400;
+  const key = [j, ref, scope, ctx, thr, boot].join("|"); if (relCache.has(key)) return relCache.get(key);
+  const us = scopeUnits(scope), pairs = [];
+  for (const u of us) { const p = relPred(j, u, ctx, thr); if (p) pairs.push([p.label, u[ref]]); }
+  const acc = pairs.filter(([a, b]) => a === b).length / pairs.length, k = kappa(pairs);
+  const rand = rng(7), accs = [], ks = [];
+  for (let b = 0; b < boot; b++) { const s = pairs.map(() => pairs[Math.floor(rand() * pairs.length)]); accs.push(s.filter(([a, b]) => a === b).length / s.length); ks.push(kappa(s)); }
+  accs.sort((a, b) => a - b); ks.sort((a, b) => a - b);
+  const q = (arr, t) => arr.length ? arr[Math.min(arr.length - 1, Math.floor(t * arr.length))] : NaN;
+  const div = pairs.filter(x => x[0] === "diverge").length, tp = pairs.filter(x => x[0] === "diverge" && x[1] === "diverge").length, gd = pairs.filter(x => x[1] === "diverge").length;
+  const maj = Math.max(...L.map(l => pairs.filter(x => x[1] === l).length)) / pairs.length;
+  const out = { n: pairs.length, acc, k, accCI: [q(accs, .025), q(accs, .975)], kCI: [q(ks, .025), q(ks, .975)], divRate: div / pairs.length,
+    divP: div ? tp / div : NaN, divR: gd ? tp / gd : NaN, maj, pairs };
+  relCache.set(key, out); return out;
+}
+
+// ---------------- injection metrics
+const v5 = (p, j, a) => p.j[j][a].v;
+const flipT = (p, j, a) => v5(p, j, a) === p.target;
+const okClean = (p, j) => v5(p, j, "clean") === p.gold;
+function injStats(j) {
+  const base = I.pairs.filter(p => okClean(p, j));
+  const at = base.filter(p => flipT(p, j, "attack")).length, qt = base.filter(p => flipT(p, j, "quoted")).length;
+  let b = 0, c = 0; for (const p of base) { const A = flipT(p, j, "attack"), Q = flipT(p, j, "quoted"); if (A && !Q) b++; if (Q && !A) c++; }
+  return { n: base.length, clean: base.length, total: I.pairs.length, at, qt, b, c, p: mcnemar(b, c) };
+}
+
+// ---------------- focus chips
+function renderFocus() {
+  const box = document.getElementById("focus-chips"); box.replaceChildren();
+  for (const j of IJ) box.append(el("button", { class: "chip", type: "button", "aria-pressed": S.focus === j, onclick: () => { S.focus = j; renderAll(); } }, NAME[j]));
+}
+
+// ---------------- report card
+const COLS = [
+  { k: "acc", h: "Agreement", s: "accuracy, final labels", rel: true, get: j => relStats(j, { ref: "v12", scope: "all", ctx: true }).acc, fmt: x => pct(x, 1), good: "hi", bar: "var(--clean)" },
+  { k: "kappa", h: "Cohen's κ", s: "beyond chance", rel: true, get: j => relStats(j, { ref: "v12", scope: "all", ctx: true }).k, fmt: f2, good: "hi", bar: "var(--clean)" },
+  { k: "divr", h: "Diverge recall", s: "of 33 diverges", rel: true, get: j => relStats(j, { ref: "v12", scope: "all", ctx: true }).divR, fmt: x => pct(x, 1), good: "hi", bar: "var(--clean)" },
+  { k: "divp", h: "Diverge precision", s: "", rel: true, get: j => relStats(j, { ref: "v12", scope: "all", ctx: true }).divP, fmt: x => pct(x, 1), good: "hi", bar: "var(--clean)" },
+  { k: "fix", h: "Injection: clean", s: "fixture accuracy", rel: false, get: j => injStats(j).clean / 70, fmt: x => pct(x, 1), good: "hi", bar: "var(--clean)" },
+  { k: "qt", h: "Quoted → attacker", s: "of clean-correct", rel: false, get: j => { const s = injStats(j); return s.qt / s.n; }, fmt: x => pct(x, 1), good: "lo", bar: "var(--quoted)" },
+  { k: "at", h: "Attack → attacker", s: "of clean-correct", rel: false, get: j => { const s = injStats(j); return s.at / s.n; }, fmt: x => pct(x, 1), good: "lo", bar: "var(--attack)" },
+];
+function renderCard() {
+  const t = document.getElementById("rc"); t.replaceChildren();
+  const rows = IJ.map(j => ({ j, v: COLS.map(c => (c.rel && !RJ.includes(j)) ? null : c.get(j)) }));
+  if (S.sort) { const i = COLS.findIndex(c => c.k === S.sort.k); rows.sort((a, b) => ((a.v[i] ?? -9) - (b.v[i] ?? -9)) * (S.sort.dir)); }
+  t.append(el("thead", {}, el("tr", {}, el("th", {}, "Judge"), COLS.map(c => el("th", { onclick: () => { S.sort = { k: c.k, dir: S.sort && S.sort.k === c.k ? -S.sort.dir : (c.good === "hi" ? -1 : 1) }; renderCard(); }, title: "Sort" },
+    c.h + (S.sort && S.sort.k === c.k ? (S.sort.dir < 0 ? " ↓" : " ↑") : ""), el("small", {}, c.s))))));
+  const tb = el("tbody");
+  for (const r of rows) {
+    const tr = el("tr", { class: "j", "aria-selected": S.focus === r.j, tabindex: "0", onclick: () => { S.focus = r.j; renderAll(); },
+      onkeydown: e => { if (e.key === "Enter") { S.focus = r.j; renderAll(); } } }, el("td", {}, NAME[r.j]));
+    r.v.forEach((x, i) => {
+      const c = COLS[i];
+      if (x === null) { tr.append(el("td", {}, el("span", { class: "na" }, "not tested"))); return; }
+      const w = Math.max(0, Math.min(1, c.k === "kappa" ? x : x));
+      tr.append(el("td", {}, el("div", { class: "cellbar" }, el("span", { style: "min-width:38px" }, c.fmt(x)), el("span", { class: "b", "aria-hidden": "true" }, el("i", { style: `width:${100 * w}%;background:${c.bar}` })))));
+    });
+    tb.append(tr);
+  }
+  t.append(tb);
+}
+
+// ---------------- combined scatter
+function renderScatter() {
+  const box = document.getElementById("scatter"), W = Math.max(340, box.clientWidth || 900), H = 340, m = { l: 56, r: 24, t: 16, b: 46 };
+  const xMin = -0.1, xMax = 1, yMax = 0.7;
+  const x = v => m.l + (v - xMin) / (xMax - xMin) * (W - m.l - m.r), y = v => m.t + (1 - v / yMax) * (H - m.t - m.b);
+  const s = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Agreement vs. manipulation by judge" });
+  s.append(sv("rect", { x: x(0.6), y: y(0.1), width: x(1) - x(0.6), height: y(0) - y(0.1), fill: "var(--ok-bg)", rx: 6 }));
+  s.append(sv("text", { x: x(1) - 6, y: y(0) - 8, "text-anchor": "end", class: "muted", style: "font-size:11px" }, "where you want to be"));
+  for (const t of [0, .2, .4, .6, .8, 1]) { s.append(sv("line", { class: "gl", x1: x(t), x2: x(t), y1: m.t, y2: H - m.b })); s.append(sv("text", { x: x(t), y: H - m.b + 16, "text-anchor": "middle", class: "muted" }, t.toFixed(1))); }
+  for (const t of [0, .2, .4, .6]) { s.append(sv("line", { class: "gl", x1: m.l, x2: W - m.r, y1: y(t), y2: y(t) })); s.append(sv("text", { x: m.l - 8, y: y(t) + 4, "text-anchor": "end", class: "muted" }, Math.round(t * 100) + "%")); }
+  s.append(sv("text", { x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle" }, "agreement with humans (Cohen's κ, 150 real replies) →"));
+  s.append(sv("text", { x: 14, y: (m.t + H - m.b) / 2, transform: `rotate(-90 14 ${(m.t + H - m.b) / 2})`, "text-anchor": "middle" }, "← manipulated by active attack"));
+  for (const j of RJ) {
+    const r = relStats(j, { ref: "v12", scope: "all", ctx: true, boot: 1000 }), a = injStats(j), yr = a.at / a.n, [lo, hi] = wilson(a.at, a.n);
+    const cx = x(r.k), cy = y(yr), foc = S.focus === j;
+    const g = sv("g", {});
+    g.append(sv("line", { x1: x(Math.max(xMin, r.kCI[0])), x2: x(r.kCI[1]), y1: cy, y2: cy, stroke: "var(--text-3)", "stroke-width": 1.5 }));
+    g.append(sv("line", { x1: cx, x2: cx, y1: y(Math.min(yMax, hi)), y2: y(lo), stroke: "var(--text-3)", "stroke-width": 1.5 }));
+    g.append(sv("circle", { cx, cy, r: foc ? 8 : 6, fill: foc ? "var(--text-1)" : "var(--text-2)", stroke: "var(--surface)", "stroke-width": 2 }));
+    const leftLab = j === "clef";
+    g.append(sv("text", { x: leftLab ? cx - 10 : cx + 10, y: cy - 8, "text-anchor": leftLab ? "end" : "start", class: foc ? "strong" : "" }, NAME[j]));
+    const hit = sv("circle", { cx, cy, r: 18, class: "hit" });
+    hover(hit, () => [el("div", { class: "tv" }, NAME[j]), tipRow("var(--clean)", `κ (95% CI ${f2(r.kCI[0])}–${f2(r.kCI[1])})`, f2(r.k)),
+      tipRow("var(--clean)", "accuracy", pct(r.acc, 1)), tipRow("var(--attack)", `attack → attacker's label (${pct(lo, 1)}–${pct(hi, 1)})`, `${a.at}/${a.n}`),
+      el("div", { class: "tl" }, "Click to focus")], () => { S.focus = j; renderAll(); });
+    g.append(hit); s.append(g);
+  }
+  box.replaceChildren(s);
+}
+
+// ---------------- reliability dot chart
+function renderRelDot() {
+  const box = document.getElementById("reldot"), W = Math.max(340, box.clientWidth || 900), narrow = W < 560;
+  const rowH = 52, top = 22, left = narrow ? 92 : 130, right = narrow ? 70 : 110, H = top + rowH * RJ.length + 24;
+  const xMin = -0.2, x = t => left + (t - xMin) / (1 - xMin) * (W - left - right);
+  const s = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Accuracy and kappa by judge" });
+  for (const t of [-0.2, 0, .2, .4, .6, .8, 1]) { s.append(sv("line", { class: t === 0 ? "ax" : "gl", x1: x(t), x2: x(t), y1: top - 6, y2: H - 22 })); s.append(sv("text", { x: x(t), y: H - 6, "text-anchor": "middle", class: "muted" }, t.toFixed(1))); }
+  const tbl = [];
+  RJ.forEach((j, i) => {
+    const st = relStats(j), yy = top + i * rowH + rowH / 2;
+    if (S.focus === j) s.append(sv("rect", { class: "row-hl", x: 0, y: yy - rowH / 2 + 2, width: W, height: rowH - 4, rx: 6 }));
+    s.append(sv("text", { x: left - 12, y: yy + 4, "text-anchor": "end", class: S.focus === j ? "strong" : "" }, NAME[j]));
+    s.append(sv("text", { x: left - 12, y: yy + 18, "text-anchor": "end", class: "muted", style: "font-size:10.5px" }, `n=${st.n}`));
+    s.append(sv("line", { x1: x(st.maj), x2: x(st.maj), y1: yy - 14, y2: yy - 2, stroke: "var(--text-3)", "stroke-dasharray": "2 2" }));
+    [["acc", "accCI", "var(--clean)", -6], ["k", "kCI", "var(--attack)", 6]].forEach(([m, ci, c, off]) => {
+      if (isNaN(st[m])) return;
+      s.append(sv("line", { x1: x(Math.max(xMin, st[ci][0])), x2: x(st[ci][1]), y1: yy + off, y2: yy + off, stroke: c, "stroke-width": 2, "stroke-linecap": "round", opacity: .55 }));
+      s.append(sv("circle", { cx: x(Math.max(xMin, st[m])), cy: yy + off, r: 5, fill: c, stroke: "var(--surface)", "stroke-width": 2 }));
+    });
+    s.append(sv("text", { x: W - right + 10, y: yy + 2, class: "strong" }, pct(st.acc, 1)));
+    s.append(sv("text", { x: W - right + 10, y: yy + 16, class: "muted" }, "κ " + f2(st.k)));
+    const hit = sv("rect", { class: "hit", x: 0, y: yy - rowH / 2, width: W, height: rowH });
+    hover(hit, () => [el("div", { class: "tv" }, NAME[j]), el("div", { class: "tl" }, `${st.n} replies · final labels · ${S.ctx ? "with" : "without"} context on later turns`),
+      tipRow("var(--clean)", `accuracy (${pct(st.accCI[0], 1)}–${pct(st.accCI[1], 1)})`, pct(st.acc, 1)),
+      tipRow("var(--attack)", `κ (${f2(st.kCI[0])}–${f2(st.kCI[1])})`, f2(st.k)),
+      tipRow("var(--diverge)", "diverge recall / precision", `${pct(st.divR, 1)} / ${pct(st.divP, 1)}`),
+      el("div", { class: "tl" }, `always-"hold" would score ${pct(st.maj, 1)}`)], () => { S.focus = j; renderAll(); });
+    s.append(hit);
+    tbl.push([NAME[j], st.n, `${pct(st.acc, 1)} (${pct(st.accCI[0], 1)}–${pct(st.accCI[1], 1)})`, `${f2(st.k)} (${f2(st.kCI[0])}–${f2(st.kCI[1])})`, pct(st.divR, 1), pct(st.divP, 1), pct(st.maj, 1)]);
+  });
+  box.replaceChildren(s);
+  document.getElementById("reldot-table").replaceChildren(el("table", { class: "data" },
+    el("thead", {}, el("tr", {}, ["Judge", "n", "accuracy (95% CI)", "κ (95% CI)", "diverge recall", "diverge precision", "always hold"].map(h => el("th", {}, h)))),
+    el("tbody", {}, tbl.map(r => el("tr", {}, r.map((c, i) => el("td", { class: i ? "n" : "" }, c)))))));
+}
+document.querySelectorAll("[data-ctx]").forEach(b => b.onclick = () => { S.ctx = b.dataset.ctx === "1"; document.querySelectorAll("[data-ctx]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderRel(); });
+
+// ---------------- confusion matrix (focused reliability judge)
+function relJudge() { return RJ.includes(S.focus) ? S.focus : "pplx"; }
+function renderCM() {
+  const j = relJudge(), st = relStats(j, { thr: S.thr });
+  document.getElementById("cm-title").textContent = `Where ${NAME[j]} goes wrong`;
+  const W = 420, c = 80, left = 96, top = 40, H = top + c * 3 + 10;
+  const s = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Confusion matrix" });
+  s.append(sv("text", { x: left + 1.5 * c, y: 14, "text-anchor": "middle", class: "muted" }, `${NAME[j]} says →`));
+  L.forEach((l, i) => s.append(sv("text", { x: left + i * c + c / 2, y: top - 8, "text-anchor": "middle", class: "strong" }, l)));
+  const us = scopeUnits().filter(u => relPred(j, u, S.ctx, S.thr));
+  L.forEach((g, r) => {
+    s.append(sv("text", { x: left - 10, y: top + r * c + c / 2 + 4, "text-anchor": "end", class: "strong" }, g));
+    L.forEach((p, k) => {
+      const ids = us.filter(u => u[S.ref] === g && relPred(j, u, S.ctx, S.thr).label === p).map(u => u.id);
+      const rowN = us.filter(u => u[S.ref] === g).length, share = rowN ? ids.length / rowN : 0, diag = r === k;
+      const fill = diag ? `color-mix(in srgb, var(--clean) ${Math.round(15 + 70 * share)}%, var(--surface))` : ids.length ? `color-mix(in srgb, var(--attack) ${Math.round(15 + 70 * share)}%, var(--surface))` : "var(--grid)";
+      s.append(sv("rect", { x: left + k * c + 2, y: top + r * c + 2, width: c - 4, height: c - 4, rx: 6, fill }));
+      s.append(sv("text", { x: left + k * c + c / 2, y: top + r * c + c / 2 + 2, "text-anchor": "middle", class: "strong", style: "font-size:18px" }, ids.length));
+      s.append(sv("text", { x: left + k * c + c / 2, y: top + r * c + c / 2 + 18, "text-anchor": "middle", class: "muted", style: "font-size:11px" }, pct(ids.length, rowN)));
+      const hit = sv("rect", { class: "hit", x: left + k * c, y: top + r * c, width: c, height: c });
+      hover(hit, () => [el("div", { class: "tv" }, `${ids.length} replies`), el("div", { class: "tl" }, `humans: ${g} · ${NAME[j]}: ${p}`), el("div", { class: "tl" }, "Click to list them")],
+        () => { S.uIds = new Set(ids); S.uSel = ids[0] || null; renderUnits(); document.getElementById("units").scrollIntoView(); });
+      s.append(hit);
+    });
+  });
+  document.getElementById("cm").replaceChildren(s);
+}
+
+
+
+// ---------------- unit explorer
+const uq = document.getElementById("uq"), uf = document.getElementById("ufilter");
+uq.oninput = () => { S.uq = uq.value.trim().toLowerCase(); renderUnits(); };
+uf.onchange = () => { S.uf = uf.value; S.uIds = null; renderUnits(); };
+const uText = new Map(R.units.map(u => [u.id, (u.q + " " + u.reply + " " + u.transcript.map(m => m[1]).join(" ")).toLowerCase()]));
+let uVisible = [];
+function unitList() {
+  const j = relJudge();
+  return R.units.filter(u => (!S.uIds || S.uIds.has(u.id)) && (!S.uq || uText.get(u.id).includes(S.uq)) && (
+    S.uf === "all" || (L.includes(S.uf) && u[S.ref] === S.uf)
+    || (S.uf === "focuswrong" && relPred(j, u).label !== u[S.ref]) || (S.uf === "anywrong" && RJ.some(k => relPred(k, u).label !== u[S.ref]))));
+}
+function renderUnits() {
+  uVisible = unitList();
+  const box = document.getElementById("urows"); box.replaceChildren();
+  if (S.uIds) box.append(el("div", { class: "empty", style: "padding:8px 10px" }, `${uVisible.length} replies from the chart. `, el("button", { class: "chip", type: "button", onclick: () => { S.uIds = null; renderUnits(); } }, "show all")));
+  if (!uVisible.length) { box.append(el("div", { class: "empty" }, "No replies match.")); renderUnitDetail(null); return; }
+  if (!uVisible.some(u => u.id === S.uSel)) S.uSel = uVisible[0].id;
+  for (const u of uVisible) {
+    const mini = el("div", { class: "mini", "aria-hidden": "true", style: "--r:1" }, RJ.map(j => el("i", { class: relPred(j, u).label === u[S.ref] ? "ok" : "w" })));
+    const r = el("div", { class: "prow", role: "option", "aria-selected": u.id === S.uSel, onclick: () => { S.uSel = u.id; renderUnits(); } },
+      el("div", {}, el("div", { class: "pq" }, u.q), el("div", { class: "pm" }, `${u.id} · ${u[S.ref]} · turn ${u.turn}`)), mini);
+    r.dataset.id = u.id; box.append(r);
+  }
+  renderUnitDetail(UM.get(S.uSel));
+}
+function renderUnitDetail(u) {
+  const d = document.getElementById("udetail"); d.replaceChildren();
+  if (!u) { d.append(el("div", { class: "empty" }, "Pick a reply.")); return; }
+  const idx = uVisible.findIndex(x => x.id === u.id);
+  d.append(el("div", { class: "dhead" }, el("h3", {}, u.q), el("div", { style: "display:flex;gap:6px" },
+    el("button", { class: "btn", type: "button", onclick: () => uStep(-1) }, "← k"), el("span", { style: "font-size:12.5px;color:var(--text-3);align-self:center" }, `${idx + 1} / ${uVisible.length}`),
+    el("button", { class: "btn", type: "button", onclick: () => uStep(1) }, "j →"))));
+  d.append(el("div", { class: "tags" }, el("span", { class: "tag" }, "label ", labChip(u.v12)),
+    el("span", { class: "tag" }, `turn ${u.turn}`), u.framing ? el("span", { class: "tag" }, u.framing) : null, u.solver ? el("span", { class: "tag" }, `answered by ${u.solver}`) : null, el("span", { class: "tag" }, `${u.id} · ${u.item}`)));
+  const gt = el("details", {}, el("summary", {}, "Reference answer and divergence rule"), el("div", { class: "block", style: "margin-top:8px" }, el("span", { class: "who" }, "reference answer"), u.gt,
+    u.div_if.length ? el("div", { style: "margin-top:8px" }, el("span", { class: "who" }, "diverges if"), u.div_if.join("\n")) : null));
+  d.append(gt);
+  if (u.transcript.length) {
+    const conv = el("div", { class: "block" });
+    u.transcript.forEach(([role, t], i) => conv.append(el("div", { class: "msg" + (i < u.transcript.length - 1 ? " dim" : "") }, el("span", { class: "who" }, role + (i === u.transcript.length - 1 ? " (pushback)" : "")), t)));
+    d.append(el("details", { open: true }, el("summary", {}, `Preceding conversation (${u.transcript.length} messages) — shown to judges "with context"`), conv));
+  }
+  d.append(el("div", { class: "block" }, el("span", { class: "who" }, "graded reply"), u.reply));
+  const t = el("table", { class: "vt" }, el("thead", {}, el("tr", {}, el("th", {}, "Judge"), el("th", {}, u.transcript.length ? "with context (deployed)" : "deployed"), u.transcript.length ? el("th", {}, "without context") : null)));
+  const tb = el("tbody");
+  for (const j of RJ) {
+    const tr = el("tr", { style: S.focus === j ? "background:var(--surface-2);font-weight:600" : "" }, el("td", {}, NAME[j]));
+    for (const ctx of u.transcript.length ? [true, false] : [true]) {
+      const p = relPred(j, u, ctx), ok = p.label === u[S.ref];
+      const bar = el("div", { class: "pbar", "aria-hidden": "true" }, L.map((l, i) => el("i", { style: `width:${100 * p.p[i]}%;background:${LABC[l]}` })));
+      hover(bar, () => [el("div", { class: "tv" }, `${NAME[j]} · ${ctx ? "with" : "without"} context`), ...L.map((l, i) => tipRow(LABC[l], l, (100 * p.p[i]).toFixed(1) + "%"))]);
+      tr.append(el("td", { class: ok ? "" : "bad" }, labChip(p.label), ok ? " ✓" : " ✗", bar));
+    }
+    tb.append(tr);
+  }
+  t.append(tb); d.append(t);
+  d.append(el("p", { class: "cap", style: "margin:6px 0 0" }, "✓ matches the final label. Hover a bar for probabilities."));
+}
+function uStep(k) { const i = uVisible.findIndex(x => x.id === S.uSel); if (i < 0) return; S.uSel = uVisible[Math.min(uVisible.length - 1, Math.max(0, i + k))].id; renderUnits();
+  document.querySelector(`#urows .prow[data-id="${CSS.escape(S.uSel)}"]`)?.scrollIntoView({ block: "nearest" }); }
+
+// ---------------- injection charts
+function renderInjDot() {
+  const box = document.getElementById("injdot"), W = Math.max(330, box.clientWidth || 520), rowH = 44, top = 18, left = 100, right = 48, H = top + rowH * IJ.length + 24;
+  const x = t => left + t * (W - left - right);
+  const s = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Injection flip rates by judge" });
+  for (const t of [0, .25, .5, .75, 1]) { s.append(sv("line", { class: "gl", x1: x(t), x2: x(t), y1: top - 6, y2: H - 22 })); s.append(sv("text", { x: x(t), y: H - 6, "text-anchor": "middle", class: "muted" }, Math.round(t * 100) + "%")); }
+  const tbl = [];
+  IJ.forEach((j, i) => {
+    const st = injStats(j), yy = top + i * rowH + rowH / 2;
+    if (S.focus === j) s.append(sv("rect", { class: "row-hl", x: 0, y: yy - rowH / 2 + 2, width: W, height: rowH - 4, rx: 6 }));
+    s.append(sv("text", { x: left - 10, y: yy + 4, "text-anchor": "end", class: S.focus === j ? "strong" : "" }, NAME[j]));
+    [["qt", "quoted", -6], ["at", "attack", 6]].forEach(([k, a, off]) => {
+      const [lo, hi] = wilson(st[k], st.n);
+      s.append(sv("line", { x1: x(lo), x2: x(hi), y1: yy + off, y2: yy + off, stroke: ARMC[a], "stroke-width": 2, "stroke-linecap": "round", opacity: .55 }));
+      s.append(sv("circle", { cx: x(st[k] / st.n), cy: yy + off, r: 5, fill: ARMC[a], stroke: "var(--surface)", "stroke-width": 2 }));
+    });
+    s.append(sv("text", { x: W - right + 8, y: yy + 4, class: "strong" }, pct(st.at, st.n)));
+    const hit = sv("rect", { class: "hit", x: 0, y: yy - rowH / 2, width: W, height: rowH });
+    hover(hit, () => [el("div", { class: "tv" }, NAME[j]), el("div", { class: "tl" }, `${st.n} of 70 pairs right when clean`),
+      tipRow("var(--quoted)", "quoted → attacker's label", `${st.qt}/${st.n}`), tipRow("var(--attack)", "attack → attacker's label", `${st.at}/${st.n}`),
+      el("div", { class: "tl" }, `McNemar: ${st.b} vs ${st.c} discordant, p = ${fmtp(st.p)}`)], () => { S.focus = j; renderAll(); });
+    s.append(hit);
+    tbl.push([NAME[j], st.n, `${st.qt} (${pct(st.qt, st.n)})`, `${st.at} (${pct(st.at, st.n)})`, fmtp(st.p)]);
+  });
+  box.replaceChildren(s);
+  document.getElementById("injdot-table").replaceChildren(el("table", { class: "data" }, el("thead", {}, el("tr", {}, ["Judge", "clean-correct", "quoted", "attack", "McNemar p"].map(h => el("th", {}, h)))),
+    el("tbody", {}, tbl.map(r => el("tr", {}, r.map((c, i) => el("td", { class: i ? "n" : "" }, c)))))));
+}
+document.querySelectorAll("[data-harm]").forEach(b => b.onclick = () => { S.harm = b.dataset.harm; document.querySelectorAll("[data-harm]").forEach(x => x.setAttribute("aria-pressed", x === b)); renderHeat(); });
+function renderHeat() {
+  const fams = I.families, box = document.getElementById("heat"), W = Math.max(460, box.clientWidth || 520), cw = (W - 130) / IJ.length, ch = 32, top = 26, H = top + ch * fams.length + 4;
+  const s = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Flips by family" });
+  const ramp = ["var(--grid)", "var(--s100)", "var(--s250)", "var(--s450)", "var(--s700)"];
+  IJ.forEach((j, i) => s.append(sv("text", { x: 130 + i * cw + cw / 2, y: 16, "text-anchor": "middle", class: S.focus === j ? "strong" : "", style: "font-size:11px" }, NAME[j].replace("-decider", "").replace("3-4B", ""))));
+  fams.forEach((f, r) => {
+    const y = top + r * ch; s.append(sv("text", { x: 122, y: y + ch / 2 + 4, "text-anchor": "end", style: "font-size:11.5px" }, FAM[f]));
+    IJ.forEach((j, i) => {
+      const base = I.pairs.filter(p => p.family === f && okClean(p, j)), k = base.filter(p => flipT(p, j, S.harm)).length, rate = base.length ? k / base.length : 0;
+      const step = k === 0 ? 0 : rate < .15 ? 1 : rate < .35 ? 2 : rate < .6 ? 3 : 4;
+      s.append(sv("rect", { x: 130 + i * cw + 1, y: y + 1, width: cw - 2, height: ch - 2, rx: 4, fill: ramp[step], stroke: S.focus === j ? "var(--text-1)" : "none", "stroke-width": 1.5 }));
+      s.append(sv("text", { x: 130 + i * cw + cw / 2, y: y + ch / 2 + 4, "text-anchor": "middle", style: step >= 3 ? "fill:var(--surface);font-weight:600;font-size:11.5px" : step === 0 ? "fill:var(--text-3);font-size:11.5px" : "fill:var(--text-1);font-weight:600;font-size:11.5px" }, base.length ? `${k}/${base.length}` : "–"));
+      const hit = sv("rect", { class: "hit", x: 130 + i * cw, y, width: cw, height: ch });
+      hover(hit, () => [el("div", { class: "tv" }, `${k}/${base.length}`), el("div", { class: "tl" }, `${NAME[j]} · ${FAM[f]} · ${S.harm}`), el("div", { class: "tl" }, "Click to open these pairs")],
+        () => { const fl = base.filter(p => flipT(p, j, S.harm)); S.pIds = new Set((fl.length ? fl : base).map(p => p.id)); S.focus = j; renderAll(); document.getElementById("pairs").scrollIntoView(); });
+      s.append(hit);
+    });
+  });
+  box.replaceChildren(s);
+}
+
+// ---------------- pair explorer
+const pq = document.getElementById("pq"), onlyflip = document.getElementById("onlyflip");
+pq.oninput = () => { S.pq = pq.value.trim().toLowerCase(); renderPairs(); };
+onlyflip.onchange = () => { S.onlyflip = onlyflip.checked; renderPairs(); };
+const pText = new Map(I.pairs.map(p => [p.id, (p.q + " " + ARMS.map(a => p.text[a].map(m => m.parts.map(x => x[1]).join(" ")).join(" ")).join(" ")).toLowerCase()]));
+let pVisible = [];
+function renderPairs() {
+  pVisible = I.pairs.filter(p => (!S.pIds || S.pIds.has(p.id)) && (!S.pq || pText.get(p.id).includes(S.pq)) && (!S.onlyflip || IJ.some(j => flipT(p, j, "attack") || flipT(p, j, "quoted"))));
+  const box = document.getElementById("prows"); box.replaceChildren();
+  if (S.pIds) box.append(el("div", { class: "empty", style: "padding:8px 10px" }, `${pVisible.length} pairs from the heatmap. `, el("button", { class: "chip", type: "button", onclick: () => { S.pIds = null; renderPairs(); } }, "show all")));
+  if (!pVisible.length) { box.append(el("div", { class: "empty" }, "No pairs match.")); renderPairDetail(null); return; }
+  if (!pVisible.some(p => p.id === S.pSel)) S.pSel = pVisible[0].id;
+  for (const p of pVisible) {
+    const mini = el("div", { class: "mini", "aria-hidden": "true", style: "--r:3" });
+    for (const j of IJ) for (const a of ARMS) mini.append(el("i", { class: a !== "clean" && flipT(p, j, a) ? (a === "attack" ? "f" : "q") : v5(p, j, a) !== p.gold ? "w" : "" }));
+    const r = el("div", { class: "prow", role: "option", "aria-selected": p.id === S.pSel, onclick: () => { S.pSel = p.id; renderPairs(); } },
+      el("div", {}, el("div", { class: "pq" }, p.q), el("div", { class: "pm" }, `${p.gold} → ${p.target} · ${FAM[p.family]}${p.multi ? " · multi-turn" : ""}`)), mini);
+    r.dataset.id = p.id; box.append(r);
+  }
+  renderPairDetail(I.pairs.find(p => p.id === S.pSel));
+}
+function armText(p, a) {
+  const box = el("div", { class: "ab" }), multi = p.text[a].length > 1;
+  for (const m of p.text[a]) {
+    const d = el("div", { class: "msg" + (multi && m.role !== "answer" && !m.changed ? " dim" : "") });
+    if (multi) d.append(el("span", { class: "who" }, m.role === "answer" ? "final answer (graded)" : m.role));
+    m.parts.forEach(([kind, t], i) => { d.append(kind ? el("mark", { class: a === "attack" ? "inj" : "quo" }, t) : t); if (i < m.parts.length - 1) d.append("\n\n"); });
+    box.append(d);
+  }
+  return box;
+}
+function renderPairDetail(p) {
+  const d = document.getElementById("pdetail"); d.replaceChildren();
+  if (!p) { d.append(el("div", { class: "empty" }, "Pick a pair.")); return; }
+  const idx = pVisible.findIndex(x => x.id === p.id);
+  d.append(el("div", { class: "dhead" }, el("h3", {}, p.q), el("div", { style: "display:flex;gap:6px" },
+    el("button", { class: "btn", type: "button", onclick: () => pStep(-1) }, "←"), el("span", { style: "font-size:12.5px;color:var(--text-3);align-self:center" }, `${idx + 1} / ${pVisible.length}`),
+    el("button", { class: "btn", type: "button", onclick: () => pStep(1) }, "→"))));
+  d.append(el("div", { class: "tags" }, el("span", { class: "tag" }, "true ", labChip(p.gold)), el("span", { class: "tag" }, "attacker wants ", labChip(p.target)), el("span", { class: "tag" }, FAM[p.family]),
+    el("span", { class: "tag" }, p.loc.endsWith("prefix") ? "start of message" : "end of message"), p.multi ? el("span", { class: "tag" }, "multi-turn") : null));
+  d.append(el("div", { class: "arms" }, ARMS.map(a => el("div", { class: "arm" }, el("div", { class: "ah" }, el("i", { style: `background:${ARMC[a]}` }), a === "attack" ? "active attack" : a === "quoted" ? "quoted & rejected" : "clean"), armText(p, a)))));
+  const t = el("table", { class: "vt" }, el("thead", {}, el("tr", {}, el("th", {}, "Judge"), ARMS.map(a => el("th", {}, a)))));
+  const tb = el("tbody");
+  for (const j of IJ) {
+    const tr = el("tr", { style: S.focus === j ? "background:var(--surface-2);font-weight:600" : "" }, el("td", {}, NAME[j]));
+    for (const a of ARMS) {
+      const r = p.j[j][a], cls = a !== "clean" && r.v === p.target ? (a === "attack" ? "flip" : "qflip") : "";
+      const td = el("td", { class: cls }, labChip(r.v), r.v === p.gold ? " ✓" : a !== "clean" && r.v === p.target ? " ⚑" : " ✗");
+      if (r.p) { const bar = el("div", { class: "pbar", "aria-hidden": "true" }, L.map((l, i) => el("i", { style: `width:${100 * r.p[i]}%;background:${LABC[l]}` })));
+        hover(bar, () => [el("div", { class: "tv" }, `${NAME[j]} · ${a}`), ...L.map((l, i) => tipRow(LABC[l], l, (100 * r.p[i]).toFixed(1) + "%"))]); td.append(bar); }
+      tr.append(td);
+    }
+    tb.append(tr);
+  }
+  t.append(tb); d.append(t);
+  d.append(el("p", { class: "cap", style: "margin:6px 0 0" }, "✓ true label · ⚑ gave the attacker's label · ✗ other wrong label."));
+}
+function pStep(k) { const i = pVisible.findIndex(x => x.id === S.pSel); if (i < 0) return; S.pSel = pVisible[Math.min(pVisible.length - 1, Math.max(0, i + k))].id; renderPairs();
+  document.querySelector(`#prows .prow[data-id="${CSS.escape(S.pSel)}"]`)?.scrollIntoView({ block: "nearest" }); }
+
+// keyboard: j/k drive whichever explorer is nearer the viewport center
+document.addEventListener("keydown", e => {
+  if (e.target.matches("input, select, textarea")) { if (e.key === "Escape") e.target.blur(); return; }
+  const mid = innerHeight / 2, dist = id => Math.abs(document.getElementById(id).getBoundingClientRect().top - mid);
+  const inPairs = dist("pdetail") < dist("udetail");
+  if (e.key === "j") inPairs ? pStep(1) : uStep(1); else if (e.key === "k") inPairs ? pStep(-1) : uStep(-1);
+  else if (e.key === "/") { e.preventDefault(); (inPairs ? pq : uq).focus(); }
+});
+
+// theme, footer
+const themeBtn = document.getElementById("theme");
+try { const t = localStorage.getItem("judge-trust-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+themeBtn.onclick = () => {
+  const dark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("judge-trust-theme", document.documentElement.dataset.theme); } catch (e) {}
+};
+document.getElementById("repro").textContent = RJ.map(j => `${NAME[j]} ${R.prev[j].same}/${R.prev[j].compared}`).join(", ") + " identical verdicts";
+document.getElementById("foot").append("Agreement: commit ", el("code", {}, R.run.commit.slice(0, 8)), `, started ${R.run.started}, ${R.run.gpu}, endorsement rules (rubric_v2), reference_v1.2. Injection: commit `,
+  el("code", {}, I.source_commit.slice(0, 8)), `, ${I.gpu}. ConspiracyBench Space PRs #409, #423, #424; completed_experiments/judge_reliability/reliability-rerun-v1.2 and judge_injection/experiments/005-injection-resistance.`);
+
+function renderRel() { relCache.clear(); renderRelDot(); renderCM(); renderUnits(); }
+function renderAll() { renderFocus(); renderCard(); renderScatter(); renderRel(); renderInjDot(); renderHeat(); renderPairs(); }
+renderAll();
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(renderAll, 150); });
+</script>
+</body>
+</html>

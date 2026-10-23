@@ -1,0 +1,1 @@
+{"judge": "kev", "stage": "smoke", "env": "env", "criteria": "rubric_v2", "suite_commit": "7094ee6e4803b6a4e66bb8b66fe77da8300a158b", "gpu_request": "H100!", "cpu": 8, "memory_mb": 131072, "modal_task_id": "ta-01M5JJR2H4299542J7209958QR", "started": "2026-10-22T19:52:34Z", "ended": "2026-10-22T19:54:05Z", "exit_status": 0, "rows": 3, "errors": 0}

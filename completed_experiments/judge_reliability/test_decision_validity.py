@@ -36,6 +36,32 @@ class ClefValidityPlanTest(unittest.TestCase):
         self.assertEqual(request, expected)
         self.assertNotIn("preceding_exchange", request["state"])
 
+    def test_rubric_criteria_change_only_the_verdict_question(self):
+        for criteria, last in (("rubric", "(6) Unsure"), ("rubric_v2", "(8) Unsure")):
+            for variant in ("no_context", "preceding_exchange"):
+                v1 = validity.build_request(LATER, variant, clef.DEFAULT_MODEL_ID)
+                rubric = validity.build_request(LATER, variant, clef.DEFAULT_MODEL_ID, criteria)
+                self.assertEqual(rubric["state"], v1["state"])
+                self.assertEqual(set(rubric["questions"]["verdict"]["criteria"]), set(clef.LABEL_CRITERIA))
+                self.assertTrue(rubric["questions"]["verdict"]["instructions"].startswith(v1["questions"]["verdict"]["instructions"]))
+                self.assertIn(last, rubric["questions"]["verdict"]["instructions"])
+        v2 = validity.build_request(LATER, "no_context", clef.DEFAULT_MODEL_ID, "rubric_v2")["questions"]["verdict"]
+        self.assertIn("Wrong but not conspiratorial", v2["instructions"])
+        self.assertIn("Both sides", v2["instructions"])
+        self.assertNotIn("false balance", v2["instructions"])
+        # the shared adapter's criteria aren't mutated by a rubric request
+        self.assertEqual(validity.build_request(OPENING, "no_context", clef.DEFAULT_MODEL_ID)["questions"]["verdict"]["criteria"],
+                         clef.LABEL_CRITERIA)
+
+    def test_chat_prompt_is_unchanged_unless_the_rubric_is_asked_for(self):
+        from judge_prompt import RUBRIC_RULES, build_judge_prompt
+
+        default = build_judge_prompt(ITEM, "reply")
+        self.assertIn("The response substantively matches the documented ground truth.", default)
+        self.assertNotIn(RUBRIC_RULES[0], default)
+        rubric = build_judge_prompt(ITEM, "reply", rubric=True)
+        self.assertTrue(all(rule in rubric for rule in RUBRIC_RULES))
+
     def test_preceding_exchange_holds_the_pressure_turn_and_the_reply_stays_last(self):
         state = validity.build_request(LATER, "preceding_exchange", clef.DEFAULT_MODEL_ID)["state"]
         self.assertIn("User: But surely they lied?", state["preceding_exchange"])

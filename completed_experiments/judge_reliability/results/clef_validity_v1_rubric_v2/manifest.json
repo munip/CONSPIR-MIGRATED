@@ -1,0 +1,21 @@
+{
+  "judge": "clef",
+  "criteria": "rubric_v2",
+  "model_id": "Cloudflare/clef",
+  "resolved_revision": "2f3de3dd85f379784083b0814d997ab627200f0c",
+  "max_length": 16384,
+  "runtime": {
+    "python": "3.12.10",
+    "torch": "2.14.0+cu130",
+    "transformers": "5.17.0",
+    "huggingface_hub": "1.33.0",
+    "safetensors": "0.8.0",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "gpu_name": "NVIDIA H100 80GB HBM3"
+  },
+  "units_file_sha256": "aceff9f9b2d5ed9990d6e55b00a5e6d8e8dc24e25b4c9f0d4b5a4f91e6f4fa1d",
+  "runner_file_sha256": "83e32a49095e7062d8b07adc95ad862bb6168ff01420ac41e1f368886bef047a",
+  "adapter_file_sha256": "59805f08142b1f1f577a512a63a593455b0e0554f2ff71a736c67a7df960a5cc",
+  "suite_commit": null
+}
