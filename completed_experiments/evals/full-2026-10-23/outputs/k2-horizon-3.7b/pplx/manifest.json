@@ -1,0 +1,11 @@
+{
+  "judge": "pplx",
+  "criteria": "rubric_v2",
+  "repo": "perplexity-ai/pplx-decider-v1.1-27b",
+  "revision": "14c9d90137962d300f3de95633f7b6535e80c5ce",
+  "device": "cuda",
+  "load_seconds": 45.684454613,
+  "units_file_sha256": "04a550464415234d2795601f35abcc57e03edfd149a25686b2e2f2ebd0b312e1",
+  "runner_file_sha256": "51b8645114ebb1881e90415f1faab01ce7ef6339741c12e37ab34a0dc57e341c",
+  "suite_commit": null
+}

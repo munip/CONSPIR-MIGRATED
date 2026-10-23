@@ -1,0 +1,85 @@
+
+=== 2026-10-23T21:37:11Z suite 856d9cccbb6bc2ad3b8a7ce9f3116aa1aa2c9e15 python /repo/inspect_eval/decision_judges/grade_units.py --judge pplx --units /results/eval/full-2026-10-23-gemma-4-e4b/units.jsonl --output-dir /results/eval/full-2026-10-23-gemma-4-e4b/pplx --run --limit 3
+6480 units -> 3 pplx calls
+Fetching 48 files:   0%|          | 0/48 [00:00<?, ?it/s]Fetching 48 files:   2%|▏         | 1/48 [00:00<00:07,  6.56it/s]Fetching 48 files: 100%|██████████| 48/48 [00:00<00:00, 273.50it/s]
+Loading weights:   0%|          | 0/1183 [00:00<?, ?it/s]Loading weights:   1%|▏         | 16/1183 [00:00<00:07, 150.63it/s]Loading weights:   3%|▎         | 32/1183 [00:01<00:59, 19.20it/s] Loading weights:   3%|▎         | 39/1183 [00:03<02:30,  7.59it/s]Loading weights:   4%|▎         | 43/1183 [00:04<02:33,  7.44it/s]Loading weights:   5%|▍         | 56/1183 [00:05<02:05,  8.97it/s]Loading weights:   8%|▊         | 92/1183 [00:05<00:49, 22.10it/s]Loading weights:   8%|▊         | 98/1183 [00:06<01:08, 15.81it/s]Loading weights:   9%|▉         | 109/1183 [00:07<00:53, 20.21it/s]Loading weights:  12%|█▏        | 144/1183 [00:07<00:25, 41.13it/s]Loading weights:  15%|█▌        | 180/1183 [00:07<00:14, 67.61it/s]Loading weights:  18%|█▊        | 208/1183 [00:07<00:10, 88.80it/s]Loading weights:  20%|█▉        | 231/1183 [00:07<00:09, 102.41it/s]Loading weights:  21%|██▏       | 253/1183 [00:07<00:07, 118.15it/s]Loading weights:  23%|██▎       | 277/1183 [00:07<00:06, 136.66it/s]Loading weights:  25%|██▌       | 298/1183 [00:07<00:06, 140.70it/s]Loading weights:  27%|██▋       | 318/1183 [00:08<00:06, 144.12it/s]Loading weights:  29%|██▉       | 348/1183 [00:08<00:05, 163.34it/s]Loading weights:  31%|███       | 367/1183 [00:08<00:11, 69.18it/s] Loading weights:  33%|███▎      | 391/1183 [00:09<00:09, 86.82it/s]Loading weights:  34%|███▍      | 408/1183 [00:09<00:08, 96.14it/s]Loading weights:  36%|███▌      | 426/1183 [00:09<00:07, 106.85it/s]Loading weights:  38%|███▊      | 453/1183 [00:09<00:05, 134.74it/s]Loading weights:  40%|███▉      | 473/1183 [00:09<00:04, 147.14it/s]Loading weights:  43%|████▎     | 503/1183 [00:09<00:03, 180.47it/s]Loading weights:  45%|████▍     | 529/1183 [00:09<00:03, 189.54it/s]Loading weights:  47%|████▋     | 552/1183 [00:09<00:03, 199.48it/s]Loading weights:  49%|████▉     | 577/1183 [00:09<00:02, 210.16it/s]Loading weights:  51%|█████     | 601/1183 [00:09<00:02, 214.71it/s]Loading weights:  53%|█████▎    | 627/1183 [00:10<00:02, 224.46it/s]Loading weights:  55%|█████▌    | 651/1183 [00:10<00:02, 223.57it/s]Loading weights:  57%|█████▋    | 680/1183 [00:10<00:02, 237.83it/s]Loading weights:  60%|██████    | 710/1183 [00:10<00:01, 246.75it/s]Loading weights:  62%|██████▏   | 739/1183 [00:10<00:01, 257.02it/s]Loading weights:  65%|██████▍   | 765/1183 [00:10<00:01, 230.42it/s]Loading weights:  67%|██████▋   | 789/1183 [00:10<00:01, 221.00it/s]Loading weights:  70%|███████   | 830/1183 [00:10<00:01, 258.46it/s]Loading weights:  73%|███████▎  | 868/1183 [00:11<00:01, 288.07it/s]Loading weights:  79%|███████▉  | 940/1183 [00:11<00:00, 399.87it/s]Loading weights:  89%|████████▉ | 1051/1183 [00:11<00:00, 591.79it/s]Loading weights: 100%|██████████| 1183/1183 [00:11<00:00, 104.94it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+done: 3 calls, 0 errors -> /results/eval/full-2026-10-23-gemma-4-e4b/pplx/results.jsonl
+
+=== 2026-10-23T21:40:08Z suite 856d9cccbb6bc2ad3b8a7ce9f3116aa1aa2c9e15 python /repo/inspect_eval/decision_judges/grade_units.py --judge pplx --units /results/eval/full-2026-10-23-gemma-4-e4b/units.jsonl --output-dir /results/eval/full-2026-10-23-gemma-4-e4b/pplx --run --limit 43
+6480 units -> 43 pplx calls
+Fetching 48 files:   0%|          | 0/48 [00:00<?, ?it/s]Fetching 48 files: 100%|██████████| 48/48 [00:00<00:00, 1593.13it/s]
+Loading weights:   0%|          | 0/1183 [00:00<?, ?it/s]Loading weights:   3%|▎         | 37/1183 [00:00<00:03, 325.93it/s]Loading weights:   6%|▌         | 70/1183 [00:00<00:05, 211.75it/s]Loading weights:   8%|▊         | 94/1183 [00:00<00:05, 191.13it/s]Loading weights:  10%|█         | 124/1183 [00:00<00:04, 219.17it/s]Loading weights:  13%|█▎        | 148/1183 [00:00<00:04, 212.71it/s]Loading weights:  14%|█▍        | 171/1183 [00:00<00:04, 213.76it/s]Loading weights:  16%|█▋        | 194/1183 [00:00<00:04, 210.22it/s]Loading weights:  19%|█▊        | 221/1183 [00:01<00:04, 206.73it/s]Loading weights:  23%|██▎       | 268/1183 [00:01<00:03, 272.63it/s]Loading weights:  25%|██▌       | 297/1183 [00:01<00:03, 263.16it/s]Loading weights:  29%|██▉       | 344/1183 [00:01<00:02, 301.40it/s]Loading weights:  33%|███▎      | 390/1183 [00:01<00:02, 343.11it/s]Loading weights:  36%|███▌      | 426/1183 [00:01<00:02, 310.47it/s]Loading weights:  40%|███▉      | 473/1183 [00:01<00:02, 344.57it/s]Loading weights:  44%|████▎     | 516/1183 [00:01<00:01, 335.72it/s]Loading weights:  47%|████▋     | 551/1183 [00:02<00:02, 310.90it/s]Loading weights:  49%|████▉     | 583/1183 [00:02<00:02, 281.90it/s]Loading weights:  53%|█████▎    | 627/1183 [00:02<00:01, 312.92it/s]Loading weights:  56%|█████▌    | 660/1183 [00:02<00:02, 260.23it/s]Loading weights:  58%|█████▊    | 688/1183 [00:02<00:01, 261.19it/s]Loading weights:  61%|██████    | 716/1183 [00:02<00:01, 237.73it/s]Loading weights:  63%|██████▎   | 741/1183 [00:02<00:01, 237.78it/s]Loading weights:  67%|██████▋   | 797/1183 [00:02<00:01, 305.83it/s]Loading weights:  70%|███████   | 829/1183 [00:03<00:01, 304.30it/s]Loading weights:  75%|███████▍  | 882/1183 [00:03<00:00, 364.05it/s]Loading weights:  82%|████████▏ | 971/1183 [00:03<00:00, 500.52it/s]Loading weights: 100%|██████████| 1183/1183 [00:03<00:00, 355.90it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+done: 43 calls, 0 errors -> /results/eval/full-2026-10-23-gemma-4-e4b/pplx/results.jsonl
+
+=== 2026-10-23T21:42:23Z suite 856d9cccbb6bc2ad3b8a7ce9f3116aa1aa2c9e15 python /repo/inspect_eval/decision_judges/grade_units.py --judge pplx --units /results/eval/full-2026-10-23-gemma-4-e4b/units.jsonl --output-dir /results/eval/full-2026-10-23-gemma-4-e4b/pplx --run
+6480 units -> 6479 pplx calls
+Fetching 48 files:   0%|          | 0/48 [00:00<?, ?it/s]Fetching 48 files: 100%|██████████| 48/48 [00:00<00:00, 1313.73it/s]
+Loading weights:   0%|          | 0/1183 [00:00<?, ?it/s]Loading weights:   3%|▎         | 33/1183 [00:00<00:03, 307.32it/s]Loading weights:   5%|▌         | 64/1183 [00:00<00:04, 253.42it/s]Loading weights:   8%|▊         | 90/1183 [00:00<00:04, 220.01it/s]Loading weights:  10%|▉         | 113/1183 [00:00<00:05, 199.07it/s]Loading weights:  11%|█▏        | 134/1183 [00:00<00:05, 201.52it/s]Loading weights:  13%|█▎        | 156/1183 [00:00<00:05, 200.99it/s]Loading weights:  15%|█▌        | 179/1183 [00:00<00:05, 200.42it/s]Loading weights:  19%|█▉        | 227/1183 [00:00<00:03, 276.08it/s]Loading weights:  22%|██▏       | 256/1183 [00:01<00:05, 177.66it/s]Loading weights:  24%|██▍       | 286/1183 [00:01<00:04, 198.04it/s]Loading weights:  26%|██▌       | 310/1183 [00:01<00:04, 203.83it/s]Loading weights:  28%|██▊       | 334/1183 [00:01<00:04, 202.69it/s]Loading weights:  31%|███       | 364/1183 [00:01<00:03, 223.36it/s]Loading weights:  34%|███▍      | 407/1183 [00:01<00:02, 266.95it/s]Loading weights:  37%|███▋      | 443/1183 [00:01<00:02, 291.26it/s]Loading weights:  40%|████      | 474/1183 [00:02<00:03, 218.42it/s]Loading weights:  42%|████▏     | 502/1183 [00:02<00:03, 219.14it/s]Loading weights:  45%|████▌     | 537/1183 [00:02<00:02, 221.48it/s]Loading weights:  48%|████▊     | 569/1183 [00:02<00:02, 241.30it/s]Loading weights:  50%|█████     | 595/1183 [00:02<00:02, 229.71it/s]Loading weights:  56%|█████▌    | 659/1183 [00:02<00:01, 322.80it/s]Loading weights:  60%|██████    | 711/1183 [00:02<00:01, 360.48it/s]Loading weights: 100%|██████████| 1183/1183 [00:02<00:00, 408.06it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+100/6479 (0 errors)
+200/6479 (0 errors)
+300/6479 (0 errors)
+400/6479 (0 errors)
+500/6479 (0 errors)
+600/6479 (0 errors)
+700/6479 (0 errors)
+800/6479 (0 errors)
+900/6479 (0 errors)
+1000/6479 (0 errors)
+1100/6479 (0 errors)
+1200/6479 (0 errors)
+1300/6479 (0 errors)
+1400/6479 (0 errors)
+1500/6479 (0 errors)
+1600/6479 (0 errors)
+1700/6479 (0 errors)
+1800/6479 (0 errors)
+1900/6479 (0 errors)
+2000/6479 (0 errors)
+2100/6479 (0 errors)
+2200/6479 (0 errors)
+2300/6479 (0 errors)
+2400/6479 (0 errors)
+2500/6479 (0 errors)
+2600/6479 (0 errors)
+2700/6479 (0 errors)
+2800/6479 (0 errors)
+2900/6479 (0 errors)
+3000/6479 (0 errors)
+3100/6479 (0 errors)
+3200/6479 (0 errors)
+3300/6479 (0 errors)
+3400/6479 (0 errors)
+3500/6479 (0 errors)
+3600/6479 (0 errors)
+3700/6479 (0 errors)
+3800/6479 (0 errors)
+3900/6479 (0 errors)
+4000/6479 (0 errors)
+4100/6479 (0 errors)
+4200/6479 (0 errors)
+4300/6479 (0 errors)
+4400/6479 (0 errors)
+4500/6479 (0 errors)
+4600/6479 (0 errors)
+4700/6479 (0 errors)
+4800/6479 (0 errors)
+4900/6479 (0 errors)
+5000/6479 (0 errors)
+5100/6479 (0 errors)
+5200/6479 (0 errors)
+5300/6479 (0 errors)
+5400/6479 (0 errors)
+5500/6479 (0 errors)
+5600/6479 (0 errors)
+5700/6479 (0 errors)
+5800/6479 (0 errors)
+5900/6479 (0 errors)
+6000/6479 (0 errors)
+6100/6479 (0 errors)
+6200/6479 (0 errors)
+6300/6479 (0 errors)
+6400/6479 (0 errors)
+done: 6479 calls, 0 errors -> /results/eval/full-2026-10-23-gemma-4-e4b/pplx/results.jsonl

@@ -132,6 +132,54 @@ Rate limits and concurrency are Inspect's own options (`--max-connections`, `--f
     naming the reasons whenever a log has any.
   - The run configuration.
 
+## Baseline suite (~4B roster)
+
+What a baseline run grades, and how. The defaults below apply to every run of the task.
+
+- **Endorsement rules.** The verdict uses the judge-rubric v2 rules (`-T rubric=rubric_v2`,
+  default): diverge means endorsing the conspiracy theory. This is the setup the deployed judges
+  were validated with on the final labels (reference v1.2: pplx κ .755, Clef κ .730). `-T rubric=v1`
+  gives the original wording.
+- **Full context.** A turn that answers a pressure message is graded with the whole conversation
+  before it, and the item's question, ground truth, lists and notes.
+- **Three separate evals, no overlap.** `-T variant=` picks the items (default `all`, the whole
+  corpus in one run). A baseline runs three evals, so no item is asked as a single-turn question
+  in two of them:
+  - `multiturn`: the items with pressure turns, each as its whole conversation;
+  - `multiturn_first`: the same items' first question alone, held out as its own eval;
+  - `single_turn`: the items with no pressure turns.
+- **pass@5.** `-T epochs=5` replays every item 5 times, and a multi-turn item's **whole
+  conversation** every time (`pressure_subset_per_cell=all`, default). pass@5, worst-of-5 and
+  all-5-agree are reported over the 5 opening answers (`repeated_sampling`) and, for multi-turn
+  items, over the 5 whole conversations (`repeated_conversations`; a conversation holds only if
+  every turn holds), in the log's metrics and in `report.py`.
+- **Sliding context window.** `-T context_overflow=slide` (default). When a conversation outgrows
+  `context_tokens`, the oldest exchanges are left out until it fits, so the model sees the most
+  recent turns, and the turn is recorded in `context_clipped`. The judge's view of the conversation
+  slides the same way (`judge_context_clipped`); its instructions, question and ground truth are
+  never cut. `stop` ends the sequence instead, as before.
+
+Every model runs with thinking on (Gemma 4 included, through `chat_template_kwargs`), and
+pplx-decider is the judge. It is a decision model, not a chat model, so a baseline run grades in
+three steps:
+
+```bash
+# 1. Solver only, on Modal (vLLM on one H100). Roster and settings: modal_solver.py.
+modal run inspect_eval/modal_solver.py --model qwen3.5-4b --limit 3        # smoke test first
+modal run inspect_eval/modal_solver.py --model qwen3.5-4b                  # k = 5, multi-turn
+modal run inspect_eval/modal_solver.py --model qwen3.5-4b --variant multiturn_first
+modal run inspect_eval/modal_solver.py --model qwen3.5-4b --variant single_turn
+modal volume get cb-judges-results solver/qwen3.5-4b logs/qwen3.5-4b
+# 2. Every turn to units, graded by pplx-decider (one H100; --judges pplx,clef adds a second judge).
+.venv/bin/python inspect_eval/export_units.py logs/qwen3.5-4b/multiturn/<log>.eval --out units/qwen3.5-4b-mt.jsonl
+modal run inspect_eval/decision_judges/modal_grade.py --units units/qwen3.5-4b-mt.jsonl --tag qwen3.5-4b-mt
+modal volume get cb-judges-results eval/qwen3.5-4b-mt graded/
+# 3. Tables, one per judge, in report.py's shape (headline, pass@5, breakdowns).
+.venv/bin/python inspect_eval/decision_judges/decision_report.py graded/qwen3.5-4b-mt --out results/qwen3.5-4b-mt
+```
+
+A chat judge can still grade inline (`--model-role grader=...`) for quick checks.
+
 ## Context budget
 
 Every prompt has to fit in `context_tokens`, checked before it is sent

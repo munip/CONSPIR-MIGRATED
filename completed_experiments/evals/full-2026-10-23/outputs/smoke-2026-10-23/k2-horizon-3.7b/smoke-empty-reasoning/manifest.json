@@ -1,0 +1,30 @@
+{
+  "model": "k2-horizon-3.7b",
+  "roster_entry": {
+    "repo": "IFM/K2-Horizon-3.7B",
+    "args": [
+      "--reasoning-parser",
+      "k2_horizon",
+      "--trust-remote-code"
+    ],
+    "template": {
+      "reasoning_effort": "high"
+    },
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95
+    }
+  },
+  "variants": [
+    "multiturn"
+  ],
+  "epochs": 1,
+  "limit": 3,
+  "max_connections": 32,
+  "max_tokens": 8192,
+  "context_tokens": 32768,
+  "suite_commit": "f73fced4470f0c01335bad3e4803b122f03ded40",
+  "gpu": "H100!",
+  "modal_task_id": "ta-01M5N6GKBZ12QJNZQS2K83YCYR",
+  "started": "2026-10-23T20:16:28Z"
+}

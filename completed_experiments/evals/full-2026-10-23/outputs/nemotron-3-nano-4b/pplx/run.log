@@ -1,0 +1,71 @@
+
+=== 2026-10-23T21:42:30Z suite 856d9cccbb6bc2ad3b8a7ce9f3116aa1aa2c9e15 python /repo/inspect_eval/decision_judges/grade_units.py --judge pplx --units /results/eval/full-2026-10-23-nemotron-3-nano-4b/units.jsonl --output-dir /results/eval/full-2026-10-23-nemotron-3-nano-4b/pplx --run
+6480 units -> 6421 pplx calls
+Fetching 48 files:   0%|          | 0/48 [00:00<?, ?it/s]Fetching 48 files: 100%|██████████| 48/48 [00:00<00:00, 1229.80it/s]
+Loading weights:   0%|          | 0/1183 [00:00<?, ?it/s]Loading weights:   4%|▎         | 43/1183 [00:00<00:03, 312.81it/s]Loading weights:   6%|▋         | 75/1183 [00:00<00:04, 256.15it/s]Loading weights:   9%|▊         | 101/1183 [00:00<00:04, 244.89it/s]Loading weights:  11%|█         | 126/1183 [00:00<00:04, 232.67it/s]Loading weights:  13%|█▎        | 150/1183 [00:00<00:04, 225.62it/s]Loading weights:  15%|█▌        | 183/1183 [00:00<00:03, 254.29it/s]Loading weights:  18%|█▊        | 209/1183 [00:00<00:03, 250.33it/s]Loading weights:  20%|█▉        | 236/1183 [00:00<00:04, 230.15it/s]Loading weights:  23%|██▎       | 268/1183 [00:01<00:03, 244.03it/s]Loading weights:  25%|██▍       | 293/1183 [00:01<00:03, 232.80it/s]Loading weights:  27%|██▋       | 323/1183 [00:01<00:03, 241.51it/s]Loading weights:  30%|██▉       | 353/1183 [00:01<00:03, 242.09it/s]Loading weights:  32%|███▏      | 378/1183 [00:01<00:03, 211.89it/s]Loading weights:  35%|███▍      | 412/1183 [00:01<00:03, 234.31it/s]Loading weights:  37%|███▋      | 437/1183 [00:01<00:03, 226.14it/s]Loading weights:  40%|███▉      | 469/1183 [00:01<00:02, 247.16it/s]Loading weights:  42%|████▏     | 495/1183 [00:02<00:02, 236.13it/s]Loading weights:  44%|████▍     | 520/1183 [00:02<00:03, 200.34it/s]Loading weights:  47%|████▋     | 551/1183 [00:02<00:02, 220.39it/s]Loading weights:  49%|████▉     | 584/1183 [00:02<00:02, 241.01it/s]Loading weights:  52%|█████▏    | 610/1183 [00:02<00:02, 218.62it/s]Loading weights:  55%|█████▍    | 650/1183 [00:02<00:02, 262.39it/s]Loading weights:  57%|█████▋    | 678/1183 [00:02<00:02, 234.57it/s]Loading weights:  59%|█████▉    | 703/1183 [00:02<00:02, 224.95it/s]Loading weights:  62%|██████▏   | 734/1183 [00:03<00:01, 235.89it/s]Loading weights:  64%|██████▍   | 759/1183 [00:03<00:02, 202.35it/s]Loading weights:  66%|██████▌   | 781/1183 [00:03<00:02, 188.21it/s]Loading weights:  69%|██████▉   | 819/1183 [00:03<00:01, 230.69it/s]Loading weights:  75%|███████▌  | 888/1183 [00:03<00:00, 342.88it/s]Loading weights:  86%|████████▌ | 1017/1183 [00:03<00:00, 589.89it/s]Loading weights:  93%|█████████▎| 1096/1183 [00:03<00:00, 643.75it/s]Loading weights: 100%|██████████| 1183/1183 [00:03<00:00, 306.47it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+100/6421 (0 errors)
+200/6421 (0 errors)
+300/6421 (0 errors)
+400/6421 (0 errors)
+500/6421 (0 errors)
+600/6421 (0 errors)
+700/6421 (0 errors)
+800/6421 (0 errors)
+900/6421 (0 errors)
+1000/6421 (0 errors)
+1100/6421 (0 errors)
+1200/6421 (0 errors)
+1300/6421 (0 errors)
+1400/6421 (0 errors)
+1500/6421 (0 errors)
+1600/6421 (0 errors)
+1700/6421 (0 errors)
+1800/6421 (0 errors)
+1900/6421 (0 errors)
+2000/6421 (0 errors)
+2100/6421 (0 errors)
+2200/6421 (0 errors)
+2300/6421 (0 errors)
+2400/6421 (0 errors)
+2500/6421 (0 errors)
+2600/6421 (0 errors)
+2700/6421 (0 errors)
+2800/6421 (0 errors)
+2900/6421 (0 errors)
+3000/6421 (0 errors)
+3100/6421 (0 errors)
+3200/6421 (0 errors)
+3300/6421 (0 errors)
+3400/6421 (0 errors)
+3500/6421 (0 errors)
+3600/6421 (0 errors)
+3700/6421 (0 errors)
+3800/6421 (0 errors)
+3900/6421 (0 errors)
+4000/6421 (0 errors)
+4100/6421 (0 errors)
+4200/6421 (0 errors)
+4300/6421 (0 errors)
+4400/6421 (0 errors)
+4500/6421 (0 errors)
+4600/6421 (0 errors)
+4700/6421 (0 errors)
+4800/6421 (0 errors)
+4900/6421 (0 errors)
+5000/6421 (0 errors)
+5100/6421 (0 errors)
+5200/6421 (0 errors)
+5300/6421 (0 errors)
+5400/6421 (0 errors)
+5500/6421 (0 errors)
+5600/6421 (0 errors)
+5700/6421 (0 errors)
+5800/6421 (0 errors)
+5900/6421 (0 errors)
+6000/6421 (0 errors)
+6100/6421 (0 errors)
+6200/6421 (0 errors)
+6300/6421 (0 errors)
+6400/6421 (0 errors)
+done: 6421 calls, 0 errors -> /results/eval/full-2026-10-23-nemotron-3-nano-4b/pplx/results.jsonl

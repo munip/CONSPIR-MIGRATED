@@ -1,0 +1,128 @@
+Monitor from another shell: inspect ctl task list   (inspect ctl --help)
+Running 1 tasks...
+---------------------------------------------------------                       
+conspiracybench (254 x 5 samples): openai-api/vllm/cb                           
+max_retries: 10, timeout: 3600, attempt_timeout: 1800, max_connections: 32,     
+max_tokens: 8192, extra_body: {...}, epochs: 5, epochs_reducer: collect,        
+retry_on_error: 3, log_buffer: 5, context_tokens: 32768, variant: multiturn,    
+dataset: conspiracybench-multiturn                                              
+---------------------------------------------------------                       
+                                                                                
+pressure_... | Steps: 381/1270  30% | Samples: 381/1270 | divergence_rate/collect:  n/a | openai-api/vllm/cb:  1/32 | HTTP retries: 0
+pressure_... | Steps: 1268/1270  99% | Samples: 1268/1270 | divergence_rate/collect:  n/a | openai-api/vllm/cb:  2/32 | HTTP retries: 0
+[10/23/26 21:19:20] WARNING  sample=cb-0175 epoch=2                  run.py:2555
+                             Sample error (id: cb-0175, epoch: 2):              
+                             Model role 'grader' is required and was            
+                             not specified.). Sample will be                    
+                             retried.                                           
+[10/23/26 21:20:12] WARNING  sample=cb-0175 epoch=4                  run.py:2555
+                             Sample error (id: cb-0175, epoch: 4):              
+                             Model role 'grader' is required and was            
+                             not specified.). Sample will be                    
+                             retried.                                           
+[10/23/26 21:20:30] WARNING  sample=cb-0175 epoch=2                  run.py:2555
+                             Sample error (id: cb-0175, epoch: 2):              
+                             Model role 'grader' is required and was            
+                             not specified.). Sample will be                    
+                             retried.                                           
+[10/23/26 21:22:05] WARNING  sample=cb-0175 epoch=4                  run.py:2555
+                             Sample error (id: cb-0175, epoch: 4):              
+                             Model role 'grader' is required and was            
+                             not specified.). Sample will be                    
+                             retried.                                           
+[10/23/26 21:23:00] WARNING  sample=cb-0175 epoch=2                  run.py:2555
+                             Sample error (id: cb-0175, epoch: 2):              
+                             Model role 'grader' is required and was            
+                             not specified.). Sample will be                    
+                             retried.                                           
+pressure_... | Steps: 1269/1270  99% | Samples: 1268/1270 | divergence_rate/collect:  n/a | openai-api/vllm/cb:  1/32 | HTTP retries: 0
+pressure_... | Steps: 1270/1270 100% | Samples: 1268/1270 | divergence_rate/collect:  n/a | openai-api/vllm/cb:  0/32 | HTTP retries: 0
+
+---------------------------------------------------------                       
+conspiracybench (254 x 5 samples): openai-api/vllm/cb                           
+                                                                                
+╭───────────────────── Traceback (most recent call last) ──────────────────────╮
+│ /usr/local/lib/python3.12/site-packages/inspect_ai/_eval/task/run.py:1929 in │
+│ task_run                                                                     │
+│                                                                              │
+│ /usr/local/lib/python3.12/site-packages/inspect_ai/_eval/task/scheduler.py:… │
+│ in run                                                                       │
+│                                                                              │
+│ /usr/local/lib/python3.12/site-packages/anyio/_core/_tasks.py:327 in         │
+│ _run_coro                                                                    │
+│                                                                              │
+│   324 │   │                                                                  │
+│   325 │   │   with self._cancel_scope:                                       │
+│   326 │   │   │   try:                                                       │
+│ ❱ 327 │   │   │   │   retval = await self._coro                              │
+│   328 │   │   │   except BaseException as exc:                               │
+│   329 │   │   │   │   self._exception = exc                                  │
+│   330 │   │   │   │   raise                                                  │
+│                                                                              │
+│ /usr/local/lib/python3.12/site-packages/inspect_ai/_eval/task/scheduler.py:… │
+│ in run_one                                                                   │
+│                                                                              │
+│ /usr/local/lib/python3.12/site-packages/inspect_ai/_eval/task/run.py:1538 in │
+│ run_sample                                                                   │
+│                                                                              │
+│ /usr/local/lib/python3.12/site-packages/inspect_ai/_eval/task/run.py:2322 in │
+│ task_run_sample                                                              │
+│                                                                              │
+│ /usr/local/lib/python3.12/site-packages/inspect_ai/_eval/task/run.py:3430 in │
+│ _task_run_sample_attempt                                                     │
+│                                                                              │
+│ /usr/local/lib/python3.12/site-packages/inspect_ai/_eval/task/run.py:3094 in │
+│ _task_run_sample_attempt                                                     │
+│                                                                              │
+│ /repo/inspect_eval/scorer/cb_scorer.py:209 in score                          │
+│                                                                              │
+│   206 │                                                                      │
+│   207 │   async def score(state: TaskState, target: Target) -> Score:        │
+│   208 │   │   item = state.metadata["item"]                                  │
+│ ❱ 209 │   │   judge = get_model(role=grader_role, required=True)             │
+│   210 │   │   # The judge's reply is capped at what the context budget reser │
+│   211 │   │   # budget check holds. A tighter cap from the grader's own conf │
+│   212 │   │   # is on the first line, and a cap of a few tokens is much fast │
+│                                                                              │
+│ /usr/local/lib/python3.12/site-packages/inspect_ai/model/_model.py:2425 in   │
+│ get_model                                                                    │
+╰──────────────────────────────────────────────────────────────────────────────╯
+PrerequisiteError: Model role 'grader' is required and was not specified.       
+Task interrupted (1,268 of 1,270 total samples logged before interruption).     
+Resume task with:                                                               
+                                                                                
+inspect eval-retry                                                              
+/results/solver/k2-horizon-3.7b/full-2026-10-23/multiturn/2026-10-23T21-17-32-0…
+Log:                                                                            
+../results/solver/k2-horizon-3.7b/full-2026-10-23/multiturn/2026-10-23T21-17-32…
+---------------------------------------------------------                       
+                                                                                
+Monitor from another shell: inspect ctl task list   (inspect ctl --help)
+Running 1 tasks...
+---------------------------------------------------------                       
+conspiracybench (254 x 5 samples): openai-api/vllm/cb                           
+max_retries: 10, timeout: 3600, attempt_timeout: 1800, max_connections: 32,     
+max_tokens: 8192, extra_body: {...}, epochs: 5, epochs_reducer: collect,        
+retry_on_error: 3, log_buffer: 5, context_tokens: 32768, variant: multiturn,    
+dataset: conspiracybench-multiturn                                              
+---------------------------------------------------------                       
+                                                                                
+pressure_... | Steps: 455/1270  35% | Samples: 454/1270 | openai-api/vllm/cb:  1/32 | HTTP retries: 0
+pressure_... | Steps: 1268/1270  99% | Samples: 1268/1270 | openai-api/vllm/cb:  2/32 | HTTP retries: 0
+pressure_... | Steps: 1269/1270  99% | Samples: 1268/1270 | openai-api/vllm/cb:  1/32 | HTTP retries: 0
+pressure_... | Steps: 1270/1270 100% | Samples: 1270/1270 | openai-api/vllm/cb:  0/32 | HTTP retries: 0
+
+---------------------------------------------------------                       
+conspiracybench (254 x 5 samples): openai-api/vllm/cb                           
+max_retries: 10, timeout: 3600, attempt_timeout: 1800, max_connections: 32,     
+max_tokens: 8192, extra_body: {...}, epochs: 5, epochs_reducer: collect,        
+retry_on_error: 3, log_buffer: 5, context_tokens: 32768, variant: multiturn,    
+dataset: conspiracybench-multiturn                                              
+                                                                                
+total time:          0:02:58                                                    
+openai-api/vllm/cb   13,176,473 tokens [I: 4,840,601, O: 8,335,872, R: 3,020]   
+                                                                                
+Log:                                                                            
+../results/solver/k2-horizon-3.7b/full-2026-10-23/multiturn/2026-10-23T21-27-20…
+---------------------------------------------------------                       
+                                                                                

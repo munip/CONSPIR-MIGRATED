@@ -1,0 +1,197 @@
+Monitor from another shell: inspect ctl task list   (inspect ctl --help)
+Running 1 tasks...
+---------------------------------------------------------                       
+conspiracybench (254 x 5 samples): openai-api/vllm/cb                           
+max_retries: 10, timeout: 3600, attempt_timeout: 1800, max_connections: 32,     
+max_tokens: 8192, extra_body: {...}, epochs: 5, epochs_reducer: collect,        
+retry_on_error: 3, log_buffer: 5, context_tokens: 32768, variant:               
+multiturn_first, dataset: conspiracybench-multiturn_first                       
+---------------------------------------------------------                       
+                                                                                
+pressure_... | Steps:   1/1270   0% | Samples:   0/1270 | openai-api/vllm/cb: 31/32 | HTTP retries: 0
+pressure_... | Steps:  12/1270   0% | Samples:  12/1270 | openai-api/vllm/cb: 31/32 | HTTP retries: 0
+pressure_... | Steps:  27/1270   2% | Samples:  27/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  40/1270   3% | Samples:  40/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  49/1270   3% | Samples:  49/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  59/1270   4% | Samples:  59/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  63/1270   4% | Samples:  63/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  73/1270   5% | Samples:  73/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  77/1270   6% | Samples:  77/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  87/1270   6% | Samples:  87/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  89/1270   7% | Samples:  89/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  99/1270   7% | Samples:  99/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 109/1270   8% | Samples: 109/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 118/1270   9% | Samples: 118/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 127/1270  10% | Samples: 127/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 133/1270  10% | Samples: 133/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 139/1270  10% | Samples: 139/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 149/1270  11% | Samples: 149/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 158/1270  12% | Samples: 158/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 162/1270  12% | Samples: 162/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 167/1270  13% | Samples: 167/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 172/1270  13% | Samples: 172/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 177/1270  13% | Samples: 177/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 181/1270  14% | Samples: 181/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 192/1270  15% | Samples: 191/1270 | openai-api/vllm/cb: 31/32 | HTTP retries: 0
+pressure_... | Steps: 204/1270  16% | Samples: 204/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 209/1270  16% | Samples: 209/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 219/1270  17% | Samples: 219/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 225/1270  17% | Samples: 225/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 236/1270  18% | Samples: 236/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 244/1270  19% | Samples: 244/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 251/1270  19% | Samples: 251/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 259/1270  20% | Samples: 259/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 267/1270  21% | Samples: 267/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 279/1270  21% | Samples: 279/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 287/1270  22% | Samples: 287/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 296/1270  23% | Samples: 296/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 303/1270  23% | Samples: 303/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 310/1270  24% | Samples: 310/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 316/1270  24% | Samples: 316/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 322/1270  25% | Samples: 322/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 330/1270  25% | Samples: 330/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 336/1270  26% | Samples: 336/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 343/1270  27% | Samples: 343/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 348/1270  27% | Samples: 348/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 355/1270  27% | Samples: 355/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 359/1270  28% | Samples: 359/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 369/1270  29% | Samples: 369/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 377/1270  29% | Samples: 377/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 385/1270  30% | Samples: 385/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 394/1270  31% | Samples: 394/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 404/1270  31% | Samples: 404/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 408/1270  32% | Samples: 408/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 415/1270  32% | Samples: 415/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 422/1270  33% | Samples: 422/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 434/1270  34% | Samples: 434/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 442/1270  34% | Samples: 442/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 446/1270  35% | Samples: 446/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 450/1270  35% | Samples: 450/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 457/1270  35% | Samples: 456/1270 | openai-api/vllm/cb: 31/32 | HTTP retries: 0
+pressure_... | Steps: 462/1270  36% | Samples: 462/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 471/1270  37% | Samples: 471/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 477/1270  37% | Samples: 477/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 483/1270  38% | Samples: 483/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 488/1270  38% | Samples: 488/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 492/1270  38% | Samples: 492/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 501/1270  39% | Samples: 501/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 506/1270  39% | Samples: 506/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 514/1270  40% | Samples: 514/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 520/1270  40% | Samples: 520/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 532/1270  41% | Samples: 532/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 541/1270  42% | Samples: 541/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 550/1270  43% | Samples: 550/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 557/1270  43% | Samples: 557/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 561/1270  44% | Samples: 561/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 574/1270  45% | Samples: 574/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 581/1270  45% | Samples: 581/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 590/1270  46% | Samples: 590/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 594/1270  46% | Samples: 594/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 602/1270  47% | Samples: 602/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 607/1270  47% | Samples: 607/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 613/1270  48% | Samples: 613/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 620/1270  48% | Samples: 620/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 631/1270  49% | Samples: 631/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 642/1270  50% | Samples: 642/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 650/1270  51% | Samples: 650/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 658/1270  51% | Samples: 658/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 667/1270  52% | Samples: 667/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 677/1270  53% | Samples: 677/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 680/1270  53% | Samples: 680/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 689/1270  54% | Samples: 689/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 701/1270  55% | Samples: 701/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 710/1270  55% | Samples: 710/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 717/1270  56% | Samples: 717/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 727/1270  57% | Samples: 727/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 735/1270  57% | Samples: 735/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 742/1270  58% | Samples: 742/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 749/1270  58% | Samples: 749/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 758/1270  59% | Samples: 758/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 765/1270  60% | Samples: 765/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 777/1270  61% | Samples: 777/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 792/1270  62% | Samples: 792/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 797/1270  62% | Samples: 797/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 808/1270  63% | Samples: 808/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 816/1270  64% | Samples: 816/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 824/1270  64% | Samples: 824/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 833/1270  65% | Samples: 833/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 840/1270  66% | Samples: 840/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 844/1270  66% | Samples: 844/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 850/1270  66% | Samples: 850/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 857/1270  67% | Samples: 857/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 868/1270  68% | Samples: 867/1270 | openai-api/vllm/cb: 31/32 | HTTP retries: 0
+pressure_... | Steps: 877/1270  69% | Samples: 877/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 889/1270  70% | Samples: 889/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 900/1270  70% | Samples: 900/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 910/1270  71% | Samples: 910/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 919/1270  72% | Samples: 919/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 928/1270  73% | Samples: 928/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 933/1270  73% | Samples: 933/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 938/1270  73% | Samples: 938/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 946/1270  74% | Samples: 946/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 951/1270  74% | Samples: 951/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 957/1270  75% | Samples: 957/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 964/1270  75% | Samples: 964/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 972/1270  76% | Samples: 972/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 982/1270  77% | Samples: 982/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 990/1270  77% | Samples: 990/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 999/1270  78% | Samples: 999/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1008/1270  79% | Samples: 1008/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1016/1270  80% | Samples: 1016/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1025/1270  80% | Samples: 1025/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1037/1270  81% | Samples: 1037/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1046/1270  82% | Samples: 1046/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1052/1270  82% | Samples: 1052/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1057/1270  83% | Samples: 1057/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1063/1270  83% | Samples: 1063/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1069/1270  84% | Samples: 1069/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1076/1270  84% | Samples: 1076/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1084/1270  85% | Samples: 1084/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1092/1270  85% | Samples: 1092/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1097/1270  86% | Samples: 1097/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1102/1270  86% | Samples: 1102/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1108/1270  87% | Samples: 1108/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1116/1270  87% | Samples: 1116/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1119/1270  88% | Samples: 1119/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1133/1270  89% | Samples: 1133/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1143/1270  90% | Samples: 1143/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1155/1270  90% | Samples: 1155/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1164/1270  91% | Samples: 1164/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1170/1270  92% | Samples: 1170/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1177/1270  92% | Samples: 1177/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1188/1270  93% | Samples: 1188/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1194/1270  94% | Samples: 1194/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1201/1270  94% | Samples: 1201/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1208/1270  95% | Samples: 1208/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1218/1270  95% | Samples: 1218/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1226/1270  96% | Samples: 1226/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1236/1270  97% | Samples: 1236/1270 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 1242/1270  97% | Samples: 1242/1270 | openai-api/vllm/cb: 28/32 | HTTP retries: 0
+pressure_... | Steps: 1252/1270  98% | Samples: 1252/1270 | openai-api/vllm/cb: 18/32 | HTTP retries: 0
+pressure_... | Steps: 1255/1270  98% | Samples: 1255/1270 | openai-api/vllm/cb: 15/32 | HTTP retries: 0
+pressure_... | Steps: 1256/1270  98% | Samples: 1256/1270 | openai-api/vllm/cb: 14/32 | HTTP retries: 0
+pressure_... | Steps: 1259/1270  99% | Samples: 1259/1270 | openai-api/vllm/cb: 11/32 | HTTP retries: 0
+pressure_... | Steps: 1261/1270  99% | Samples: 1261/1270 | openai-api/vllm/cb:  9/32 | HTTP retries: 0
+pressure_... | Steps: 1262/1270  99% | Samples: 1262/1270 | openai-api/vllm/cb:  8/32 | HTTP retries: 0
+pressure_... | Steps: 1263/1270  99% | Samples: 1263/1270 | openai-api/vllm/cb:  7/32 | HTTP retries: 0
+pressure_... | Steps: 1264/1270  99% | Samples: 1263/1270 | openai-api/vllm/cb:  6/32 | HTTP retries: 0
+pressure_... | Steps: 1265/1270  99% | Samples: 1265/1270 | openai-api/vllm/cb:  5/32 | HTTP retries: 0
+pressure_... | Steps: 1266/1270  99% | Samples: 1266/1270 | openai-api/vllm/cb:  4/32 | HTTP retries: 0
+pressure_... | Steps: 1268/1270  99% | Samples: 1268/1270 | openai-api/vllm/cb:  2/32 | HTTP retries: 0
+pressure_... | Steps: 1269/1270  99% | Samples: 1268/1270 | openai-api/vllm/cb:  1/32 | HTTP retries: 0
+pressure_... | Steps: 1270/1270 100% | Samples: 1270/1270 | openai-api/vllm/cb:  0/32 | HTTP retries: 0
+
+---------------------------------------------------------                       
+conspiracybench (254 x 5 samples): openai-api/vllm/cb                           
+max_retries: 10, timeout: 3600, attempt_timeout: 1800, max_connections: 32,     
+max_tokens: 8192, extra_body: {...}, epochs: 5, epochs_reducer: collect,        
+retry_on_error: 3, log_buffer: 5, context_tokens: 32768, variant:               
+multiturn_first, dataset: conspiracybench-multiturn_first                       
+                                                                                
+total time:            0:14:32                                                  
+openai-api/vllm/cb     2,071,375 tokens [I: 41,205, O: 2,030,170, R: 806]       
+                                                                                
+Log:                                                                            
+../results/solver/k2-horizon-3.7b/full-2026-10-23/multiturn_first/2026-10-23T20…
+---------------------------------------------------------                       
+                                                                                

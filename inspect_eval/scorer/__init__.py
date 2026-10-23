@@ -2,6 +2,7 @@
 from .cb_scorer import (
     INVALID,
     TURN_SEPARATOR,
+    DEFAULT_RUBRIC,
     build_judge_prompt,
     conspiracy_judge,
     judge_reply_text,
@@ -11,6 +12,7 @@ from .cb_scorer import (
 __all__ = [
     "INVALID",
     "TURN_SEPARATOR",
+    "DEFAULT_RUBRIC",
     "build_judge_prompt",
     "conspiracy_judge",
     "judge_reply_text",

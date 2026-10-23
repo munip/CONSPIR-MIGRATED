@@ -1,0 +1,59 @@
+Monitor from another shell: inspect ctl task list   (inspect ctl --help)
+Running 1 tasks...
+---------------------------------------------------------                       
+conspiracybench (61 x 5 samples): openai-api/vllm/cb                            
+max_retries: 10, timeout: 3600, attempt_timeout: 1800, max_connections: 32,     
+max_tokens: 8192, extra_body: {...}, epochs: 5, epochs_reducer: collect,        
+retry_on_error: 3, log_buffer: 5, context_tokens: 32768, variant: single_turn,  
+dataset: conspiracybench-single_turn                                            
+---------------------------------------------------------                       
+                                                                                
+pressure_... | Steps:   1/305   0% | Samples:   0/305 | openai-api/vllm/cb: 31/32 | HTTP retries: 0
+pressure_... | Steps:   6/305   1% | Samples:   6/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  14/305   4% | Samples:  14/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  21/305   6% | Samples:  21/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  34/305  11% | Samples:  34/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  44/305  14% | Samples:  44/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  53/305  17% | Samples:  53/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  63/305  20% | Samples:  63/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  73/305  23% | Samples:  73/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  84/305  27% | Samples:  84/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps:  90/305  29% | Samples:  90/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 103/305  33% | Samples: 103/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 113/305  37% | Samples: 113/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 124/305  40% | Samples: 124/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 136/305  44% | Samples: 136/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 142/305  46% | Samples: 142/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 153/305  50% | Samples: 153/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 162/305  53% | Samples: 162/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 176/305  57% | Samples: 176/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 184/305  60% | Samples: 184/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 192/305  62% | Samples: 192/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 201/305  65% | Samples: 201/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 214/305  70% | Samples: 214/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 225/305  73% | Samples: 224/305 | openai-api/vllm/cb: 31/32 | HTTP retries: 0
+pressure_... | Steps: 236/305  77% | Samples: 236/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 248/305  81% | Samples: 248/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 260/305  85% | Samples: 260/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 269/305  88% | Samples: 269/305 | openai-api/vllm/cb: 32/32 | HTTP retries: 0
+pressure_... | Steps: 280/305  91% | Samples: 280/305 | openai-api/vllm/cb: 25/32 | HTTP retries: 0
+pressure_... | Steps: 287/305  94% | Samples: 287/305 | openai-api/vllm/cb: 18/32 | HTTP retries: 0
+pressure_... | Steps: 294/305  96% | Samples: 294/305 | openai-api/vllm/cb: 11/32 | HTTP retries: 0
+pressure_... | Steps: 300/305  98% | Samples: 300/305 | openai-api/vllm/cb:  5/32 | HTTP retries: 0
+pressure_... | Steps: 304/305  99% | Samples: 304/305 | openai-api/vllm/cb:  1/32 | HTTP retries: 0
+pressure_... | Steps: 305/305 100% | Samples: 305/305 | openai-api/vllm/cb:  0/32 | HTTP retries: 0
+
+---------------------------------------------------------                       
+conspiracybench (61 x 5 samples): openai-api/vllm/cb                            
+max_retries: 10, timeout: 3600, attempt_timeout: 1800, max_connections: 32,     
+max_tokens: 8192, extra_body: {...}, epochs: 5, epochs_reducer: collect,        
+retry_on_error: 3, log_buffer: 5, context_tokens: 32768, variant: single_turn,  
+dataset: conspiracybench-single_turn                                            
+                                                                                
+total time:              0:02:52                                                
+openai-api/vllm/cb       406,029 tokens [I: 13,440, O: 392,589, R: 0]           
+                                                                                
+Log:                                                                            
+../results/solver/nemotron-3-nano-4b/full-2026-10-23/single_turn/2026-10-23T20-…
+---------------------------------------------------------                       
+                                                                                

@@ -115,3 +115,37 @@ def stratified_subset(samples, per_cell: int = 1, seed: int = 0) -> list[str]:
         ids = sorted(cells[cell])
         chosen += rng.sample(ids, min(per_cell, len(ids)))
     return sorted(chosen)
+
+
+# "all" is the whole corpus in one run. The other three are the evals a baseline runs separately,
+# so no item is asked as a single-turn question in two of them.
+VARIANTS = ("all", "multiturn", "multiturn_first", "single_turn")
+
+
+def variant_dataset(samples, variant: str) -> MemoryDataset:
+    """The samples of one eval.
+
+    - ``all``: every item, unchanged.
+    - ``multiturn``: the items with pressure turns, each played as its whole conversation.
+    - ``multiturn_first``: the same items' first question on its own, with no pressure turns, as a
+      separate held-out single-turn eval. Sample ids and the item are unchanged apart from dropping
+      ``pressure_turns``, so the item is graded exactly like a single-turn one.
+    - ``single_turn``: the items that have no pressure turns.
+    """
+    if variant not in VARIANTS:
+        raise ValueError(f"variant must be one of {VARIANTS}, got {variant!r}")
+    out = []
+    for sample in samples:
+        metadata = sample.metadata or {}
+        multiturn = bool(metadata.get("multiturn"))
+        if variant == "all" or variant == "single_turn" and not multiturn or variant == "multiturn" and multiturn:
+            out.append(sample)
+        elif variant == "multiturn_first" and multiturn:
+            opening = {k: v for k, v in metadata["item"].items() if k != "pressure_turns"}
+            out.append(Sample(
+                input=sample.input,
+                target=sample.target,
+                id=sample.id,
+                metadata={**metadata, "item": opening, "variant": variant},
+            ))
+    return MemoryDataset(out, name=f"conspiracybench-{variant}")

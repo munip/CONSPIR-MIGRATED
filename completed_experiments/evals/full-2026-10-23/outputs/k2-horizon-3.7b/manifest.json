@@ -1,0 +1,58 @@
+{
+  "model": "k2-horizon-3.7b",
+  "roster_entry": {
+    "repo": "IFM/K2-Horizon-3.7B",
+    "args": [
+      "--reasoning-parser",
+      "k2_horizon",
+      "--trust-remote-code"
+    ],
+    "template": {
+      "reasoning_effort": "high"
+    },
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95
+    }
+  },
+  "variants": [
+    "multiturn",
+    "multiturn_first",
+    "single_turn"
+  ],
+  "epochs": 5,
+  "limit": null,
+  "max_connections": 32,
+  "max_tokens": 8192,
+  "context_tokens": 32768,
+  "suite_commit": "f73fced4470f0c01335bad3e4803b122f03ded40",
+  "gpu": "H100!",
+  "modal_task_id": "ta-01M5N6TXCTZ9ETJMJW0F4A3H1R",
+  "started": "2026-10-23T20:22:04Z",
+  "server_ready_seconds": 121,
+  "exit_status": {
+    "multiturn": 0,
+    "multiturn_first": 0,
+    "single_turn": 0
+  },
+  "minutes": 50.6,
+  "ended": "2026-10-23T21:12:38Z",
+  "retries": [
+    {
+      "variant": "multiturn",
+      "original_log": "2026-10-23T20-24-10-00-00_conspiracybench_H7EGYoej8czPVxcFELMLfs.eval",
+      "suite_commit": "cb290ae9d93bd56b5fa493121eb9312e9da3e763",
+      "exit_status": 0,
+      "minutes": 6.7,
+      "ended": "2026-10-23T21:24:02Z"
+    },
+    {
+      "variant": "multiturn",
+      "original_log": "2026-10-23T21-17-32-00-00_conspiracybench_H7EGYoej8czPVxcFELMLfs.eval",
+      "suite_commit": "1b2fcca2710dcefb01c921aa235bdf0d29670bb3",
+      "exit_status": 0,
+      "minutes": 3.2,
+      "ended": "2026-10-23T21:30:19Z"
+    }
+  ]
+}

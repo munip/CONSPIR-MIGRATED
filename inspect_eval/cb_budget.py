@@ -39,6 +39,11 @@ OVERFLOW_TURN = "context_overflow_turn"
 # that stopped early from one that was meant to be short.
 TURNS_PLANNED = "turns_planned"
 
+# Per-turn labels are joined into one scalar score value (see scorer/cb_scorer.py), and a turn that
+# can't be graded is labelled INVALID.
+TURN_SEPARATOR = ">"
+INVALID = "invalid"
+
 # Why a turn's label is "invalid" (Score.metadata["invalid_reasons"]).
 MODEL_CONTEXT_OVERFLOW = "model_context_overflow"
 JUDGE_CONTEXT_OVERFLOW = "judge_context_overflow"
@@ -74,3 +79,40 @@ async def fits(model: Model, prompt, reply_tokens: int, context_tokens: int | No
     if context_tokens is None:
         return True
     return await model.count_tokens(prompt) + reply_tokens <= context_tokens
+
+
+# What happens to a conversation that no longer fits: "slide" drops the oldest exchanges until it
+# does (the default), "stop" ends the sequence there and scores the turn invalid.
+CONTEXT_OVERFLOW_MODES = ("slide", "stop")
+DEFAULT_CONTEXT_OVERFLOW = "slide"
+
+# Sample metadata keys: the turns sent with a clipped conversation, as {"turn", "dropped"} records
+# (dropped = earlier messages left out), for the model under test and for the judge.
+CONTEXT_CLIPPED = "context_clipped"
+JUDGE_CONTEXT_CLIPPED = "judge_context_clipped"
+
+
+async def slide_window(model: Model, messages: list, reply_tokens: int, context_tokens: int | None):
+    """The most recent part of ``messages`` that fits, or None if even the latest message alone doesn't.
+
+    Leading system messages always stay. After them, the oldest messages are dropped two at a time
+    (one user message and the reply to it), so the window still starts with a user message and
+    always ends with the latest one. The full conversation stays in the transcript; only what is
+    sent is clipped.
+    """
+    head = 0
+    while head < len(messages) and _role(messages[head]) == "system":
+        head += 1
+    system, rest = list(messages[:head]), list(messages[head:])
+    while rest:
+        window = system + rest
+        if await fits(model, window, reply_tokens, context_tokens):
+            return window
+        if len(rest) <= 1:
+            return None
+        rest = rest[2:]
+    return None
+
+
+def _role(message):
+    return message["role"] if isinstance(message, dict) else message.role

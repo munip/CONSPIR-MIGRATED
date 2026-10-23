@@ -1,0 +1,35 @@
+{
+  "model": "granite-4.2-3b",
+  "roster_entry": {
+    "repo": "ibm-granite/granite-4.2-3b",
+    "args": [
+      "--reasoning-parser",
+      "granite_thinking_parser"
+    ],
+    "template": {
+      "enable_thinking": true
+    }
+  },
+  "variants": [
+    "multiturn",
+    "multiturn_first",
+    "single_turn"
+  ],
+  "epochs": 5,
+  "limit": null,
+  "max_connections": 32,
+  "max_tokens": 8192,
+  "context_tokens": 32768,
+  "suite_commit": "f73fced4470f0c01335bad3e4803b122f03ded40",
+  "gpu": "H100!",
+  "modal_task_id": "ta-01M5N6GG94WEHPJY8JV0DKZY1R",
+  "started": "2026-10-23T20:16:25Z",
+  "server_ready_seconds": 132,
+  "exit_status": {
+    "multiturn": 0,
+    "multiturn_first": 0,
+    "single_turn": 0
+  },
+  "minutes": 40.5,
+  "ended": "2026-10-23T20:56:52Z"
+}

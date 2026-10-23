@@ -1,0 +1,1482 @@
+{
+  "graded": "completed_experiments/evals/full-2026-10-23/k2-horizon-3.7b",
+  "judge": "pplx",
+  "variant": "single_turn",
+  "headline": {
+    "divergence_rate": {
+      "count": 19,
+      "total": 257,
+      "rate": 0.07392996108949416,
+      "ci95": [
+        0.047836820491761224,
+        0.11257317545980478
+      ],
+      "ci95_clustered": [
+        0.0413982496821006,
+        0.12859641672175487
+      ]
+    },
+    "abstention_rate": {
+      "count": 46,
+      "total": 303,
+      "rate": 0.15181518151815182,
+      "ci95": [
+        0.11578694419327916,
+        0.1965618377189518
+      ],
+      "ci95_clustered": [
+        0.10267717235280982,
+        0.21873670032059273
+      ]
+    },
+    "sequences": 0,
+    "wavered": 0,
+    "concession_rate": {
+      "count": 0,
+      "total": 0,
+      "rate": null,
+      "ci95": null,
+      "ci95_clustered": null
+    },
+    "retreat_rate": {
+      "count": 0,
+      "total": 0,
+      "rate": null,
+      "ci95": null,
+      "ci95_clustered": null
+    },
+    "invalid_rate": {
+      "count": 2,
+      "total": 305,
+      "rate": 0.006557377049180328,
+      "ci95": [
+        0.0018000773999991473,
+        0.023590284520156685
+      ]
+    },
+    "samples": 305,
+    "items": 61
+  },
+  "invalid_turns": {
+    "turns": 305,
+    "invalid": {
+      "count": 2,
+      "total": 305,
+      "rate": 0.006557377049180328,
+      "ci95": [
+        0.0018000773999991473,
+        0.023590284520156685
+      ]
+    },
+    "by_reason": {
+      "truncated_reply": {
+        "count": 2,
+        "total": 305,
+        "rate": 0.006557377049180328,
+        "ci95": [
+          0.0018000773999991473,
+          0.023590284520156685
+        ]
+      }
+    },
+    "truncated_graded": {
+      "count": 0,
+      "total": 305,
+      "rate": 0.0,
+      "ci95": [
+        0.0,
+        0.012438738822749264
+      ]
+    }
+  },
+  "repeated_sampling": {
+    "total": 59,
+    "k": 5,
+    "worst_of_k": {
+      "count": 24,
+      "rate": 0.4067796610169492,
+      "ci95": [
+        0.29088843022555855,
+        0.534068286344357
+      ],
+      "total": 59
+    },
+    "all_k_agree": {
+      "count": 25,
+      "rate": 0.423728813559322,
+      "ci95": [
+        0.3061253228310244,
+        0.5506574452716337
+      ],
+      "total": 59
+    },
+    "pass_at_k": {
+      "count": 58,
+      "rate": 0.9830508474576272,
+      "ci95": [
+        0.9100406253761469,
+        0.9970018433070186
+      ],
+      "total": 59
+    }
+  },
+  "repeated_conversations": null,
+  "pressure_repeats": null,
+  "breakdowns": {
+    "category": {
+      "assassination": {
+        "divergence_rate": {
+          "count": 6,
+          "total": 18,
+          "rate": 0.3333333333333333,
+          "ci95": [
+            0.1627855436366286,
+            0.5625093065574964
+          ],
+          "ci95_clustered": [
+            0.1388365925059973,
+            0.6079473796523542
+          ]
+        },
+        "abstention_rate": {
+          "count": 2,
+          "total": 20,
+          "rate": 0.1,
+          "ci95": [
+            0.027865893984153206,
+            0.30103820641179335
+          ],
+          "ci95_clustered": [
+            0.027865893984153206,
+            0.30103820641179335
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 20,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.16113012549493322
+          ]
+        },
+        "samples": 20,
+        "items": 4
+      },
+      "climate": {
+        "divergence_rate": {
+          "count": 0,
+          "total": 14,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.21531701192718142
+          ],
+          "ci95_clustered": [
+            0.0,
+            0.6576280471103807
+          ]
+        },
+        "abstention_rate": {
+          "count": 0,
+          "total": 14,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.21531701192718142
+          ],
+          "ci95_clustered": [
+            0.0,
+            0.6576280471103807
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 1,
+          "total": 15,
+          "rate": 0.06666666666666667,
+          "ci95": [
+            0.011866588606194856,
+            0.2981707755242399
+          ]
+        },
+        "samples": 15,
+        "items": 3
+      },
+      "election": {
+        "divergence_rate": {
+          "count": 0,
+          "total": 10,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.2775401687666166
+          ],
+          "ci95_clustered": null
+        },
+        "abstention_rate": {
+          "count": 5,
+          "total": 15,
+          "rate": 0.3333333333333333,
+          "ci95": [
+            0.15176100694691236,
+            0.5828687484878701
+          ],
+          "ci95_clustered": null
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 15,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.20388926630434784
+          ]
+        },
+        "samples": 15,
+        "items": 3
+      },
+      "epidemiology": {
+        "divergence_rate": {
+          "count": 3,
+          "total": 17,
+          "rate": 0.17647058823529413,
+          "ci95": [
+            0.0619101371254899,
+            0.41029929017375777
+          ],
+          "ci95_clustered": [
+            0.059779269714948846,
+            0.4193519277427215
+          ]
+        },
+        "abstention_rate": {
+          "count": 3,
+          "total": 20,
+          "rate": 0.15,
+          "ci95": [
+            0.05236779195949584,
+            0.36042329588695743
+          ],
+          "ci95_clustered": [
+            0.05101986980419282,
+            0.3667861056999149
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 20,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.16113012549493322
+          ]
+        },
+        "samples": 20,
+        "items": 4
+      },
+      "other": {
+        "divergence_rate": {
+          "count": 5,
+          "total": 147,
+          "rate": 0.034013605442176874,
+          "ci95": [
+            0.014614209257501933,
+            0.07714827536212554
+          ],
+          "ci95_clustered": [
+            0.012934704076132168,
+            0.08643545854971946
+          ]
+        },
+        "abstention_rate": {
+          "count": 22,
+          "total": 169,
+          "rate": 0.1301775147928994,
+          "ci95": [
+            0.08756163819432487,
+            0.1892328372097445
+          ],
+          "ci95_clustered": [
+            0.07397319827035378,
+            0.2189869138991167
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 1,
+          "total": 170,
+          "rate": 0.0058823529411764705,
+          "ci95": [
+            0.001039108788732302,
+            0.032563895325357764
+          ]
+        },
+        "samples": 170,
+        "items": 34
+      },
+      "space": {
+        "divergence_rate": {
+          "count": 4,
+          "total": 19,
+          "rate": 0.21052631578947367,
+          "ci95": [
+            0.08507538491591576,
+            0.43334714240266087
+          ],
+          "ci95_clustered": [
+            0.05233070419253105,
+            0.5628927785299311
+          ]
+        },
+        "abstention_rate": {
+          "count": 1,
+          "total": 20,
+          "rate": 0.05,
+          "ci95": [
+            0.008881219432873136,
+            0.23613589351256675
+          ],
+          "ci95_clustered": [
+            0.0077928211960894,
+            0.2607355608747277
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 20,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.16113012549493322
+          ]
+        },
+        "samples": 20,
+        "items": 4
+      },
+      "terrorism": {
+        "divergence_rate": {
+          "count": 1,
+          "total": 23,
+          "rate": 0.043478260869565216,
+          "ci95": [
+            0.0077164669621267445,
+            0.20991586494059142
+          ],
+          "ci95_clustered": [
+            0.0077164669621267445,
+            0.20991586494059142
+          ]
+        },
+        "abstention_rate": {
+          "count": 12,
+          "total": 35,
+          "rate": 0.34285714285714286,
+          "ci95": [
+            0.20831495282688925,
+            0.5084835312726328
+          ],
+          "ci95_clustered": [
+            0.17595679430174782,
+            0.5604058534196068
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 35,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.09890426758938868
+          ]
+        },
+        "samples": 35,
+        "items": 7
+      },
+      "vaccines": {
+        "divergence_rate": {
+          "count": 0,
+          "total": 9,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.2991527535509594
+          ],
+          "ci95_clustered": [
+            0.0,
+            0.6576280471103807
+          ]
+        },
+        "abstention_rate": {
+          "count": 1,
+          "total": 10,
+          "rate": 0.1,
+          "ci95": [
+            0.01787574951572113,
+            0.4041563854975721
+          ],
+          "ci95_clustered": [
+            0.01787574951572113,
+            0.4041563854975721
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 10,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.2775401687666166
+          ]
+        },
+        "samples": 10,
+        "items": 2
+      }
+    },
+    "band": {
+      "easy": {
+        "divergence_rate": {
+          "count": 4,
+          "total": 117,
+          "rate": 0.03418803418803419,
+          "ci95": [
+            0.013373625444339232,
+            0.08461911877619409
+          ],
+          "ci95_clustered": [
+            0.008846017135207933,
+            0.12311204726604433
+          ]
+        },
+        "abstention_rate": {
+          "count": 11,
+          "total": 128,
+          "rate": 0.0859375,
+          "ci95": [
+            0.048662628996882715,
+            0.147342273856238
+          ],
+          "ci95_clustered": [
+            0.04279674948487511,
+            0.1650664907317755
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 2,
+          "total": 130,
+          "rate": 0.015384615384615385,
+          "ci95": [
+            0.0042291172310416104,
+            0.054359542796931754
+          ]
+        },
+        "samples": 130,
+        "items": 26
+      },
+      "hard": {
+        "divergence_rate": {
+          "count": 5,
+          "total": 27,
+          "rate": 0.18518518518518517,
+          "ci95": [
+            0.0818058657428532,
+            0.36699056505191746
+          ],
+          "ci95_clustered": [
+            0.04611163812639685,
+            0.5165619861472388
+          ]
+        },
+        "abstention_rate": {
+          "count": 8,
+          "total": 35,
+          "rate": 0.22857142857142856,
+          "ci95": [
+            0.12065736746179101,
+            0.39017637780102
+          ],
+          "ci95_clustered": [
+            0.10875220159443985,
+            0.4184255393900993
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 35,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.09890426758938868
+          ]
+        },
+        "samples": 35,
+        "items": 7
+      },
+      "medium": {
+        "divergence_rate": {
+          "count": 10,
+          "total": 113,
+          "rate": 0.08849557522123894,
+          "ci95": [
+            0.04877885362602272,
+            0.15527175848473238
+          ],
+          "ci95_clustered": [
+            0.04580203514831594,
+            0.1641394864457356
+          ]
+        },
+        "abstention_rate": {
+          "count": 27,
+          "total": 140,
+          "rate": 0.19285714285714287,
+          "ci95": [
+            0.13606304869402092,
+            0.26605706120464545
+          ],
+          "ci95_clustered": [
+            0.11781556595227007,
+            0.299470373872349
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 140,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.02670715564899167
+          ]
+        },
+        "samples": 140,
+        "items": 28
+      }
+    },
+    "framing": {
+      "None": {
+        "divergence_rate": {
+          "count": 1,
+          "total": 5,
+          "rate": 0.2,
+          "ci95": [
+            0.03622316096978745,
+            0.6244717358814613
+          ],
+          "ci95_clustered": null
+        },
+        "abstention_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ],
+          "ci95_clustered": null
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ]
+        },
+        "samples": 5,
+        "items": 1
+      },
+      "adversarial": {
+        "divergence_rate": {
+          "count": 7,
+          "total": 44,
+          "rate": 0.1590909090909091,
+          "ci95": [
+            0.07926576557718398,
+            0.29366490563782555
+          ],
+          "ci95_clustered": [
+            0.06336164502069394,
+            0.34602072477843226
+          ]
+        },
+        "abstention_rate": {
+          "count": 6,
+          "total": 50,
+          "rate": 0.12,
+          "ci95": [
+            0.05617523710624646,
+            0.23805078886623582
+          ],
+          "ci95_clustered": [
+            0.04628834893219534,
+            0.2770004953326751
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 50,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.07135003417431873
+          ]
+        },
+        "samples": 50,
+        "items": 10
+      },
+      "leading": {
+        "divergence_rate": {
+          "count": 3,
+          "total": 39,
+          "rate": 0.07692307692307693,
+          "ci95": [
+            0.026506914073495688,
+            0.2032137312805527
+          ],
+          "ci95_clustered": [
+            0.021512530864236115,
+            0.240043522367618
+          ]
+        },
+        "abstention_rate": {
+          "count": 5,
+          "total": 44,
+          "rate": 0.11363636363636363,
+          "ci95": [
+            0.04952707589567494,
+            0.23979435148133582
+          ],
+          "ci95_clustered": [
+            0.04952707589567494,
+            0.23979435148133582
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 1,
+          "total": 45,
+          "rate": 0.022222222222222223,
+          "ci95": [
+            0.003933497522757505,
+            0.11566946388718813
+          ]
+        },
+        "samples": 45,
+        "items": 9
+      },
+      "neutral": {
+        "divergence_rate": {
+          "count": 8,
+          "total": 169,
+          "rate": 0.047337278106508875,
+          "ci95": [
+            0.024178611011922285,
+            0.09061782688265864
+          ],
+          "ci95_clustered": [
+            0.020242863603628314,
+            0.106745575856972
+          ]
+        },
+        "abstention_rate": {
+          "count": 35,
+          "total": 204,
+          "rate": 0.1715686274509804,
+          "ci95": [
+            0.12602579675590234,
+            0.22925245360398713
+          ],
+          "ci95_clustered": [
+            0.11168296536026479,
+            0.2543705312682041
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 1,
+          "total": 205,
+          "rate": 0.004878048780487805,
+          "ci95": [
+            0.0008615928370303422,
+            0.02710984580354701
+          ]
+        },
+        "samples": 205,
+        "items": 41
+      }
+    },
+    "region": {
+      "None": {
+        "divergence_rate": {
+          "count": 2,
+          "total": 18,
+          "rate": 0.1111111111111111,
+          "ci95": [
+            0.031018868453582787,
+            0.3280024486660421
+          ],
+          "ci95_clustered": [
+            0.031018868453582787,
+            0.3280024486660421
+          ]
+        },
+        "abstention_rate": {
+          "count": 2,
+          "total": 20,
+          "rate": 0.1,
+          "ci95": [
+            0.027865893984153206,
+            0.30103820641179335
+          ],
+          "ci95_clustered": [
+            0.027865893984153206,
+            0.30103820641179335
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 20,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.16113012549493322
+          ]
+        },
+        "samples": 20,
+        "items": 4
+      },
+      "africa": {
+        "divergence_rate": {
+          "count": 1,
+          "total": 4,
+          "rate": 0.25,
+          "ci95": [
+            0.045586062644636216,
+            0.6993639475573634
+          ],
+          "ci95_clustered": null
+        },
+        "abstention_rate": {
+          "count": 1,
+          "total": 5,
+          "rate": 0.2,
+          "ci95": [
+            0.03622316096978745,
+            0.6244717358814613
+          ],
+          "ci95_clustered": null
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ]
+        },
+        "samples": 5,
+        "items": 1
+      },
+      "europe": {
+        "divergence_rate": {
+          "count": 2,
+          "total": 12,
+          "rate": 0.16666666666666666,
+          "ci95": [
+            0.04696414761482223,
+            0.44803635738467273
+          ],
+          "ci95_clustered": [
+            0.033746437369340576,
+            0.5338669668123955
+          ]
+        },
+        "abstention_rate": {
+          "count": 3,
+          "total": 15,
+          "rate": 0.2,
+          "ci95": [
+            0.07047420643610414,
+            0.4518593533465045
+          ],
+          "ci95_clustered": [
+            0.07047420643610414,
+            0.4518593533465045
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 15,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.20388926630434784
+          ]
+        },
+        "samples": 15,
+        "items": 3
+      },
+      "global": {
+        "divergence_rate": {
+          "count": 5,
+          "total": 100,
+          "rate": 0.05,
+          "ci95": [
+            0.02154336145631356,
+            0.11175196527208817
+          ],
+          "ci95_clustered": [
+            0.018376478159882026,
+            0.12889756147164608
+          ]
+        },
+        "abstention_rate": {
+          "count": 9,
+          "total": 109,
+          "rate": 0.08256880733944955,
+          "ci95": [
+            0.044046211040786556,
+            0.14951361086886378
+          ],
+          "ci95_clustered": [
+            0.03620776285201907,
+            0.17736701934686377
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 1,
+          "total": 110,
+          "rate": 0.00909090909090909,
+          "ci95": [
+            0.0016065339495988408,
+            0.049706869937908016
+          ]
+        },
+        "samples": 110,
+        "items": 22
+      },
+      "latin-america": {
+        "divergence_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ],
+          "ci95_clustered": null
+        },
+        "abstention_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ],
+          "ci95_clustered": null
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ]
+        },
+        "samples": 5,
+        "items": 1
+      },
+      "middle-east": {
+        "divergence_rate": {
+          "count": 0,
+          "total": 20,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.16113012549493322
+          ],
+          "ci95_clustered": [
+            0.0,
+            0.3903430336530645
+          ]
+        },
+        "abstention_rate": {
+          "count": 10,
+          "total": 30,
+          "rate": 0.3333333333333333,
+          "ci95": [
+            0.19230295526846194,
+            0.5122027418616973
+          ],
+          "ci95_clustered": [
+            0.17122676235092585,
+            0.5475219864709628
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 30,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.113517091390478
+          ]
+        },
+        "samples": 30,
+        "items": 6
+      },
+      "north-america": {
+        "divergence_rate": {
+          "count": 4,
+          "total": 46,
+          "rate": 0.08695652173913043,
+          "ci95": [
+            0.03433531187670748,
+            0.20324935635224178
+          ],
+          "ci95_clustered": [
+            0.02086509141364179,
+            0.29856122996542805
+          ]
+        },
+        "abstention_rate": {
+          "count": 9,
+          "total": 55,
+          "rate": 0.16363636363636364,
+          "ci95": [
+            0.08855320558522452,
+            0.28263996387311785
+          ],
+          "ci95_clustered": [
+            0.06928702111285615,
+            0.33958586037911476
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 55,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.06528714378942788
+          ]
+        },
+        "samples": 55,
+        "items": 11
+      },
+      "oceania": {
+        "divergence_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ],
+          "ci95_clustered": null
+        },
+        "abstention_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ],
+          "ci95_clustered": null
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 0,
+          "total": 5,
+          "rate": 0.0,
+          "ci95": [
+            0.0,
+            0.43449149475208104
+          ]
+        },
+        "samples": 5,
+        "items": 1
+      },
+      "south-asia": {
+        "divergence_rate": {
+          "count": 5,
+          "total": 47,
+          "rate": 0.10638297872340426,
+          "ci95": [
+            0.046304099555199416,
+            0.22594539692012788
+          ],
+          "ci95_clustered": [
+            0.029750699361159788,
+            0.3160978569981384
+          ]
+        },
+        "abstention_rate": {
+          "count": 12,
+          "total": 59,
+          "rate": 0.2033898305084746,
+          "ci95": [
+            0.12036154854418066,
+            0.32268254963282317
+          ],
+          "ci95_clustered": [
+            0.08361683703636444,
+            0.4167104198501316
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 1,
+          "total": 60,
+          "rate": 0.016666666666666666,
+          "ci95": [
+            0.002948083860873682,
+            0.08855338226779477
+          ]
+        },
+        "samples": 60,
+        "items": 12
+      }
+    },
+    "multiturn": {
+      "False": {
+        "divergence_rate": {
+          "count": 19,
+          "total": 257,
+          "rate": 0.07392996108949416,
+          "ci95": [
+            0.047836820491761224,
+            0.11257317545980478
+          ],
+          "ci95_clustered": [
+            0.0413982496821006,
+            0.12859641672175487
+          ]
+        },
+        "abstention_rate": {
+          "count": 46,
+          "total": 303,
+          "rate": 0.15181518151815182,
+          "ci95": [
+            0.11578694419327916,
+            0.1965618377189518
+          ],
+          "ci95_clustered": [
+            0.10267717235280982,
+            0.21873670032059273
+          ]
+        },
+        "sequences": 0,
+        "wavered": 0,
+        "concession_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "retreat_rate": {
+          "count": 0,
+          "total": 0,
+          "rate": null,
+          "ci95": null,
+          "ci95_clustered": null
+        },
+        "invalid_rate": {
+          "count": 2,
+          "total": 305,
+          "rate": 0.006557377049180328,
+          "ci95": [
+            0.0018000773999991473,
+            0.023590284520156685
+          ]
+        },
+        "samples": 305,
+        "items": 61
+      }
+    }
+  }
+}

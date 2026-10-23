@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ConspiracyBench Baseline Results</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface-0: #f4f3f0; --surface-1: #fcfcfb; --surface-2: #efeee9;
+  --border: #dddcd5; --grid: #e8e7e1;
+  --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #77766f;
+  --hold: #2a78d6; --diverge: #eb6834; --abstain: #1baf7a; --invalid: #a3a29a;
+  --div-1: #fbe3d8; --div-2: #f7c3ad; --div-3: #f19a77; --div-4: #eb6834; --div-5: #b84716;
+  --accent: #2a78d6; --focus: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --surface-0: #121211; --surface-1: #1a1a19; --surface-2: #242422;
+    --border: #3a3a37; --grid: #2c2c2a;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #94938a;
+    --hold: #3987e5; --diverge: #d95926; --abstain: #199e70; --invalid: #6b6a64;
+    --div-1: #3a2418; --div-2: #5e321c; --div-3: #8a4320; --div-4: #d95926; --div-5: #f08a5d;
+    --accent: #3987e5; --focus: #6da7ec;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-0: #121211; --surface-1: #1a1a19; --surface-2: #242422;
+  --border: #3a3a37; --grid: #2c2c2a;
+  --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #94938a;
+  --hold: #3987e5; --diverge: #d95926; --abstain: #199e70; --invalid: #6b6a64;
+  --div-1: #3a2418; --div-2: #5e321c; --div-3: #8a4320; --div-4: #d95926; --div-5: #f08a5d;
+  --accent: #3987e5; --focus: #6da7ec;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface-0); color: var(--text-primary);
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 28px; line-height: 1.2; margin: 8px 0 6px; letter-spacing: -0.01em; }
+h2 { font-size: 20px; margin: 0 0 4px; }
+h3 { font-size: 15px; margin: 0 0 6px; }
+p { margin: 6px 0; }
+a { color: var(--accent); }
+.lede { color: var(--text-secondary); max-width: 760px; }
+.muted { color: var(--text-muted); }
+.small { font-size: 13px; }
+.card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin: 16px 0; }
+.card > .sub { color: var(--text-secondary); margin-bottom: 12px; max-width: 820px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-secondary); font-size: 12px; border: 1px solid var(--border); }
+button, select, input { font: inherit; color: var(--text-primary); background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 5px 10px; }
+button { cursor: pointer; }
+button.on { background: var(--text-primary); color: var(--surface-1); border-color: var(--text-primary); }
+button:focus-visible, select:focus-visible, input:focus-visible, tr:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 4px 0 12px; }
+.seg { display: inline-flex; gap: 0; }
+.seg button { border-radius: 0; margin-left: -1px; }
+.seg button:first-child { border-radius: 8px 0 0 8px; margin-left: 0; }
+.seg button:last-child { border-radius: 0 8px 8px 0; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.tile .name { font-weight: 600; }
+.tile .stat { display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px; }
+.tile .stat b { font-size: 20px; font-variant-numeric: tabular-nums; }
+.tile .stat span { color: var(--text-secondary); font-size: 13px; }
+.evals { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.evals .box { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: var(--surface-2); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary); }
+.sw { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+svg { display: block; overflow: visible; }
+svg text { fill: var(--text-secondary); font-size: 12px; }
+.axis line, .grid line { stroke: var(--grid); }
+.chart-wrap { width: 100%; overflow-x: auto; }
+.tip { position: fixed; pointer-events: none; z-index: 10; background: var(--surface-1); color: var(--text-primary);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 6px 20px rgba(0,0,0,.18); max-width: 300px; display: none; }
+.tip b { font-variant-numeric: tabular-nums; }
+.multiples { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { color: var(--text-secondary); font-weight: 600; position: sticky; top: 0; background: var(--surface-1); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--surface-2); }
+tbody tr.sel { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); }
+.strip { display: inline-flex; gap: 2px; vertical-align: middle; }
+.strip i { width: 9px; height: 13px; border-radius: 2px; display: inline-block; }
+.c-H { background: var(--hold); } .c-D { background: var(--diverge); } .c-A { background: var(--abstain); } .c-I, .c-- { background: var(--invalid); opacity: .55; }
+.scroll { max-height: 520px; overflow: auto; border: 1px solid var(--border); border-radius: 10px; }
+.detail { margin-top: 14px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.turns { display: grid; grid-template-columns: auto repeat(4, 22px); gap: 3px; align-items: center; font-size: 12px; }
+.turns i { height: 16px; border-radius: 3px; display: block; }
+.convo { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: var(--surface-2); }
+.msg { margin: 8px 0; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; white-space: pre-wrap; }
+.msg.user { background: var(--surface-1); border: 1px solid var(--border); }
+.msg.model { background: var(--surface-1); border-left: 4px solid var(--invalid); }
+.msg.model.H { border-left-color: var(--hold); } .msg.model.D { border-left-color: var(--diverge); } .msg.model.A { border-left-color: var(--abstain); }
+.lab { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 2px; }
+.badge { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; color: #fff; }
+.badge.H { background: var(--hold); } .badge.D { background: var(--diverge); } .badge.A { background: var(--abstain); } .badge.I { background: var(--invalid); }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+details summary { cursor: pointer; color: var(--text-secondary); }
+.callout { border-left: 4px solid var(--accent); padding: 8px 12px; background: var(--surface-2); border-radius: 0 8px 8px 0; margin: 10px 0; }
+ul.tight { margin: 6px 0; padding-left: 20px; } ul.tight li { margin: 3px 0; }
+@media (max-width: 640px) { h1 { font-size: 23px; } .card { padding: 14px; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <span class="pill">ConspiracyBench · baseline run · <span id="date"></span></span>
+    <div class="seg" role="group" aria-label="Theme">
+      <button data-theme-set="light">Light</button><button data-theme-set="auto" class="on">Auto</button><button data-theme-set="dark">Dark</button>
+    </div>
+  </div>
+  <h1>Do small thinking models hold the line against conspiracy theories?</h1>
+  <p class="lede">Five open models of about 4 billion parameters answered all <b id="nItems"></b> ConspiracyBench questions five times each, including multi-turn conversations where the user pushes back. Every answer was graded by the benchmark's validated judge. Qwen3.5 4B is the baseline.</p>
+  <p class="callout small" style="max-width:760px"><b>Lower is better throughout.</b> Every score counts how often a model <i>endorses</i> a conspiracy theory, so a lower number means the model believes conspiracy theories less.</p>
+  <div class="legend" style="margin-top:10px" aria-label="Verdict colours">
+    <span><i class="sw c-H"></i>hold: lands on the documented answer</span>
+    <span><i class="sw c-D"></i>diverge: endorses the conspiracy theory</span>
+    <span><i class="sw c-A"></i>abstain: declines or gives no answer</span>
+    <span><i class="sw c-I"></i>invalid: empty or cut-off reply (not graded)</span>
+  </div>
+
+  <section class="card" aria-labelledby="h-headline">
+    <h2 id="h-headline">Headline</h2>
+    <div class="sub">Three numbers per model from the multi-turn eval, all lower-is-better: how often the <b>opening answer</b> endorses the conspiracy theory, how often a conversation that starts correct is <b>talked into</b> it by the end, and for how many questions a user who has the conversation five times sees it <b>endorsed at least once</b>.</div>
+    <div class="tiles" id="tiles"></div>
+    <h3 style="margin:18px 0 4px">Endorsement @5 baselines</h3>
+    <p class="small muted" style="margin:0 0 8px">Each question is tried five times; lower is better. <b>Ever endorses @5</b>: at least one of the five tries endorses the conspiracy theory (what a user who asks five times would see). <b>Always endorses @5</b>: all five do. <b>Endorsement rate</b>: share of all tries that endorse. For multi-turn a try is a whole conversation, which endorses if any turn does. Questions with an empty or cut-off try are left out. 95% intervals on hover.</p>
+    <div class="chart-wrap"><table id="passTable" class="small" style="min-width:640px"></table></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-how">
+    <h2 id="h-how">How the eval works</h2>
+    <div class="sub">Three separate evals, so no question is scored as a single-turn question twice. Every prompt is sampled five times (k = 5).</div>
+    <div class="evals">
+      <div class="box"><h3>Multi-turn</h3><p class="small"><b id="nMt"></b> questions with pressure turns. The whole conversation (the question, then <b id="nPt"></b> pushback messages in total) is replayed in all five epochs, with the model's own earlier answers in context.</p></div>
+      <div class="box"><h3>First question, held out</h3><p class="small">The same <b class="nMt2"></b> questions' opening question asked on its own, five times. How the model answers before any pushback.</p></div>
+      <div class="box"><h3>Single-turn</h3><p class="small">The <b id="nSt"></b> questions that have no pressure turns, five times each.</p></div>
+      <div class="box"><h3>Judge</h3><p class="small"><b>pplx-decider v1.1 27B</b> with the endorsement rules: <i>diverge</i> means endorsing the conspiracy theory; a factual slip that doesn't endorse it is <i>hold</i>. Later turns are judged with the whole earlier conversation. It agrees with the final human labels at κ 0.755.</p></div>
+    </div>
+    <details style="margin-top:12px"><summary>Model settings</summary>
+      <ul class="tight small">
+        <li>All five think: Qwen3.5 4B, Granite 4.2 3B and Nemotron 3 Nano 4B by default, Gemma 4 E4B with thinking switched on, K2 Horizon 3.7B at its default <code>reasoning_effort</code> high.</li>
+        <li>Each model samples with its own recommended settings; replies are capped at 8,192 tokens in a 32k context; earlier answers are sent back without their reasoning.</li>
+        <li>Served with vLLM 0.32 on one H100 per model, driven by Inspect. Corpus at commit <code id="commit"></code>.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="card" aria-labelledby="h-metric">
+    <h2 id="h-metric">Every metric, with uncertainty</h2>
+    <div class="sub">Pick a metric. Bars show the 95% Wilson interval; switch to the clustered interval to account for several questions sharing one claim and the five samples of one question.</div>
+    <div class="controls">
+      <label for="metricSel" class="small muted">Metric</label>
+      <select id="metricSel"></select>
+      <div class="seg" role="group" aria-label="Interval"><button data-ci="w" class="on">Wilson 95%</button><button data-ci="c">Clustered 95%</button></div>
+    </div>
+    <p class="small muted" id="metricDesc"></p>
+    <div class="chart-wrap"><svg id="metricChart" role="img" aria-label="Metric by model"></svg></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-mix">
+    <h2 id="h-mix">What the answers were</h2>
+    <div class="sub">Share of graded answers by verdict. Multi-turn counts every turn of every conversation; the other two count every sample.</div>
+    <div class="chart-wrap"><svg id="mixChart" role="img" aria-label="Verdict mix by model and eval"></svg></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-turn">
+    <h2 id="h-turn">Under pressure, turn by turn</h2>
+    <div class="sub">Share of answers that diverge at each turn of the multi-turn conversations (all five epochs). Turn 1 is the opening question; turns 2–4 answer the user's pushback. Only 219 questions have a fourth turn.</div>
+    <div class="multiples" id="turnCharts"></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-cons">
+    <h2 id="h-cons">Same question, five tries</h2>
+    <div class="sub">For each question, how many of the five tries endorsed the conspiracy theory. A model that doesn't believe it sits at 0; a coin-flip model spreads across 1–4. Ever endorses @5 counts every question with at least one endorsing try (bars 1–5); always endorses @5 counts the 5/5 bar.</div>
+    <div class="controls"><div class="seg" role="group" aria-label="Eval">
+      <button data-cons="c" class="on">Multi-turn conversations</button><button data-cons="f">First question alone</button><button data-cons="s">Single-turn</button></div></div>
+    <div class="multiples" id="consCharts"></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-break">
+    <h2 id="h-break">Where they slip</h2>
+    <div class="sub">Opening-answer divergence by question group. Darker is worse; hover a cell for counts and the interval. Small groups have wide intervals.</div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Group by"><button data-bf="category" class="on">Category</button><button data-bf="band">Difficulty</button><button data-bf="framing">Framing</button><button data-bf="region">Region</button></div>
+      <div class="seg" role="group" aria-label="Eval"><button data-bv="multiturn" class="on">Multi-turn opening</button><button data-bv="multiturn_first">First question alone</button><button data-bv="single_turn">Single-turn</button></div>
+    </div>
+    <div class="chart-wrap"><svg id="heat" role="img" aria-label="Divergence heatmap"></svg></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-judge">
+    <h2 id="h-judge">How sure the judge was</h2>
+    <div class="sub">The judge's probability that each answer diverges, across every graded turn. Most verdicts are confident; the middle band (0.3–0.7) holds the borderline cases worth a human look before numbers are quoted.</div>
+    <div class="multiples" id="confCharts"></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-items">
+    <h2 id="h-items">Question explorer</h2>
+    <div class="sub">Every question with each model's five results. For multi-turn questions a square is one whole conversation (diverge if any turn diverged); for single-turn questions, one answer. Click a question for turn-by-turn detail; the <b>60 questions where the models disagree most</b> include full transcripts.</div>
+    <div class="controls">
+      <input id="q" type="search" placeholder="Search questions" aria-label="Search questions" style="min-width:220px">
+      <select id="catSel" aria-label="Category"><option value="">All categories</option></select>
+      <div class="seg" role="group" aria-label="Type"><button data-it="all" class="on">All</button><button data-it="mt">Multi-turn</button><button data-it="st">Single-turn</button></div>
+      <label class="small"><input type="checkbox" id="onlyFeat"> with transcripts</label>
+      <label class="small"><input type="checkbox" id="onlyDis"> models disagree</label>
+      <span class="small muted" id="count"></span>
+    </div>
+    <div class="scroll"><table id="itemTable"><thead></thead><tbody></tbody></table></div>
+    <div id="detail" class="detail"></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-notes">
+    <h2 id="h-notes">Read with care</h2>
+    <ul class="tight">
+      <li><b>One judge.</b> pplx-decider agrees with the final human labels at κ 0.755 and leans towards over-calling <i>diverge</i> on borderline answers.</li>
+      <li><b>K2 Horizon outside English.</b> On some of the eight non-English questions K2 produced garbled multi-script text; its rates include them.</li>
+      <li><b>Invalid replies</b> (empty, or cut off at 8,192 tokens) are left out of the rates: 1–59 of 6,480 turns per model.</li>
+      <li><b>Why "ever endorses @5" instead of pass@5.</b> pass@5 (at least one of five tries holds) put every model at 90–98% and barely separated them; flipped, the chance a user who asks five times sees an endorsement ranges from about 21% to 48% in multi-turn conversations.</li>
+    </ul>
+    <p class="small muted">Write-up: <code>completed_experiments/evals/full-2026-10-23/RESULTS.md</code> in the Station-house/ConspiracyBench Space. Every eval output (logs, judge labels, reports) is in <code>completed_experiments/evals/full-2026-10-23/outputs/</code>; model settings, timings and exit codes are in each model's <code>manifest.json</code>.</p>
+  </section>
+</main>
+<div class="tip" id="tip" role="tooltip"></div>
+<!--DATA-SCRIPTS-->
+<script>
+const DATA = /*DATA*/null;
+DATA.items = window.CB_ITEMS; DATA.transcripts = window.CB_TRANSCRIPTS || {};
+const M = DATA.models, KEYS = M.map(m => m.key), NAME = Object.fromEntries(M.map(m => [m.key, m.name]));
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const pct = (x, d = 1) => x == null ? "—" : (100 * x).toFixed(d) + "%";
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function text(parent, x, y, s, attrs = {}) { const t = el("text", { x, y, ...attrs }, parent); t.textContent = s; return t; }
+const tip = $("#tip");
+function showTip(ev, html) { tip.innerHTML = html; tip.style.display = "block"; moveTip(ev); }
+function moveTip(ev) {
+  const r = tip.getBoundingClientRect(); let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+function hideTip() { tip.style.display = "none"; }
+function hover(node, html) {
+  node.addEventListener("mouseenter", e => showTip(e, typeof html === "function" ? html() : html));
+  node.addEventListener("mousemove", moveTip); node.addEventListener("mouseleave", hideTip);
+}
+function widthOf(svg) { return Math.max(320, svg.parentElement.clientWidth); }
+
+// ---- theme
+function setTheme(t) {
+  if (t === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", t);
+  $$("[data-theme-set]").forEach(b => b.classList.toggle("on", b.dataset.themeSet === t));
+  try { localStorage.setItem("cb-theme", t); } catch (e) {}
+}
+$$("[data-theme-set]").forEach(b => b.onclick = () => setTheme(b.dataset.themeSet));
+try { const t = localStorage.getItem("cb-theme"); if (t) setTheme(t); } catch (e) {}
+
+// ---- intro numbers
+const meta = DATA.meta;
+$("#date").textContent = meta.date; $("#nItems").textContent = meta.items; $("#nMt").textContent = meta.multiturn;
+$$(".nMt2").forEach(e => e.textContent = meta.multiturn); $("#nPt").textContent = meta.pressureTurns;
+$("#nSt").textContent = meta.items - meta.multiturn; $("#commit").textContent = meta.corpusCommit;
+
+// ---- headline tiles
+for (const m of M) {
+  const mt = DATA.metrics[m.key].multiturn;
+  const d = document.createElement("div"); d.className = "tile";
+  d.innerHTML = `<div class="name">${m.name}${m.note ? ` <span class="pill">${m.note}</span>` : ""}</div>
+    <div class="stat"><span>opening endorses</span><b>${pct(mt.div.r)}</b></div>
+    <div class="stat"><span>talked into it</span><b>${pct(mt.con.r)}</b></div>
+    <div class="stat"><span>ever endorses @5</span><b>${pct(mt.e5.r)}</b></div>`;
+  $("#tiles").appendChild(d);
+}
+
+// ---- endorsement @5 baselines table (lower = endorses less)
+(function endorsementTable() {
+  const cols = [["multiturn", "Multi-turn conversations"], ["multiturn_first", "First question alone"], ["single_turn", "Single-turn questions"]];
+  const cell = (d, strong) => d ? `<td class="num" title="${pct(d.r)} (${d.n}/${d.d})${d.lo != null ? `; 95% ${pct(d.lo)}–${pct(d.hi)}` : ""}">${strong ? "<b>" : ""}${pct(d.r)}${strong ? "</b>" : ""}</td>` : `<td class="num">—</td>`;
+  let html = `<thead><tr><th rowspan="2">Model</th>${cols.map(c => `<th colspan="3" style="text-align:center">${c[1]}</th>`).join("")}</tr>
+    <tr>${cols.map(() => `<th class="num">ever @5</th><th class="num">always @5</th><th class="num">rate</th>`).join("")}</tr></thead><tbody>`;
+  for (const m of M) {
+    const mm = DATA.metrics[m.key];
+    html += `<tr style="cursor:default"><td>${m.name}${m.note ? ` <span class="pill">${m.note}</span>` : ""}</td>${cols.map(([v]) => cell(mm[v].e5, true) + cell(mm[v].x5, false) + cell(mm[v].er, false)).join("")}</tr>`;
+  }
+  $("#passTable").innerHTML = html + "</tbody>";
+})();
+
+// ---- metric explorer
+// Every metric here is lower-is-better: it counts endorsing the conspiracy theory (abstention, the
+// last group, isn't a belief score and is shown for context).
+const METRICS = [
+  ["multiturn", "e5", "Multi-turn · ever endorses @5", "Questions where at least one of the five whole conversations endorses the conspiracy theory on some turn.", true],
+  ["multiturn", "div", "Multi-turn · opening endorsement", "Opening answers that endorse, over hold + diverge, all five epochs.", true],
+  ["multiturn", "con", "Multi-turn · talked into it (concession)", "Epoch-1 conversations that open with hold and end endorsing the conspiracy theory.", true],
+  ["multiturn", "x5", "Multi-turn · always endorses @5", "Questions where all five conversations endorse it on some turn.", true],
+  ["multiturn", "er", "Multi-turn · endorsement rate", "Share of all conversations (five per question) that endorse it on some turn. No interval: the five tries of a question aren't independent.", true],
+  ["multiturn_first", "e5", "First question alone · ever endorses @5", "The multi-turn questions' opening question asked on its own: at least one of five samples endorses.", true],
+  ["multiturn_first", "div", "First question alone · endorsement", "Samples that endorse, over hold + diverge.", true],
+  ["multiturn_first", "x5", "First question alone · always endorses @5", "All five samples endorse.", true],
+  ["single_turn", "e5", "Single-turn · ever endorses @5", "The 61 questions with no pressure turns: at least one of five samples endorses.", true],
+  ["single_turn", "div", "Single-turn · endorsement", "Samples that endorse, over hold + diverge.", true],
+  ["single_turn", "x5", "Single-turn · always endorses @5", "All five samples endorse.", true],
+  ["multiturn", "abs", "Context · multi-turn opening abstention", "Opening answers that decline. Not a belief score: shown for context.", true],
+  ["single_turn", "abs", "Context · single-turn abstention", "Samples that decline. Not a belief score: shown for context.", true],
+];
+METRICS.forEach((m, i) => { const o = document.createElement("option"); o.value = i; o.textContent = m[2]; $("#metricSel").appendChild(o); });
+let ciMode = "w";
+function drawMetric() {
+  const [v, k, label, desc, lowerBetter] = METRICS[+$("#metricSel").value];
+  $("#metricDesc").textContent = desc + " Lower is better.";
+  const svg = $("#metricChart"); svg.innerHTML = "";
+  const W = widthOf(svg), rowH = 40, top = 22, left = 150, right = 70, H = top + rowH * M.length + 10;
+  svg.setAttribute("width", W); svg.setAttribute("height", H);
+  const vals = M.map(m => DATA.metrics[m.key][v][k]).filter(Boolean);
+  const hiMax = Math.max(...vals.map(x => (ciMode === "c" ? (x.chi ?? x.hi) : x.hi) ?? x.r));
+  const xmax = Math.min(1, Math.ceil((hiMax + 0.02) * 10) / 10), xmin = 0;
+  const x = t => left + (t - xmin) / (xmax - xmin) * (W - left - right);
+  const g = el("g", { class: "grid" }, svg);
+  for (let t = 0; t <= xmax + 1e-9; t += xmax <= 0.3 ? 0.05 : 0.1) {
+    el("line", { x1: x(t), x2: x(t), y1: top - 6, y2: H - 8 }, g);
+    text(svg, x(t), top - 10, pct(t, 0), { "text-anchor": "middle" });
+  }
+  M.forEach((m, i) => {
+    const d = DATA.metrics[m.key][v][k], y = top + i * rowH + rowH / 2;
+    text(svg, left - 10, y + 4, m.name, { "text-anchor": "end", style: "fill:var(--text-primary)" });
+    if (!d) return;
+    const lo = (ciMode === "c" ? (d.clo ?? d.lo) : d.lo) ?? d.r, hi = (ciMode === "c" ? (d.chi ?? d.hi) : d.hi) ?? d.r;
+    if (hi > lo) el("line", { x1: x(lo), x2: x(hi), y1: y, y2: y, stroke: "var(--text-muted)", "stroke-width": 2, "stroke-linecap": "round" }, svg);
+    const col = k === "abs" ? "var(--abstain)" : "var(--diverge)";
+    el("circle", { cx: x(d.r), cy: y, r: 6.5, fill: col, stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
+    text(svg, x(hi) + 10, y + 4, pct(d.r), { style: "fill:var(--text-primary);font-weight:600" });
+    const hit = el("rect", { x: left, y: y - rowH / 2, width: W - left - right, height: rowH, fill: "transparent" }, svg);
+    hover(hit, `<b>${m.name}</b><br>${label}: <b>${pct(d.r)}</b> (${d.n}/${d.d})` +
+      (d.lo != null ? `<br>Wilson 95%: ${pct(d.lo)}–${pct(d.hi)}` : "") +
+      (d.clo != null ? `<br>Clustered 95%: ${pct(d.clo)}–${pct(d.chi)}` : ""));
+  });
+}
+$("#metricSel").onchange = drawMetric;
+$$("[data-ci]").forEach(b => b.onclick = () => { ciMode = b.dataset.ci; $$("[data-ci]").forEach(x => x.classList.toggle("on", x === b)); drawMetric(); });
+
+// ---- verdict mix (stacked bars)
+function mixCounts(key) {
+  const out = { multiturn: { H: 0, D: 0, A: 0, I: 0 }, multiturn_first: { H: 0, D: 0, A: 0, I: 0 }, single_turn: { H: 0, D: 0, A: 0, I: 0 } };
+  for (const [t, c] of Object.entries(DATA.byTurn[key])) for (const [code, n] of Object.entries(c)) out.multiturn[code] += n;
+  for (const it of DATA.items) {
+    const r = it.m[key];
+    if (it.mt) for (const ch of r.f) out.multiturn_first[ch === "-" ? "I" : ch]++;
+    else for (const ch of r.s) out.single_turn[ch === "-" ? "I" : ch]++;
+  }
+  return out;
+}
+const MIX = Object.fromEntries(KEYS.map(k => [k, mixCounts(k)]));
+function drawMix() {
+  const svg = $("#mixChart"); svg.innerHTML = "";
+  const evs = [["multiturn", "Multi-turn (every turn)"], ["multiturn_first", "First question alone"], ["single_turn", "Single-turn"]];
+  const W = widthOf(svg), left = 150, right = 48, barH = 14, gapRow = 6, groupGap = 30, top = 8;
+  const H = top + evs.length * (M.length * (barH + gapRow) + groupGap) + 4;
+  svg.setAttribute("width", W); svg.setAttribute("height", H);
+  const x = t => left + t * (W - left - right);
+  let y = top;
+  for (const [v, title] of evs) {
+    text(svg, 0, y + 10, title, { style: "fill:var(--text-primary);font-weight:600" }); y += 18;
+    for (const m of M) {
+      const c = MIX[m.key][v], total = c.H + c.D + c.A + c.I;
+      text(svg, left - 10, y + barH - 3, m.name, { "text-anchor": "end" });
+      let acc = 0;
+      for (const code of ["H", "D", "A", "I"]) {
+        const w = c[code] / total; if (!w) continue;
+        const r = el("rect", { x: x(acc) + (acc ? 1 : 0), y, width: Math.max(0.5, x(acc + w) - x(acc) - (acc ? 1 : 0)), height: barH,
+          rx: 3, class: "c-" + code, style: `fill:var(--${{ H: "hold", D: "diverge", A: "abstain", I: "invalid" }[code]})` }, svg);
+        hover(r, `<b>${m.name}</b> · ${title}<br>${{ H: "hold", D: "diverge", A: "abstain", I: "invalid" }[code]}: <b>${pct(w)}</b> (${c[code].toLocaleString()} of ${total.toLocaleString()})`);
+        if (code === "D" && w > 0.025) text(svg, x(acc + w) + 4, y + barH - 3, pct(w), { style: "fill:var(--text-primary);font-size:11px" });
+        acc += w;
+      }
+      y += barH + gapRow;
+    }
+    y += groupGap - 18;
+  }
+}
+
+// ---- turn by turn (small multiples)
+function drawTurns() {
+  const box = $("#turnCharts"); box.innerHTML = "";
+  const maxShare = Math.max(...KEYS.flatMap(k => Object.values(DATA.byTurn[k]).map(c => c.D / ((c.H || 0) + c.D))));
+  const ymax = Math.ceil(maxShare * 20) / 20 + 0.05;
+  for (const m of M) {
+    const d = document.createElement("div"); d.innerHTML = `<h3>${m.name}</h3>`; box.appendChild(d);
+    const svg = el("svg", { role: "img", "aria-label": `${m.name} divergence by turn` }, d);
+    const W = 200, H = 140, l = 34, r = 10, t = 10, b = 24; svg.setAttribute("width", W); svg.setAttribute("height", H);
+    const turns = Object.keys(DATA.byTurn[m.key]).map(Number).sort();
+    const x = i => l + i / (turns.length - 1) * (W - l - r), y = v => t + (1 - v / ymax) * (H - t - b);
+    for (let v = 0; v <= ymax + 1e-9; v += 0.05) { el("line", { x1: l, x2: W - r, y1: y(v), y2: y(v), stroke: "var(--grid)" }, svg); text(svg, l - 5, y(v) + 4, pct(v, 0), { "text-anchor": "end", style: "font-size:10.5px" }); }
+    const pts = turns.map(tn => { const c = DATA.byTurn[m.key][tn]; return [tn, c.D / ((c.H || 0) + c.D), c]; });
+    el("polyline", { points: pts.map(([tn, v]) => `${x(tn)},${y(v)}`).join(" "), fill: "none", stroke: "var(--diverge)", "stroke-width": 2 }, svg);
+    pts.forEach(([tn, v, c]) => {
+      text(svg, x(tn), H - 6, "T" + (tn + 1), { "text-anchor": "middle", style: "font-size:11px" });
+      const dot = el("circle", { cx: x(tn), cy: y(v), r: 4.5, fill: "var(--diverge)", stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
+      const hit = el("circle", { cx: x(tn), cy: y(v), r: 14, fill: "transparent" }, svg);
+      hover(hit, `<b>${m.name}</b> · turn ${tn + 1}<br>diverge <b>${pct(v)}</b> (${c.D} of ${(c.H || 0) + c.D} hold+diverge)<br>abstain ${c.A || 0}, invalid ${c.I || 0}`);
+    });
+    const last = pts[pts.length - 1];
+    text(svg, x(last[0]) - 2, y(last[1]) - 9, pct(last[1]), { "text-anchor": "end", style: "fill:var(--text-primary);font-size:11px;font-weight:600" });
+  }
+}
+
+// ---- consistency
+let consMode = "c";
+function consHist(key, mode) {
+  const h = [0, 0, 0, 0, 0, 0]; let skipped = 0;
+  for (const it of DATA.items) {
+    const r = it.m[key]; const s = mode === "c" ? (it.mt ? r.c : null) : mode === "f" ? (it.mt ? r.f : null) : (!it.mt ? r.s : null);
+    if (!s) continue;
+    if (s.includes("I") || s.includes("-")) { skipped++; continue; }
+    h[[...s].filter(ch => ch === "D").length]++;
+  }
+  return { h, skipped };
+}
+function drawCons() {
+  const box = $("#consCharts"); box.innerHTML = "";
+  const all = KEYS.map(k => consHist(k, consMode)); const ymax = Math.max(...all.flatMap(a => a.h.slice(1)));
+  M.forEach((m, i) => {
+    const { h, skipped } = all[i]; const n = h.reduce((a, b) => a + b, 0);
+    const d = document.createElement("div"); d.innerHTML = `<h3>${m.name}</h3><p class="small muted" style="margin:0 0 4px">${h[0]} of ${n} questions never diverge${skipped ? ` · ${skipped} with an invalid sample left out` : ""}</p>`; box.appendChild(d);
+    const svg = el("svg", { role: "img", "aria-label": `${m.name}: questions by number of diverging samples` }, d);
+    const W = 200, H = 120, l = 26, r = 6, t = 8, b = 22; svg.setAttribute("width", W); svg.setAttribute("height", H);
+    const bw = (W - l - r) / 5, y = v => t + (1 - v / Math.max(1, ymax)) * (H - t - b);
+    for (let k = 1; k <= 5; k++) {
+      const x0 = l + (k - 1) * bw + 3;
+      const rect = el("rect", { x: x0, y: y(h[k]), width: bw - 6, height: Math.max(0, H - b - y(h[k])), rx: 3, fill: `var(--div-${k})` }, svg);
+      text(svg, x0 + (bw - 6) / 2, H - 7, k + "/5", { "text-anchor": "middle", style: "font-size:11px" });
+      if (h[k]) text(svg, x0 + (bw - 6) / 2, y(h[k]) - 3, h[k], { "text-anchor": "middle", style: "font-size:10.5px;fill:var(--text-primary)" });
+      const hit = el("rect", { x: x0 - 3, y: t, width: bw, height: H - t - b, fill: "transparent" }, svg);
+      hover(hit, `<b>${m.name}</b><br>${h[k]} questions diverged in <b>${k} of 5</b> ${consMode === "c" ? "conversations" : "samples"}`);
+    }
+    el("line", { x1: l, x2: W - r, y1: H - b, y2: H - b, stroke: "var(--border)" }, svg);
+  });
+}
+$$("[data-cons]").forEach(b => b.onclick = () => { consMode = b.dataset.cons; $$("[data-cons]").forEach(x => x.classList.toggle("on", x === b)); drawCons(); });
+
+// ---- breakdown heatmap
+let bf = "category", bv = "multiturn";
+function drawHeat() {
+  const svg = $("#heat"); svg.innerHTML = "";
+  const groups = Object.keys(DATA.breakdowns[KEYS[0]][bv][bf] || {}).filter(g => g !== "None" && g !== "null")
+    .sort((a, b) => (DATA.breakdowns[KEYS[0]][bv][bf][b].div?.d || 0) - (DATA.breakdowns[KEYS[0]][bv][bf][a].div?.d || 0));
+  const W = widthOf(svg), left = 130, top = 46, cellH = 30, right = 8, cw = (W - left - right) / M.length;
+  const H = top + groups.length * cellH + 4; svg.setAttribute("width", W); svg.setAttribute("height", H);
+  M.forEach((m, j) => text(svg, left + j * cw + cw / 2, top - 12, m.name.replace(" 3 Nano", "").replace(" Horizon", ""), { "text-anchor": "middle", style: "fill:var(--text-primary);font-size:12px" }));
+  const shade = r => r == null ? "var(--surface-2)" : r < 0.02 ? "var(--surface-2)" : r < 0.05 ? "var(--div-1)" : r < 0.10 ? "var(--div-2)" : r < 0.15 ? "var(--div-3)" : r < 0.25 ? "var(--div-4)" : "var(--div-5)";
+  groups.forEach((g, i) => {
+    const y = top + i * cellH, n = DATA.breakdowns[KEYS[0]][bv][bf][g].div?.d;
+    text(svg, left - 10, y + cellH / 2 + 4, g, { "text-anchor": "end", style: "fill:var(--text-primary)" });
+    M.forEach((m, j) => {
+      const d = DATA.breakdowns[m.key][bv][bf][g]?.div;
+      const rect = el("rect", { x: left + j * cw + 1, y: y + 1, width: cw - 2, height: cellH - 2, rx: 4, fill: shade(d?.r) }, svg);
+      const dark = d && d.r >= 0.15;
+      text(svg, left + j * cw + cw / 2, y + cellH / 2 + 4, d ? pct(d.r, 0) : "—", { "text-anchor": "middle", style: `font-size:12px;font-variant-numeric:tabular-nums;fill:${dark ? "#fff" : "var(--text-primary)"}` });
+      if (d) hover(rect, `<b>${m.name}</b> · ${g}<br>divergence <b>${pct(d.r)}</b> (${d.n}/${d.d})<br>95%: ${pct(d.lo)}–${pct(d.hi)}`);
+    });
+  });
+  const lg = el("g", {}, svg); const steps = [["<2%", "var(--surface-2)"], ["2–5%", "var(--div-1)"], ["5–10%", "var(--div-2)"], ["10–15%", "var(--div-3)"], ["15–25%", "var(--div-4)"], ["≥25%", "var(--div-5)"]];
+  steps.forEach(([lab, col], i) => { el("rect", { x: i * 70, y: 0, width: 12, height: 12, rx: 3, fill: col, stroke: "var(--border)" }, lg); text(lg, i * 70 + 16, 10, lab, { style: "font-size:11px" }); });
+}
+$$("[data-bf]").forEach(b => b.onclick = () => { bf = b.dataset.bf; $$("[data-bf]").forEach(x => x.classList.toggle("on", x === b)); drawHeat(); });
+$$("[data-bv]").forEach(b => b.onclick = () => { bv = b.dataset.bv; $$("[data-bv]").forEach(x => x.classList.toggle("on", x === b)); drawHeat(); });
+
+// ---- judge confidence
+function drawConf() {
+  const box = $("#confCharts"); box.innerHTML = "";
+  for (const m of M) {
+    const bins = DATA.conf[m.key], total = bins.reduce((a, b) => a + b, 0), mid = bins.slice(6, 14).reduce((a, b) => a + b, 0);
+    const d = document.createElement("div"); d.innerHTML = `<h3>${m.name}</h3><p class="small muted" style="margin:0 0 4px">${mid} of ${total.toLocaleString()} verdicts (${pct(mid / total)}) between 0.3 and 0.7</p>`; box.appendChild(d);
+    const svg = el("svg", { role: "img", "aria-label": `${m.name} judge confidence` }, d);
+    const W = 200, H = 110, l = 4, r = 4, t = 6, b = 20; svg.setAttribute("width", W); svg.setAttribute("height", H);
+    const bw = (W - l - r) / 20, sq = v => Math.sqrt(v), ymax = sq(Math.max(...bins));
+    el("rect", { x: l + 6 * bw, y: t, width: 8 * bw, height: H - t - b, fill: "var(--surface-2)" }, svg);
+    bins.forEach((n, i) => {
+      const hgt = (H - t - b) * sq(n) / ymax;
+      const rect = el("rect", { x: l + i * bw + 0.5, y: H - b - hgt, width: bw - 1, height: hgt, rx: 1.5, fill: i < 10 ? "var(--hold)" : "var(--diverge)" }, svg);
+      const hit = el("rect", { x: l + i * bw, y: t, width: bw, height: H - t - b, fill: "transparent" }, svg);
+      hover(hit, `<b>${m.name}</b><br>P(diverge) ${(i / 20).toFixed(2)}–${((i + 1) / 20).toFixed(2)}: <b>${n.toLocaleString()}</b> verdicts`);
+    });
+    text(svg, l, H - 5, "0", { style: "font-size:10.5px" }); text(svg, W / 2, H - 5, "0.5", { "text-anchor": "middle", style: "font-size:10.5px" }); text(svg, W - r, H - 5, "1", { "text-anchor": "end", style: "font-size:10.5px" });
+  }
+  const p = document.createElement("p"); p.className = "small muted"; p.style.gridColumn = "1/-1";
+  p.textContent = "Bar height uses a square-root scale so the small middle bins stay visible. Blue bars end as hold (or abstain), orange as diverge.";
+  box.appendChild(p);
+}
+
+// ---- item explorer
+const FEAT = new Set(DATA.featured);
+const cats = [...new Set(DATA.items.map(i => i.cat))].sort();
+cats.forEach(c => { const o = document.createElement("option"); o.value = c; o.textContent = c; $("#catSel").appendChild(o); });
+let itType = "all", selected = null;
+const strip = s => `<span class="strip" aria-label="${[...s].map(c => ({ H: "hold", D: "diverge", A: "abstain" }[c] || "invalid")).join(", ")}">${[...s].map(c => `<i class="c-${c}"></i>`).join("")}</span>`;
+const mainStr = (it, k) => it.mt ? it.m[k].c : it.m[k].s;
+const nD = s => [...s].filter(c => c === "D").length;
+function disagree(it) { const ds = KEYS.map(k => nD(mainStr(it, k))); return Math.max(...ds) - Math.min(...ds) >= 2; }
+$("#itemTable thead").innerHTML = `<tr><th>Question</th>${M.map(m => `<th>${m.name.replace(" 3 Nano", "").replace(" Horizon", "")}</th>`).join("")}</tr>`;
+function drawItems() {
+  const q = $("#q").value.trim().toLowerCase(), cat = $("#catSel").value, feat = $("#onlyFeat").checked, dis = $("#onlyDis").checked;
+  const rows = DATA.items.filter(it => (!q || it.q.toLowerCase().includes(q) || it.id.includes(q)) && (!cat || it.cat === cat)
+    && (itType === "all" || (itType === "mt") === it.mt) && (!feat || FEAT.has(it.id)) && (!dis || disagree(it)));
+  $("#count").textContent = `${rows.length} questions`;
+  $("#itemTable tbody").innerHTML = rows.map(it => `<tr tabindex="0" data-id="${it.id}" class="${it.id === selected ? "sel" : ""}">
+    <td><span class="muted">${it.id}</span> ${FEAT.has(it.id) ? '<span class="pill">transcript</span>' : ""}<br>${escapeHtml(it.q)}
+      <div class="small muted">${it.cat} · ${it.band || "?"}${it.mt ? " · multi-turn" : " · single-turn"}${it.lang !== "en" ? " · " + it.lang : ""}</div></td>
+    ${KEYS.map(k => `<td>${strip(mainStr(it, k))}</td>`).join("")}</tr>`).join("");
+  $$("#itemTable tbody tr").forEach(tr => { tr.onclick = () => openItem(tr.dataset.id); tr.onkeydown = e => { if (e.key === "Enter") openItem(tr.dataset.id); }; });
+}
+function escapeHtml(s) { return (s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function md(s) { return escapeHtml(s).replace(/\*\*([^*\n]+?)\*\*/g, "<b>$1</b>").replace(/^#{1,6} /gm, ""); }
+let tModel = KEYS[0];
+function openItem(id, scroll = true) {
+  selected = id; drawItems();
+  const it = DATA.items.find(i => i.id === id), tr = DATA.transcripts[id];
+  let html = `<div class="convo"><div class="lab">${it.id} · ${it.cat} · ${it.band || "?"} · ${it.mt ? "multi-turn" : "single-turn"}</div><h3 style="margin:2px 0 8px">${escapeHtml(it.q)}</h3>`;
+  if (tr) html += `<p class="small"><b>Documented answer:</b> ${escapeHtml(tr.gt)}</p>`;
+  html += `<div class="grid2">`;
+  for (const m of M) {
+    const r = it.m[m.key];
+    if (it.mt) {
+      html += `<div><div class="lab">${m.name}</div><div class="turns"><span></span>${[1, 2, 3, 4].map(t => `<span class="muted" style="text-align:center">T${t}</span>`).join("")}
+        ${r.t.map((row, e) => `<span class="muted">epoch ${e + 1}</span>${[0, 1, 2, 3].map(t => row[t] ? `<i class="c-${row[t]}" title="epoch ${e + 1}, turn ${t + 1}: ${({ H: "hold", D: "diverge", A: "abstain", I: "invalid", "-": "not reached" })[row[t]]}"></i>` : "<span></span>").join("")}`).join("")}</div>
+        <div class="small muted" style="margin-top:4px">first question alone: ${strip(r.f)}</div></div>`;
+    } else html += `<div><div class="lab">${m.name}</div>${strip(r.s)}</div>`;
+  }
+  html += `</div>`;
+  if (tr) {
+    html += `<h3 style="margin-top:14px">Epoch 1 transcript</h3><div class="tabs" role="tablist">${M.map(m => `<button role="tab" data-tm="${m.key}" class="${m.key === tModel ? "on" : ""}">${m.name}</button>`).join("")}</div><div id="tview"></div>`;
+  } else html += `<p class="small muted" style="margin-top:10px">No transcript stored for this question; the full logs are in the Space under <code>completed_experiments/evals/full-2026-10-23/outputs/</code>.</p>`;
+  html += `</div>`;
+  $("#detail").innerHTML = html;
+  if (tr) {
+    $$("[data-tm]").forEach(b => b.onclick = () => { tModel = b.dataset.tm; $$("[data-tm]").forEach(x => x.classList.toggle("on", x === b)); drawTranscript(it, tr); });
+    drawTranscript(it, tr);
+  }
+  if (scroll) $("#detail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+function drawTranscript(it, tr) {
+  const turns = tr.m[tModel] || [], users = [it.q.replace(/…$/, ""), ...tr.pt];
+  const LAB = { H: "hold", D: "diverge", A: "abstain", I: "invalid" };
+  $("#tview").innerHTML = turns.map((t, i) => `<div class="msg user"><div class="lab">User${i ? " · pushback " + i : ""}</div>${escapeHtml(i ? users[i] : DATA.items.find(x => x.id === it.id).q)}</div>
+    <div class="msg model ${t.l}"><div class="lab">${NAME[tModel]} · <span class="badge ${t.l}">${LAB[t.l]}</span>${t.p != null ? ` <span class="muted">P(diverge) ${t.p.toFixed(2)}</span>` : ""}${t.skip ? ` <span class="muted">(${t.skip.replace("_", " ")}, not graded)</span>` : ""}</div>${md(t.a) || '<span class="muted">(no answer text)</span>'}</div>`).join("");
+}
+$("#q").oninput = drawItems; $("#catSel").onchange = drawItems; $("#onlyFeat").onchange = drawItems; $("#onlyDis").onchange = drawItems;
+$$("[data-it]").forEach(b => b.onclick = () => { itType = b.dataset.it; $$("[data-it]").forEach(x => x.classList.toggle("on", x === b)); drawItems(); });
+
+function drawAll() { drawMetric(); drawMix(); drawTurns(); drawCons(); drawHeat(); drawConf(); }
+drawAll(); drawItems(); openItem(DATA.featured[0], false);
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { drawMetric(); drawMix(); drawHeat(); }, 120); });
+</script>
+</body>
+</html>

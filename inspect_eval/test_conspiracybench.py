@@ -25,7 +25,7 @@ from inspect_ai.dataset import MemoryDataset
 from inspect_ai.model import GenerateConfig, ModelOutput, get_model
 from inspect_ai.solver import generate
 
-from scorer import cb_scorer
+from scorer import DEFAULT_RUBRIC, cb_scorer
 import conspiracybench as cb
 import judge_cases
 import report
@@ -161,11 +161,11 @@ class JudgePromptParityTest(unittest.TestCase):
         log = run(MMR_ITEM, answers, recording_judge(lambda _: next(labels), seen))
 
         q, p = MMR_ITEM["question"], MMR_ITEM["pressure_turns"]
-        expected = [build_judge_prompt(MMR_ITEM, answers[0], None)]
+        expected = [build_judge_prompt(MMR_ITEM, answers[0], None, rubric=DEFAULT_RUBRIC)]
         history = [{"role": "user", "content": q}]
         for i in range(3):
             history += [{"role": "assistant", "content": answers[i]}, {"role": "user", "content": p[i]}]
-            expected.append(build_judge_prompt(MMR_ITEM, answers[i + 1], list(history)))
+            expected.append(build_judge_prompt(MMR_ITEM, answers[i + 1], list(history), rubric=DEFAULT_RUBRIC))
 
         self.assertEqual(seen, expected)
         self.assertEqual(log["values"], ["hold>hold>hold>diverge"])
@@ -175,7 +175,7 @@ class JudgePromptParityTest(unittest.TestCase):
         seen = []
         log = run(item, ["Uncontrolled fires."], recording_judge(lambda _: "hold", seen))
 
-        self.assertEqual(seen, [build_judge_prompt(item, "Uncontrolled fires.")])
+        self.assertEqual(seen, [build_judge_prompt(item, "Uncontrolled fires.", rubric=DEFAULT_RUBRIC)])
         self.assertNotIn("Conversation before", seen[0])
         self.assertEqual(log["values"], ["hold"])
 
@@ -766,7 +766,7 @@ class ContextBudgetTest(unittest.TestCase):
 
         model = get_model("mockllm/model", custom_outputs=respond, memoize=False)
         seen = []
-        log = run(WTC_ITEM, model, recording_judge(lambda _: "hold", seen),
+        log = run(WTC_ITEM, model, recording_judge(lambda _: "hold", seen), context_overflow="stop",
                   context_tokens=500, judge_context_tokens=100_000, config=GenerateConfig(max_tokens=100))
 
         self.assertEqual(calls, [1])  # the opening turn only; the second prompt would not fit
@@ -775,6 +775,41 @@ class ContextBudgetTest(unittest.TestCase):
         self.assertEqual(log["score_metadata"]["invalid_reasons"], [None, "model_context_overflow"])
         self.assertEqual(len(seen), 1)
         self.assertEqual(log["metrics"]["invalid_rate"], 1.0)
+
+    def test_conversation_over_budget_slides_to_the_most_recent_turns(self):
+        sent = []
+
+        def respond(input, tools, tool_choice, config):
+            sent.append([m.text for m in input])
+            return ModelOutput.from_content("mockllm/model", self.LONG)
+
+        model = get_model("mockllm/model", custom_outputs=respond, memoize=False)
+        seen = []
+        log = run(WTC_ITEM, model, recording_judge(lambda _: "hold", seen),
+                  context_tokens=500, judge_context_tokens=100_000, config=GenerateConfig(max_tokens=100))
+
+        turns = WTC_ITEM["pressure_turns"]
+        # Each pressure turn goes out with the earlier exchanges left out, never cut mid-message.
+        self.assertEqual(sent, [[WTC_ITEM["question"]], *([t] for t in turns)])
+        self.assertEqual(log["metadata"]["context_clipped"],
+                         [{"turn": i + 1, "dropped": 2 * (i + 1)} for i in range(len(turns))])
+        self.assertNotIn("context_overflow_turn", log["metadata"])
+        self.assertEqual(log["values"], [">".join(["hold"] * (1 + len(turns)))])
+        # The transcript keeps the whole conversation, so the judge still sees all of it.
+        self.assertEqual(log["user_turns"][1], [WTC_ITEM["question"], *turns])
+        self.assertIn(WTC_ITEM["question"], seen[-1].split("Model response:")[0].split("Ground truth:")[1])
+
+    def test_judge_transcript_over_budget_slides_too(self):
+        seen = []
+        answers = [self.LONG] * (1 + len(WTC_ITEM["pressure_turns"]))
+        log = run(WTC_ITEM, answers, recording_judge(lambda _: "hold", seen),
+                  context_tokens=100_000, judge_context_tokens=2600)
+        self.assertNotIn("invalid", log["values"][0])
+        clipped = log["metadata"].get("judge_context_clipped") or []
+        self.assertTrue(clipped)
+        last = seen[-1]
+        self.assertIn(WTC_ITEM["pressure_turns"][-1], last)  # the message being answered stays
+        self.assertIn("Ground truth:", last)
 
     def test_judge_prompt_over_budget_is_not_sent(self):
         seen = []

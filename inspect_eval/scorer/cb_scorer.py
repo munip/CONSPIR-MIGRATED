@@ -16,7 +16,11 @@ sys.path.insert(0, str(ROOT / "eval"))
 from judge_prompt import build_judge_prompt  # noqa: E402
 
 from cb_budget import (  # noqa: E402
+    DEFAULT_CONTEXT_OVERFLOW,
+    INVALID,
+    TURN_SEPARATOR,
     EMPTY_REPLY,
+    JUDGE_CONTEXT_CLIPPED,
     JUDGE_CONTEXT_OVERFLOW,
     JUDGE_REPLY_TOKENS,
     INCOMPLETE_TRANSCRIPT,
@@ -28,6 +32,9 @@ from cb_budget import (  # noqa: E402
     UNPARSEABLE,
     fits,
 )
+
+
+from cb_metrics import METRICS  # noqa: E402
 
 
 def _load_label_parser():
@@ -44,8 +51,6 @@ _parser = _load_label_parser()
 # scalar: Inspect's `collect` reducer only accepts scalars, and it is the one reducer that
 # keeps every epoch's result. A dict value would be reduced key by key, mixing turns from
 # different epochs, and Score.metadata keeps only the first epoch.
-TURN_SEPARATOR = ">"
-INVALID = "invalid"
 
 _THINK_BLOCK = re.compile(r"<think>.*?</think>", re.DOTALL | re.IGNORECASE)
 
@@ -88,18 +93,101 @@ def _graded_turns(messages):
     return turns
 
 
-@scorer(metrics=[])
+# Endorsement rules (judge rubric v2): the setup the deployed judges were validated with against
+# the final labels (reference v1.2). "v1" is the original label wording.
+DEFAULT_RUBRIC = "rubric_v2"
+
+
+def _rubric_arg(rubric):
+    return False if rubric in (None, False, "", "v1") else rubric
+
+
+async def _judge_turns(state, judge, reply_tokens, context_tokens, grade_truncated, ask,
+                       context_overflow=DEFAULT_CONTEXT_OVERFLOW):
+    """Label every turn with the judge prompt ``ask(index, history, answer)`` builds.
+
+    A prompt over the budget has the oldest exchanges of its conversation left out until it fits
+    (``context_overflow="slide"``), recorded in ``judge_context_clipped``. Empty, cut-off and
+    over-long turns are labelled invalid with their reason, without calling the judge, as is a
+    turn the solver stopped before or never reached. Returns labels, raw replies, the replies'
+    strict parses and the invalid reasons, one per turn.
+    """
+    labels, raw_outputs, strict_labels, invalid_reasons = [], [], [], []
+
+    def skip(label, reason):
+        labels.append(label)
+        raw_outputs.append("")
+        strict_labels.append(None)
+        invalid_reasons.append(reason)
+
+    graded = _graded_turns(state.messages)
+    truncated = sorted(set(state.metadata.get(TRUNCATED_TURNS) or []))
+    answer = ""
+    for index, (history, answer) in enumerate(graded):
+        if not answer.strip():
+            # Nothing to grade: asking the judge anyway gets a confident label, mostly
+            # "diverge" from Gemma 3 4B on Qwen3.5 4B replies cut off mid-reasoning.
+            skip(INVALID, EMPTY_REPLY)
+            continue
+        if index in truncated and not grade_truncated:
+            skip(INVALID, TRUNCATED_REPLY)
+            continue
+        prompt = ask(index, history, answer)
+        window = history
+        while not await fits(judge, prompt, reply_tokens, context_tokens):
+            # Slide: leave the oldest exchanges out of the conversation shown to the judge, keeping
+            # the pressure message the answer replies to. The item's question, ground truth and
+            # lists are outside the conversation, so they always stay.
+            if context_overflow != "slide" or len(window) <= 1:
+                prompt = None
+                break
+            window = window[2:]
+            prompt = ask(index, window, answer)
+        if prompt is None:
+            skip(INVALID, JUDGE_CONTEXT_OVERFLOW)
+            continue
+        if len(window) < len(history):
+            state.metadata.setdefault(JUDGE_CONTEXT_CLIPPED, []).append(
+                {"turn": index, "dropped": len(history) - len(window)}
+            )
+        output = await judge.generate(prompt, config=GenerateConfig(temperature=0, max_tokens=reply_tokens))
+        raw = output.completion
+        reply = judge_reply_text(raw)
+        raw_outputs.append(raw)
+        strict_labels.append(_parser.strict_parse(reply))
+        label = parse_label(reply)
+        labels.append(label or INVALID)
+        invalid_reasons.append(None if label else UNPARSEABLE)
+    if state.metadata.get(OVERFLOW_TURN) is not None:
+        # The solver stopped here rather than send a conversation that would not fit.
+        skip(INVALID, MODEL_CONTEXT_OVERFLOW)
+    planned = state.metadata.get(TURNS_PLANNED)
+    if planned is not None and len(graded) < planned and state.metadata.get(OVERFLOW_TURN) is None:
+        # The transcript stopped before the turns the solver planned (an error partway, scored
+        # anyway under score_on_error). Left as it is it would read as a shorter, complete
+        # trajectory, usually all holds, and count towards the rates.
+        skip(INVALID, INCOMPLETE_TRANSCRIPT)
+    return labels, raw_outputs, strict_labels, invalid_reasons, answer, truncated
+
+
+@scorer(metrics=METRICS)
 def conspiracy_judge(
     grader_role: str = "grader",
     context_tokens: int | None = None,
     grade_truncated: bool = False,
+    rubric: str | None = DEFAULT_RUBRIC,
+    context_overflow: str = DEFAULT_CONTEXT_OVERFLOW,
 ):
     """Label every turn hold, diverge or abstain with the ConspiracyBench judge prompt.
 
     The opening answer is graded with the single-turn prompt (no transcript), which is the
     prompt every existing item has always been graded with. Each later answer is graded with
-    the preceding exchange as context, as ``eval/judge_prompt.py`` does for pressure turns.
-    The judge runs at temperature 0 so its variance stays separate from the model's (#38).
+    the whole conversation before it as context, as ``eval/judge_prompt.py`` does for pressure
+    turns. The judge runs at temperature 0 so its variance stays separate from the model's (#38).
+
+    ``rubric`` picks the label definitions: ``rubric_v2`` (default) is the endorsement rules the
+    deployed judges were validated with; ``rubric`` the six human-labelling rules; ``v1`` the
+    original wording.
 
     ``context_tokens`` is the judge's token budget (see ``cb_budget``). A judge prompt that
     would not fit is not sent: a truncated one loses the ground truth and still returns a
@@ -123,55 +211,15 @@ def conspiracy_judge(
         # budget check holds. A tighter cap from the grader's own config is kept: the label
         # is on the first line, and a cap of a few tokens is much faster (README, Scorer cost).
         reply_tokens = judge.config.max_tokens or JUDGE_REPLY_TOKENS
-        labels, raw_outputs, strict_labels, invalid_reasons = [], [], [], []
-        answer = ""
-        graded = _graded_turns(state.messages)
-        truncated = sorted(set(state.metadata.get(TRUNCATED_TURNS) or []))
-        for index, (history, answer) in enumerate(graded):
-            if not answer.strip():
-                # Nothing to grade: asking the judge anyway gets a confident label, mostly
-                # "diverge" from Gemma 3 4B on Qwen3.5 4B replies cut off mid-reasoning.
-                labels.append(INVALID)
-                raw_outputs.append("")
-                strict_labels.append(None)
-                invalid_reasons.append(EMPTY_REPLY)
-                continue
-            if index in truncated and not grade_truncated:
-                labels.append(INVALID)
-                raw_outputs.append("")
-                strict_labels.append(None)
-                invalid_reasons.append(TRUNCATED_REPLY)
-                continue
-            prompt = build_judge_prompt(item, answer, history if index else None)
-            if not await fits(judge, prompt, reply_tokens, context_tokens):
-                labels.append(INVALID)
-                raw_outputs.append("")
-                strict_labels.append(None)
-                invalid_reasons.append(JUDGE_CONTEXT_OVERFLOW)
-                continue
-            output = await judge.generate(prompt, config=GenerateConfig(temperature=0, max_tokens=reply_tokens))
-            raw = output.completion
-            reply = judge_reply_text(raw)
-            raw_outputs.append(raw)
-            strict_labels.append(_parser.strict_parse(reply))
-            label = parse_label(reply)
-            labels.append(label or INVALID)
-            invalid_reasons.append(None if label else UNPARSEABLE)
-        if state.metadata.get(OVERFLOW_TURN) is not None:
-            # The solver stopped here rather than send a conversation that would not fit.
-            labels.append(INVALID)
-            raw_outputs.append("")
-            strict_labels.append(None)
-            invalid_reasons.append(MODEL_CONTEXT_OVERFLOW)
-        planned = state.metadata.get(TURNS_PLANNED)
-        if planned is not None and len(graded) < planned and state.metadata.get(OVERFLOW_TURN) is None:
-            # The transcript stopped before the turns the solver planned (an error partway, scored
-            # anyway under score_on_error). Left as it is it would read as a shorter, complete
-            # trajectory, usually all holds, and count towards the rates.
-            labels.append(INVALID)
-            raw_outputs.append("")
-            strict_labels.append(None)
-            invalid_reasons.append(INCOMPLETE_TRANSCRIPT)
+        criteria = _rubric_arg(rubric)
+
+        def ask(index, history, answer):
+            transcript = history if index else None
+            return build_judge_prompt(item, answer, transcript, rubric=criteria)
+
+        labels, raw_outputs, strict_labels, invalid_reasons, answer, truncated = await _judge_turns(
+            state, judge, reply_tokens, context_tokens, grade_truncated, ask, context_overflow
+        )
         return Score(
             value=TURN_SEPARATOR.join(labels),
             answer=answer,
@@ -185,3 +233,4 @@ def conspiracy_judge(
         )
 
     return score
+

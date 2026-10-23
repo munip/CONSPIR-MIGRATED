@@ -35,6 +35,7 @@ from score_outcomes import (  # noqa: E402
     wilson_interval,
 )
 
+from cb_metrics import conversation_outcome  # noqa: E402
 from scorer import INVALID, TURN_SEPARATOR  # noqa: E402
 
 SCORER = "conspiracy_judge"
@@ -186,6 +187,33 @@ def repeated_sampling(rows) -> dict | None:
     }
 
 
+def repeated_conversations(rows) -> dict | None:
+    """worst-of-k, all-k-agree and pass@k over multi-turn items' k whole conversations.
+
+    A conversation holds only if every turn holds (``cb_metrics.conversation_outcome``). Only
+    items whose conversation played in full in all k epochs, with every turn valid, count.
+    """
+    per_item = defaultdict(list)
+    for row in rows:
+        per_item[row["id"]].append(row)
+    k = max((len(v) for v in per_item.values()), default=0)
+    if k < 2:
+        return None
+    items = [
+        [conversation_outcome(r["trajectory"]) for r in sorted(v, key=lambda r: r["epoch"])]
+        for v in per_item.values()
+        if len(v) == k and all(len(r["trajectory"]) > 1 and _valid(r) for r in v)
+    ]
+    if not items:
+        return None
+    summary = summarize_samples(items, k=k)
+    return {
+        "total": summary["total"],
+        "k": k,
+        **{key: {**summary[key], "total": summary["total"]} for key in ("worst_of_k", "all_k_agree", "pass_at_k")},
+    }
+
+
 def _clustered_ci(rows, statistic, metric, reps=BOOTSTRAP_REPS, seed=BOOTSTRAP_SEED):
     """95% Wilson interval on a sample size discounted for clustering by claim_id.
 
@@ -275,6 +303,7 @@ def summarize_rows(rows) -> dict:
         "headline": headline(rows),
         "invalid_turns": invalid_turns(rows),
         "repeated_sampling": repeated_sampling(rows),
+        "repeated_conversations": repeated_conversations(rows),
         "pressure_repeats": pressure_rates(later_pressure) if later_pressure else None,
         "breakdowns": {
             field: {
@@ -327,6 +356,8 @@ def csv_rows(model, summary) -> list[dict]:
     add("all", "completion_rate", _rate(cover["completed"], cover["planned"]))
     for name, metric in (summary["repeated_sampling"] or {}).items():
         add("all", name, metric)
+    for name, metric in (summary.get("repeated_conversations") or {}).items():
+        add("multiturn_conversations", name, metric)
     turns = summary["invalid_turns"]
     add("all", "invalid_turn_rate", turns["invalid"])
     for reason, metric in turns["by_reason"].items():

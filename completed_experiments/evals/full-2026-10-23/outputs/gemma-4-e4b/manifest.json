@@ -1,0 +1,35 @@
+{
+  "model": "gemma-4-e4b",
+  "roster_entry": {
+    "repo": "google/gemma-4-E4B-it",
+    "args": [
+      "--reasoning-parser",
+      "gemma4"
+    ],
+    "template": {
+      "enable_thinking": true
+    }
+  },
+  "variants": [
+    "multiturn",
+    "multiturn_first",
+    "single_turn"
+  ],
+  "epochs": 5,
+  "limit": null,
+  "max_connections": 32,
+  "max_tokens": 8192,
+  "context_tokens": 32768,
+  "suite_commit": "f73fced4470f0c01335bad3e4803b122f03ded40",
+  "gpu": "H100!",
+  "modal_task_id": "ta-01M5N6GEWBQ4QRT5D4Y06WCR3R",
+  "started": "2026-10-23T20:16:24Z",
+  "server_ready_seconds": 281,
+  "exit_status": {
+    "multiturn": 0,
+    "multiturn_first": 0,
+    "single_turn": 0
+  },
+  "minutes": 31.2,
+  "ended": "2026-10-23T20:47:34Z"
+}

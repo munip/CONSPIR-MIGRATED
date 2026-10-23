@@ -1,0 +1,71 @@
+
+=== 2026-10-23T21:42:28Z suite 856d9cccbb6bc2ad3b8a7ce9f3116aa1aa2c9e15 python /repo/inspect_eval/decision_judges/grade_units.py --judge pplx --units /results/eval/full-2026-10-23-granite-4.2-3b/units.jsonl --output-dir /results/eval/full-2026-10-23-granite-4.2-3b/pplx --run
+6480 units -> 6479 pplx calls
+Fetching 48 files:   0%|          | 0/48 [00:00<?, ?it/s]Fetching 48 files: 100%|██████████| 48/48 [00:00<00:00, 1056.35it/s]
+Loading weights:   0%|          | 0/1183 [00:00<?, ?it/s]Loading weights:   2%|▏         | 26/1183 [00:00<00:04, 259.84it/s]Loading weights:   4%|▍         | 53/1183 [00:00<00:04, 264.37it/s]Loading weights:   9%|▊         | 101/1183 [00:00<00:03, 337.47it/s]Loading weights:  11%|█▏        | 135/1183 [00:00<00:03, 313.66it/s]Loading weights:  14%|█▍        | 167/1183 [00:00<00:04, 218.82it/s]Loading weights:  17%|█▋        | 201/1183 [00:00<00:04, 229.08it/s]Loading weights:  19%|█▉        | 227/1183 [00:00<00:04, 205.15it/s]Loading weights:  22%|██▏       | 261/1183 [00:01<00:03, 234.86it/s]Loading weights:  24%|██▍       | 287/1183 [00:01<00:03, 235.74it/s]Loading weights:  26%|██▋       | 312/1183 [00:01<00:04, 180.99it/s]Loading weights:  28%|██▊       | 333/1183 [00:01<00:04, 184.01it/s]Loading weights:  30%|██▉       | 354/1183 [00:01<00:04, 187.10it/s]Loading weights:  32%|███▏      | 375/1183 [00:01<00:04, 191.04it/s]Loading weights:  34%|███▍      | 402/1183 [00:01<00:03, 210.98it/s]Loading weights:  36%|███▌      | 425/1183 [00:01<00:03, 210.04it/s]Loading weights:  38%|███▊      | 447/1183 [00:02<00:03, 212.47it/s]Loading weights:  40%|████      | 476/1183 [00:02<00:03, 222.87it/s]Loading weights:  42%|████▏     | 499/1183 [00:02<00:03, 191.04it/s]Loading weights:  44%|████▍     | 520/1183 [00:02<00:03, 184.79it/s]Loading weights:  47%|████▋     | 558/1183 [00:02<00:02, 232.77it/s]Loading weights:  50%|████▉     | 586/1183 [00:02<00:02, 244.92it/s]Loading weights:  53%|█████▎    | 627/1183 [00:02<00:01, 283.61it/s]Loading weights:  56%|█████▌    | 657/1183 [00:02<00:02, 238.54it/s]Loading weights:  58%|█████▊    | 683/1183 [00:03<00:02, 235.19it/s]Loading weights:  60%|█████▉    | 708/1183 [00:03<00:02, 216.14it/s]Loading weights:  64%|██████▍   | 755/1183 [00:03<00:01, 261.59it/s]Loading weights:  66%|██████▋   | 785/1183 [00:03<00:01, 262.74it/s]Loading weights:  69%|██████▉   | 818/1183 [00:03<00:01, 235.65it/s]Loading weights:  72%|███████▏  | 856/1183 [00:03<00:01, 267.74it/s]Loading weights:  78%|███████▊  | 919/1183 [00:03<00:00, 357.24it/s]Loading weights:  85%|████████▍ | 1001/1183 [00:03<00:00, 470.88it/s]Loading weights: 100%|██████████| 1183/1183 [00:03<00:00, 296.60it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+100/6479 (0 errors)
+200/6479 (0 errors)
+300/6479 (0 errors)
+400/6479 (0 errors)
+500/6479 (0 errors)
+600/6479 (0 errors)
+700/6479 (0 errors)
+800/6479 (0 errors)
+900/6479 (0 errors)
+1000/6479 (0 errors)
+1100/6479 (0 errors)
+1200/6479 (0 errors)
+1300/6479 (0 errors)
+1400/6479 (0 errors)
+1500/6479 (0 errors)
+1600/6479 (0 errors)
+1700/6479 (0 errors)
+1800/6479 (0 errors)
+1900/6479 (0 errors)
+2000/6479 (0 errors)
+2100/6479 (0 errors)
+2200/6479 (0 errors)
+2300/6479 (0 errors)
+2400/6479 (0 errors)
+2500/6479 (0 errors)
+2600/6479 (0 errors)
+2700/6479 (0 errors)
+2800/6479 (0 errors)
+2900/6479 (0 errors)
+3000/6479 (0 errors)
+3100/6479 (0 errors)
+3200/6479 (0 errors)
+3300/6479 (0 errors)
+3400/6479 (0 errors)
+3500/6479 (0 errors)
+3600/6479 (0 errors)
+3700/6479 (0 errors)
+3800/6479 (0 errors)
+3900/6479 (0 errors)
+4000/6479 (0 errors)
+4100/6479 (0 errors)
+4200/6479 (0 errors)
+4300/6479 (0 errors)
+4400/6479 (0 errors)
+4500/6479 (0 errors)
+4600/6479 (0 errors)
+4700/6479 (0 errors)
+4800/6479 (0 errors)
+4900/6479 (0 errors)
+5000/6479 (0 errors)
+5100/6479 (0 errors)
+5200/6479 (0 errors)
+5300/6479 (0 errors)
+5400/6479 (0 errors)
+5500/6479 (0 errors)
+5600/6479 (0 errors)
+5700/6479 (0 errors)
+5800/6479 (0 errors)
+5900/6479 (0 errors)
+6000/6479 (0 errors)
+6100/6479 (0 errors)
+6200/6479 (0 errors)
+6300/6479 (0 errors)
+6400/6479 (0 errors)
+done: 6479 calls, 0 errors -> /results/eval/full-2026-10-23-granite-4.2-3b/pplx/results.jsonl

@@ -291,7 +291,7 @@ class ResumeAndReproducibilityTest(unittest.TestCase):
             self.assertIsNotNone(spec.revision.commit)  # the code that ran
         self.assertGreater(len(spec.dataset.sample_ids), 0)  # the items that ran
         params = {s.solver: s.params for s in log.plan.steps}
-        self.assertTrue(params["pressure_turns"]["pressure_ids"])  # the repeated-pressure subset
+        self.assertIsNone(params["pressure_turns"]["pressure_ids"])  # every conversation, every epoch
 
 
 class RetryDefaultsTest(unittest.TestCase):

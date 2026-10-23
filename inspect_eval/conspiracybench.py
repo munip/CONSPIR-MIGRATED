@@ -27,16 +27,18 @@ from inspect_ai import Epochs, Task, task  # noqa: E402
 from inspect_ai.model import GenerateConfig  # noqa: E402
 from inspect_ai.solver import system_message  # noqa: E402
 
-from cb_budget import DEFAULT_CONTEXT_TOKENS  # noqa: E402
+from cb_budget import CONTEXT_OVERFLOW_MODES, DEFAULT_CONTEXT_OVERFLOW, DEFAULT_CONTEXT_TOKENS  # noqa: E402
 from cb_dataset import (  # noqa: E402, F401  (re-exported for the tests and README)
     ROOT,
     conspiracybench_dataset,
     item_to_sample,
     load_items,
+    VARIANTS,
+    variant_dataset,
     stratified_subset,
 )
 from cb_metrics import METRICS  # noqa: E402
-from scorer import INVALID, TURN_SEPARATOR, conspiracy_judge  # noqa: E402, F401
+from scorer import DEFAULT_RUBRIC, INVALID, TURN_SEPARATOR, conspiracy_judge  # noqa: E402, F401
 from solver import pressure_turns  # noqa: E402
 
 # k for the documented full run (SCHEMA.md, "Repeated sampling"). The task defaults to
@@ -84,6 +86,8 @@ def build_task(
     max_retries: int | None = DEFAULT_MAX_RETRIES,
     timeout: int | None = DEFAULT_TIMEOUT,
     grade_truncated: bool = False,
+    rubric: str | None = DEFAULT_RUBRIC,
+    context_overflow: str = DEFAULT_CONTEXT_OVERFLOW,
 ) -> Task:
     """The ConspiracyBench task over any dataset. ``conspiracybench`` below uses the repo's.
 
@@ -103,6 +107,12 @@ def build_task(
     A reply that was cut off before the model finished it is scored invalid
     (``truncated_reply``) rather than graded as if complete. ``grade_truncated=True`` sends
     such replies to the judge anyway; they are counted in the report either way.
+
+    ``rubric`` is the verdict's label definitions (``conspiracy_judge``).
+
+    ``context_overflow`` is what happens to a conversation over the budget, for the model and the
+    judge: ``slide`` (default) leaves out the oldest exchanges so the most recent ones fit;
+    ``stop`` ends the sequence and scores the turn invalid.
     """
     config = config or GenerateConfig()
     config = config.model_copy(update={
@@ -112,7 +122,8 @@ def build_task(
     })
     if judge_context_tokens is None:
         judge_context_tokens = context_tokens
-    solver = [pressure_turns(pressure_ids, context_tokens=context_tokens, max_tokens=config.max_tokens)]
+    solver = [pressure_turns(pressure_ids, context_tokens=context_tokens, max_tokens=config.max_tokens,
+                             context_overflow=context_overflow)]
     if system_prompt:
         # system_message() fills {name} placeholders from the sample's metadata, so a prompt
         # containing JSON would be mangled and {item} would hand the model the ground truth.
@@ -122,9 +133,9 @@ def build_task(
         dataset=dataset,
         solver=solver,
         scorer=conspiracy_judge(
-            grader_role, context_tokens=judge_context_tokens, grade_truncated=grade_truncated
+            grader_role, context_tokens=judge_context_tokens, grade_truncated=grade_truncated, rubric=rubric,
+            context_overflow=context_overflow,
         ),
-        metrics=METRICS,
         epochs=Epochs(epochs, "collect"),
         config=config,
     )
@@ -134,7 +145,7 @@ def build_task(
 def conspiracybench(
     include_pending: bool = False,
     epochs: int = 1,
-    pressure_subset_per_cell: int = 1,
+    pressure_subset_per_cell: int | str = "all",
     subset_seed: int = 0,
     system_prompt: str | None = None,
     temperature: float | None = None,
@@ -145,13 +156,18 @@ def conspiracybench(
     timeout: int | None = DEFAULT_TIMEOUT,
     grade_truncated: bool = False,
     grader_role: str = "grader",
+    variant: str = "all",
+    rubric: str = DEFAULT_RUBRIC,
+    context_overflow: str = DEFAULT_CONTEXT_OVERFLOW,
 ) -> Task:
-    """Every item, sampled ``epochs`` times on the opening turn.
+    """Every item, sampled ``epochs`` times.
 
-    Pressure sequences run in epoch 1 for every multi-turn item and in every epoch for a
-    stratified subset: up to ``pressure_subset_per_cell`` items per category x difficulty
-    band, drawn with ``subset_seed``. The subset's ids are recorded in the log's task
-    arguments via the solver. ``temperature=None`` keeps the model's own default, which
+    With ``pressure_subset_per_cell="all"`` (default) a multi-turn item's whole conversation, the
+    opening question and every pressure turn, is played in every epoch, so pass@k, worst-of-k and
+    all-k-agree for multi-turn items are over k whole conversations (``report.py``). A number
+    instead plays pressure sequences in epoch 1 for every item and in every epoch only for a
+    stratified subset: up to that many items per category x difficulty band, drawn with
+    ``subset_seed``, recorded in the log via the solver. ``temperature=None`` keeps the model's own default, which
     is what SCHEMA.md asks for; ``system_prompt=None`` sends no system message.
 
     ``context_tokens`` must not exceed the context the models are actually loaded with
@@ -160,11 +176,32 @@ def conspiracybench(
 
     ``max_retries`` and ``timeout`` are how long one failing model call is retried, for the
     model and the judge (see ``DEFAULT_MAX_RETRIES``).
+
+    ``variant`` picks the items (``variant_dataset``). ``all`` (default) is the whole corpus in one
+    run. A baseline runs three separate evals instead, so no item is asked as a single-turn
+    question twice: ``multiturn`` (the items with pressure turns, as whole conversations),
+    ``multiturn_first`` (the same items' first question alone, held out) and ``single_turn`` (the
+    items with no pressure turns).
+
+    ``rubric`` is the verdict's label definitions, endorsement rules (``rubric_v2``) by default.
+
+    ``context_overflow="slide"`` (default) keeps a conversation that outgrows ``context_tokens``
+    going with only its most recent exchanges; ``stop`` ends it there instead.
     """
     context_tokens, judge_context_tokens = _optional_int(context_tokens), _optional_int(judge_context_tokens)
     max_retries, timeout = _optional_int(max_retries), _optional_int(timeout)
+    if variant not in VARIANTS:
+        raise ValueError(f"variant must be one of {VARIANTS}, got {variant!r}")
+    if rubric not in ("v1", "rubric", "rubric_v2"):
+        raise ValueError(f"rubric must be v1, rubric or rubric_v2, got {rubric!r}")
+    if context_overflow not in CONTEXT_OVERFLOW_MODES:
+        raise ValueError(f"context_overflow must be one of {CONTEXT_OVERFLOW_MODES}, got {context_overflow!r}")
     dataset = conspiracybench_dataset(include_pending=include_pending)
-    pressure_ids = stratified_subset(dataset, pressure_subset_per_cell, subset_seed)
+    if str(pressure_subset_per_cell).strip().lower() == "all":
+        pressure_ids = None  # every conversation plays in full in every epoch
+    else:
+        pressure_ids = stratified_subset(dataset, int(pressure_subset_per_cell), subset_seed)
+    dataset = variant_dataset(dataset, variant)
     return build_task(
         dataset,
         epochs=epochs,
@@ -177,4 +214,6 @@ def conspiracybench(
         max_retries=max_retries,
         timeout=timeout,
         grade_truncated=grade_truncated,
+        rubric=rubric,
+        context_overflow=context_overflow,
     )

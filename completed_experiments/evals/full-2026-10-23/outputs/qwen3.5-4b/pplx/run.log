@@ -1,0 +1,71 @@
+
+=== 2026-10-23T21:42:41Z suite 856d9cccbb6bc2ad3b8a7ce9f3116aa1aa2c9e15 python /repo/inspect_eval/decision_judges/grade_units.py --judge pplx --units /results/eval/full-2026-10-23-qwen3.5-4b/units.jsonl --output-dir /results/eval/full-2026-10-23-qwen3.5-4b/pplx --run
+6480 units -> 6435 pplx calls
+Fetching 48 files:   0%|          | 0/48 [00:00<?, ?it/s]Fetching 48 files: 100%|██████████| 48/48 [00:00<00:00, 1421.62it/s]
+Loading weights:   0%|          | 0/1183 [00:00<?, ?it/s]Loading weights:   2%|▏         | 21/1183 [00:00<00:06, 177.73it/s]Loading weights:   4%|▍         | 48/1183 [00:00<00:05, 217.07it/s]Loading weights:   6%|▌         | 70/1183 [00:00<00:05, 197.97it/s]Loading weights:   8%|▊         | 98/1183 [00:00<00:04, 226.97it/s]Loading weights:  10%|█         | 122/1183 [00:00<00:05, 194.54it/s]Loading weights:  12%|█▏        | 147/1183 [00:00<00:05, 205.90it/s]Loading weights:  14%|█▍        | 169/1183 [00:00<00:05, 190.25it/s]Loading weights:  16%|█▋        | 195/1183 [00:00<00:04, 203.47it/s]Loading weights:  18%|█▊        | 216/1183 [00:01<00:04, 197.10it/s]Loading weights:  20%|██        | 237/1183 [00:01<00:04, 191.91it/s]Loading weights:  22%|██▏       | 264/1183 [00:01<00:04, 185.02it/s]Loading weights:  24%|██▍       | 285/1183 [00:01<00:05, 179.55it/s]Loading weights:  26%|██▋       | 312/1183 [00:01<00:04, 193.85it/s]Loading weights:  28%|██▊       | 336/1183 [00:01<00:04, 201.94it/s]Loading weights:  30%|███       | 357/1183 [00:01<00:04, 198.85it/s]Loading weights:  33%|███▎      | 388/1183 [00:01<00:03, 222.62it/s]Loading weights:  36%|███▋      | 431/1183 [00:02<00:02, 276.22it/s]Loading weights:  39%|███▉      | 460/1183 [00:02<00:02, 242.50it/s]Loading weights:  41%|████      | 486/1183 [00:02<00:02, 239.26it/s]Loading weights:  47%|████▋     | 552/1183 [00:02<00:01, 337.93it/s]Loading weights:  50%|████▉     | 587/1183 [00:02<00:01, 341.06it/s]Loading weights:  53%|█████▎    | 622/1183 [00:02<00:01, 302.23it/s]Loading weights:  55%|█████▌    | 654/1183 [00:02<00:01, 282.92it/s]Loading weights:  58%|█████▊    | 684/1183 [00:02<00:01, 286.24it/s]Loading weights:  62%|██████▏   | 738/1183 [00:03<00:01, 326.13it/s]Loading weights:  65%|██████▌   | 772/1183 [00:03<00:01, 329.41it/s]Loading weights:  68%|██████▊   | 806/1183 [00:03<00:01, 277.36it/s]Loading weights:  76%|███████▌  | 894/1183 [00:03<00:00, 423.58it/s]Loading weights:  81%|████████▏ | 962/1183 [00:03<00:00, 482.40it/s]Loading weights:  86%|████████▌ | 1017/1183 [00:03<00:00, 488.43it/s]Loading weights: 100%|██████████| 1183/1183 [00:03<00:00, 321.99it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+100/6435 (0 errors)
+200/6435 (0 errors)
+300/6435 (0 errors)
+400/6435 (0 errors)
+500/6435 (0 errors)
+600/6435 (0 errors)
+700/6435 (0 errors)
+800/6435 (0 errors)
+900/6435 (0 errors)
+1000/6435 (0 errors)
+1100/6435 (0 errors)
+1200/6435 (0 errors)
+1300/6435 (0 errors)
+1400/6435 (0 errors)
+1500/6435 (0 errors)
+1600/6435 (0 errors)
+1700/6435 (0 errors)
+1800/6435 (0 errors)
+1900/6435 (0 errors)
+2000/6435 (0 errors)
+2100/6435 (0 errors)
+2200/6435 (0 errors)
+2300/6435 (0 errors)
+2400/6435 (0 errors)
+2500/6435 (0 errors)
+2600/6435 (0 errors)
+2700/6435 (0 errors)
+2800/6435 (0 errors)
+2900/6435 (0 errors)
+3000/6435 (0 errors)
+3100/6435 (0 errors)
+3200/6435 (0 errors)
+3300/6435 (0 errors)
+3400/6435 (0 errors)
+3500/6435 (0 errors)
+3600/6435 (0 errors)
+3700/6435 (0 errors)
+3800/6435 (0 errors)
+3900/6435 (0 errors)
+4000/6435 (0 errors)
+4100/6435 (0 errors)
+4200/6435 (0 errors)
+4300/6435 (0 errors)
+4400/6435 (0 errors)
+4500/6435 (0 errors)
+4600/6435 (0 errors)
+4700/6435 (0 errors)
+4800/6435 (0 errors)
+4900/6435 (0 errors)
+5000/6435 (0 errors)
+5100/6435 (0 errors)
+5200/6435 (0 errors)
+5300/6435 (0 errors)
+5400/6435 (0 errors)
+5500/6435 (0 errors)
+5600/6435 (0 errors)
+5700/6435 (0 errors)
+5800/6435 (0 errors)
+5900/6435 (0 errors)
+6000/6435 (0 errors)
+6100/6435 (0 errors)
+6200/6435 (0 errors)
+6300/6435 (0 errors)
+6400/6435 (0 errors)
+done: 6435 calls, 0 errors -> /results/eval/full-2026-10-23-qwen3.5-4b/pplx/results.jsonl

@@ -1,0 +1,71 @@
+
+=== 2026-10-23T21:42:32Z suite 856d9cccbb6bc2ad3b8a7ce9f3116aa1aa2c9e15 python /repo/inspect_eval/decision_judges/grade_units.py --judge pplx --units /results/eval/full-2026-10-23-k2-horizon-3.7b/units.jsonl --output-dir /results/eval/full-2026-10-23-k2-horizon-3.7b/pplx --run
+6480 units -> 6444 pplx calls
+Fetching 48 files:   0%|          | 0/48 [00:00<?, ?it/s]Fetching 48 files: 100%|██████████| 48/48 [00:00<00:00, 1303.24it/s]
+Loading weights:   0%|          | 0/1183 [00:00<?, ?it/s]Loading weights:   3%|▎         | 35/1183 [00:00<00:05, 205.59it/s]Loading weights:   5%|▍         | 56/1183 [00:00<00:07, 155.72it/s]Loading weights:   7%|▋         | 78/1183 [00:00<00:06, 164.98it/s]Loading weights:   8%|▊         | 95/1183 [00:00<00:07, 147.97it/s]Loading weights:  12%|█▏        | 137/1183 [00:00<00:04, 219.78it/s]Loading weights:  14%|█▎        | 161/1183 [00:00<00:04, 210.99it/s]Loading weights:  16%|█▋        | 193/1183 [00:00<00:04, 208.46it/s]Loading weights:  19%|█▉        | 225/1183 [00:01<00:04, 231.74it/s]Loading weights:  22%|██▏       | 263/1183 [00:01<00:03, 264.03it/s]Loading weights:  25%|██▍       | 291/1183 [00:01<00:03, 264.06it/s]Loading weights:  27%|██▋       | 319/1183 [00:01<00:03, 250.91it/s]Loading weights:  29%|██▉       | 345/1183 [00:01<00:04, 194.64it/s]Loading weights:  31%|███       | 368/1183 [00:01<00:04, 189.83it/s]Loading weights:  33%|███▎      | 389/1183 [00:01<00:04, 185.61it/s]Loading weights:  35%|███▌      | 415/1183 [00:02<00:03, 193.67it/s]Loading weights:  38%|███▊      | 446/1183 [00:02<00:03, 217.03it/s]Loading weights:  42%|████▏     | 494/1183 [00:02<00:02, 282.56it/s]Loading weights:  45%|████▍     | 528/1183 [00:02<00:02, 294.86it/s]Loading weights:  47%|████▋     | 559/1183 [00:02<00:02, 227.20it/s]Loading weights:  49%|████▉     | 585/1183 [00:02<00:02, 215.25it/s]Loading weights:  51%|█████▏    | 609/1183 [00:02<00:02, 218.18it/s]Loading weights:  55%|█████▍    | 647/1183 [00:02<00:02, 257.49it/s]Loading weights:  57%|█████▋    | 675/1183 [00:03<00:02, 235.30it/s]Loading weights:  61%|██████    | 717/1183 [00:03<00:01, 276.33it/s]Loading weights:  63%|██████▎   | 747/1183 [00:03<00:01, 253.14it/s]Loading weights:  66%|██████▋   | 786/1183 [00:03<00:01, 274.65it/s]Loading weights:  70%|██████▉   | 824/1183 [00:03<00:01, 285.87it/s]Loading weights:  74%|███████▍  | 873/1183 [00:03<00:00, 329.52it/s]Loading weights:  82%|████████▏ | 971/1183 [00:03<00:00, 495.44it/s]Loading weights:  87%|████████▋ | 1034/1183 [00:03<00:00, 529.70it/s]Loading weights: 100%|██████████| 1183/1183 [00:03<00:00, 302.66it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+100/6444 (0 errors)
+200/6444 (0 errors)
+300/6444 (0 errors)
+400/6444 (0 errors)
+500/6444 (0 errors)
+600/6444 (0 errors)
+700/6444 (0 errors)
+800/6444 (0 errors)
+900/6444 (0 errors)
+1000/6444 (0 errors)
+1100/6444 (0 errors)
+1200/6444 (0 errors)
+1300/6444 (0 errors)
+1400/6444 (0 errors)
+1500/6444 (0 errors)
+1600/6444 (0 errors)
+1700/6444 (0 errors)
+1800/6444 (0 errors)
+1900/6444 (0 errors)
+2000/6444 (0 errors)
+2100/6444 (0 errors)
+2200/6444 (0 errors)
+2300/6444 (0 errors)
+2400/6444 (0 errors)
+2500/6444 (0 errors)
+2600/6444 (0 errors)
+2700/6444 (0 errors)
+2800/6444 (0 errors)
+2900/6444 (0 errors)
+3000/6444 (0 errors)
+3100/6444 (0 errors)
+3200/6444 (0 errors)
+3300/6444 (0 errors)
+3400/6444 (0 errors)
+3500/6444 (0 errors)
+3600/6444 (0 errors)
+3700/6444 (0 errors)
+3800/6444 (0 errors)
+3900/6444 (0 errors)
+4000/6444 (0 errors)
+4100/6444 (0 errors)
+4200/6444 (0 errors)
+4300/6444 (0 errors)
+4400/6444 (0 errors)
+4500/6444 (0 errors)
+4600/6444 (0 errors)
+4700/6444 (0 errors)
+4800/6444 (0 errors)
+4900/6444 (0 errors)
+5000/6444 (0 errors)
+5100/6444 (0 errors)
+5200/6444 (0 errors)
+5300/6444 (0 errors)
+5400/6444 (0 errors)
+5500/6444 (0 errors)
+5600/6444 (0 errors)
+5700/6444 (0 errors)
+5800/6444 (0 errors)
+5900/6444 (0 errors)
+6000/6444 (0 errors)
+6100/6444 (0 errors)
+6200/6444 (0 errors)
+6300/6444 (0 errors)
+6400/6444 (0 errors)
+done: 6444 calls, 0 errors -> /results/eval/full-2026-10-23-k2-horizon-3.7b/pplx/results.jsonl
