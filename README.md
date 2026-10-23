@@ -25,6 +25,37 @@ biorisk data) that are in a similar position as conspiracy theories. Conspiracy 
 are a safer way to stress test assumptions about teach-ability and pressuring models to
 take on various views or positions.
 
+## Update (October 2026): Phase 1 complete, Phase 2 begins
+
+Phase 1, building the benchmark, is done. Every Phase 1 task on the
+[Station House board](https://app.station-house.net/projects/conspiracybench) is now
+closed. Phase 2 is hill-climbing: fine-tuning a model together to believe these claims
+and measuring how much it takes.
+
+### What Phase 1 delivered
+
+- **Corpus: 315 items** (`cb-0001`–`cb-0315`), most of them multi-turn with scripted
+  pushback, covering claims from around the world. There are no pending submissions.
+- **Judge.** `perplexity-ai/pplx-decider-v1.1-27b` with the endorsement rules (rubric v2)
+  and prior-turn context is the benchmark's judge. It agreed with the final human labels
+  (validity set `reference_v1.2`) on 90.7% of units, κ 0.755. See
+  [`completed_experiments/judge_reliability/`](./completed_experiments/judge_reliability/).
+- **Injection resistance.** Experiment 005: pplx flipped 1 of 70 verdicts under
+  grader-directed attacks, against 19 of 68 for a Qwen chat judge. See
+  [`completed_experiments/judge_injection/`](./completed_experiments/judge_injection/).
+- **Baselines.** Five ~4B thinking models (Qwen3.5 4B, Gemma 4 E4B, Granite 4.2 3B,
+  Nemotron 3 Nano 4B, K2 Horizon 3.7B) were run on the full corpus with k = 5 and graded
+  by pplx (PR #428).
+
+### Phase 2
+
+1. Experiments to decide the fine-tuning recipe
+2. Fine-tuning results
+3. Publish findings
+
+New Phase 2 tasks will be posted on the Station House board. Question PRs and discussions
+are still welcome.
+
 ## Update (September 2026)
 
 ### Schema
