@@ -52,7 +52,12 @@ def trait_scorer():
                 end = completion_clean.find("```", start)
                 completion_clean = completion_clean[start:end].strip()
             
-            predicted = json.loads(completion_clean)
+            try:
+                predicted = json.loads(completion_clean)
+                invalid_output = False
+            except Exception:
+                return Score(value=0.0, explanation="Invalid format - could not parse JSON")
+            
             if not isinstance(predicted, list):
                 return Score(value=0.0, explanation="Invalid format")
             
@@ -63,7 +68,7 @@ def trait_scorer():
                     if t not in valid_predicted:  # deduplicate
                         valid_predicted.append(t)
             
-            # Get target
+            # Get target (only present traits among known labels)
             try:
                 target_traits = json.loads(str(target))
             except:
@@ -72,24 +77,32 @@ def trait_scorer():
             if not isinstance(target_traits, list):
                 target_traits = []
             
-            # Compute exact match for now (can be extended to per-trait metrics)
+            # Get known traits from metadata for masking
+            known_traits = []
+            if hasattr(state, 'metadata') and state.metadata:
+                known_traits = state.metadata.get('known_traits', list(set(target_traits) | set(valid_predicted)))
+            
+            # Compute metrics only over known labels
             valid_predicted_set = set(valid_predicted)
             target_set = set(target_traits)
+            known_set = set(known_traits) if known_traits else (target_set | set(t for t in TRAIT_IDS if True))  # fallback
             
-            if valid_predicted_set == target_set:
-                return Score(value=1.0, explanation=f"Exact match: {valid_predicted}")
+            # For evaluation, only count predictions against known labels
+            # Don't penalize for predicting unannotated traits
+            relevant_pred = valid_predicted_set & known_set
+            relevant_target = target_set & known_set
+            
+            if len(relevant_pred) == 0 and len(relevant_target) == 0:
+                return Score(value=1.0, explanation="Both empty on known labels")
+            
+            true_pos = len(relevant_pred & relevant_target)
+            prec = true_pos / len(relevant_pred) if relevant_pred else 0.0
+            rec = true_pos / len(relevant_target) if relevant_target else 0.0
+            if prec + rec == 0:
+                f1 = 0.0
             else:
-                # Partial credit based on F1
-                true_pos = len(valid_predicted_set & target_set)
-                if len(valid_predicted_set) == 0 and len(target_set) == 0:
-                    return Score(value=1.0, explanation="Both empty")
-                prec = true_pos / len(valid_predicted_set) if valid_predicted_set else 0.0
-                rec = true_pos / len(target_set) if target_set else 0.0
-                if prec + rec == 0:
-                    f1 = 0.0
-                else:
-                    f1 = 2 * prec * rec / (prec + rec)
-                return Score(value=f1, explanation=f"Pred: {valid_predicted}, Target: {target_traits}, F1: {f1:.3f}")
+                f1 = 2 * prec * rec / (prec + rec)
+            return Score(value=f1, explanation=f"Pred: {sorted(list(valid_predicted_set))}, Target: {sorted(list(target_set))}, F1: {f1:.3f}")
         except Exception as e:
             return Score(value=0.0, explanation=f"Error: {str(e)}")
     

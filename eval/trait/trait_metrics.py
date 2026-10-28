@@ -14,17 +14,22 @@ TRAIT_IDS = [
 
 def compute_trait_metrics(predictions: Dict[str, List[str]], 
                          references: Dict[str, Dict[str, str]],
-                         known_label_mask: Dict[str, Set[str]] = None) -> Dict[str, Any]:
+                         known_label_mask: Dict[str, Set[str]] = None,
+                         invalid_outputs: int = 0,
+                         total_outputs: int = None) -> Dict[str, Any]:
     """Compute per-trait precision, recall, F1 with known-label masking."""
     if known_label_mask is None:
         known_label_mask = {pid: set(TRAIT_IDS) for pid in predictions}
+    
+    if total_outputs is None:
+        total_outputs = len(predictions)
     
     results = {
         "per_trait": {},
         "macro": {"precision": 0, "recall": 0, "f1": 0},
         "micro": {"precision": 0, "recall": 0, "f1": 0},
         "exact_match": 0,
-        "invalid_output_rate": 0
+        "invalid_output_rate": invalid_outputs / total_outputs if total_outputs > 0 else 0.0
     }
     
     # Per-trait metrics
@@ -83,6 +88,21 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
     results["micro"]["f1"] = 2 * results["micro"]["precision"] * results["micro"]["recall"] / \
                               (results["micro"]["precision"] + results["micro"]["recall"]) \
                               if (results["micro"]["precision"] + results["micro"]["recall"]) > 0 else 0.0
+    
+    # Exact match
+    exact_matches = 0
+    for pid in predictions:
+        pred_set = set(predictions[pid])
+        # Get target set (only present among known)
+        ref = references.get(pid, {})
+        target_set = set()
+        known = known_label_mask.get(pid, set(TRAIT_IDS))
+        for t in known:
+            if ref.get(t) == "present":
+                target_set.add(t)
+        if pred_set == target_set:
+            exact_matches += 1
+    results["exact_match"] = exact_matches / len(predictions) if predictions else 0.0
     
     return results
 ```

@@ -49,11 +49,16 @@ def trait_to_sample(item: Dict[str, Any]) -> Sample:
     if context:
         input_text = f"Context: {context}\n\nText: {text}"
     
-    # Get ground truth traits
+    # Get ground truth traits - only use known labels
     trait_annotations = item.get("trait_annotations", {})
     target_traits = []
+    known_traits = []
     for trait_id in TRAIT_IDS:
-        if trait_annotations.get(trait_id) == "present":
+        ann = trait_annotations.get(trait_id)
+        if ann == "unannotated":
+            continue  # Do not treat unannotated as negative
+        known_traits.append(trait_id)
+        if ann == "present":
             target_traits.append(trait_id)
     
     return Sample(
@@ -64,7 +69,8 @@ def trait_to_sample(item: Dict[str, Any]) -> Sample:
             "item": item,
             "domain_id": item.get("domain_id"),
             "source": item.get("source", {}),
-            "trait_annotations": trait_annotations
+            "trait_annotations": trait_annotations,
+            "known_traits": known_traits
         }
     )
 

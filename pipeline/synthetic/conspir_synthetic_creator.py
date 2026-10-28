@@ -50,8 +50,6 @@ class ConspirSyntheticCreator:
             "id": candidate_id,
             "text": text,
             "domain_id": domain_id,
-            "requested_traits": requested_traits,
-            "is_counterexample": is_counterexample,
             "trait_annotations": {t: "unannotated" for t in TRAIT_IDS},
             "source": {
                 "dataset": "synthetic",
@@ -62,10 +60,14 @@ class ConspirSyntheticCreator:
                     "timestamp": datetime.utcnow().isoformat() + "Z"
                 },
                 "source_ids": source_ids or [],
-                "license": "review_required"
+                "license": "review_required",
+                "requested_traits": requested_traits,
+                "is_counterexample": is_counterexample
             },
-            "review_state": "pending",
-            "review_trail": []
+            "metadata": {
+                "review_state": "pending",
+                "review_trail": []
+            }
         }
         
         self.candidates.append(candidate)
@@ -86,8 +88,12 @@ class ConspirSyntheticCreator:
                         else:
                             candidate["trait_annotations"][trait] = "absent"
                     candidate["dominant_trait"] = adjudicated_traits[0] if adjudicated_traits else None
-                candidate["review_state"] = "approved" if approved else "rejected"
-                candidate["review_trail"].append({
+                if "metadata" not in candidate:
+                    candidate["metadata"] = {}
+                candidate["metadata"]["review_state"] = "approved" if approved else "rejected"
+                if "review_trail" not in candidate["metadata"]:
+                    candidate["metadata"]["review_trail"] = []
+                candidate["metadata"]["review_trail"].append({
                     "reviewer": reviewer,
                     "timestamp": datetime.utcnow().isoformat() + "Z",
                     "adjudicated_traits": adjudicated_traits,
@@ -117,9 +123,9 @@ class ConspirSyntheticCreator:
             "seed": self.seed,
             "count": len(self.candidates),
             "review_states": {
-                "pending": sum(1 for c in self.candidates if c["review_state"] == "pending"),
-                "approved": sum(1 for c in self.candidates if c["review_state"] == "approved"),
-                "rejected": sum(1 for c in self.candidates if c["review_state"] == "rejected")
+                "pending": sum(1 for c in self.candidates if c.get("metadata", {}).get("review_state") == "pending"),
+                "approved": sum(1 for c in self.candidates if c.get("metadata", {}).get("review_state") == "approved"),
+                "rejected": sum(1 for c in self.candidates if c.get("metadata", {}).get("review_state") == "rejected")
             }
         }
         with open(batch_dir / "manifest.json", 'w', encoding='utf-8') as f:
