@@ -2,3 +2,6 @@
 __pycache__/
 logs/
 results/
+.env
+/docs/CONSPIR_MIGRATION_PLAN.md
+/docs/CONSPIR_ARCHITECTURE.md
