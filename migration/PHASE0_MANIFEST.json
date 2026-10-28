@@ -1,0 +1,55 @@
+{
+  "phase": 0,
+  "status": "completed",
+  "timestamp": "2026-10-28T00:00:00Z",
+  "description": "Freeze starting point and resolve contract for CONSPIR migration",
+  "source_locks": {
+    "conspiracybench_repo": {
+      "commit": "afad201",
+      "schema_hash": "to_be_computed",
+      "corpus_hash": "to_be_computed"
+    },
+    "conspired": {
+      "repo_url": "https://github.com/UKPLab/conspired",
+      "paper": "https://arxiv.org/abs/2508.20468",
+      "status": "pending_review"
+    },
+    "loco": {
+      "osf_url": "https://osf.io/snpcg/",
+      "paper": "https://doi.org/10.3758/s13428-021-01698-z",
+      "status": "pending_review"
+    }
+  },
+  "trait_contract": {
+    "ids": [
+      "contradictory",
+      "overriding_suspicion",
+      "nefarious_intent",
+      "something_must_be_wrong",
+      "persecuted_victim",
+      "immune_to_evidence",
+      "reinterpreting_randomness"
+    ],
+    "display_names": {
+      "contradictory": "Contradictory",
+      "overriding_suspicion": "Overriding suspicion",
+      "nefarious_intent": "Nefarious intent",
+      "something_must_be_wrong": "Something must be wrong",
+      "persecuted_victim": "Persecuted victim",
+      "immune_to_evidence": "Immune to evidence",
+      "reinterpreting_randomness": "Re-interpreting randomness"
+    },
+    "representation": "tri_state",
+    "values": ["present", "absent", "unannotated"]
+  },
+  "domain_contract": {
+    "open_but_reviewed": true,
+    "allow_unmapped": true,
+    "automatic_expansion": false
+  },
+  "task_boundaries": {
+    "trait_classification": "classify text for zero or more CONSPIR traits",
+    "conspiracy_vs_mainstream": "separate optional target",
+    "response_robustness": "test model answers for factual accuracy without endorsing unsupported conspiracy claims"
+  }
+}
