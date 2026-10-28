@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://huggingface.co/spaces/Station-house/ConspiracyBench/schemas/conspir/v2.json",
+  "title": "ConspiracyBench CONSPIR v2 schemas",
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "#/definitions/questionRecord"
+    },
+    {
+      "$ref": "#/definitions/traitRecord"
+    },
+    {
+      "$ref": "#/definitions/responseRobustnessRecord"
+    }
+  ],
+  "definitions": {
+    "questionRecord": {
+      "type": "object",
+      "title": "Question record (legacy v1 compatible)",
+      "required": ["schema_version", "task_type", "id", "category", "question", "ground_truth_answer", "ground_truth_source"],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "enum": ["1.0", "2.0"]
+        },
+        "task_type": {
+          "type": "string",
+          "enum": ["question_answer"]
+        },
+        "id": {"type": "string"},
+        "claim_id": {"type": "string"},
+        "category": {"type": "string"},
+        "question": {"type": "string", "minLength": 1},
+        "ground_truth_answer": {"type": "string", "minLength": 1},
+        "ground_truth_source": {"oneOf": [{"type": "string"}, {"type": "array"}]},
+        "difficulty": {"type": "object"},
+        "framing": {"type": "string"},
+        "pressure_turns": {"type": "array"},
+        "region": {"type": "string"},
+        "language": {"type": "string"},
+        "notes": {"type": "string"},
+        "diverges_if": {"type": "array"},
+        "does_not_diverge_if": {"type": "array"},
+        "contributor": {"type": "string"},
+        "date_added": {"type": "string"},
+        "domain_id": {"type": "string"}
+      }
+    },
+    "traitRecord": {
+      "type": "object",
+      "title": "Trait classification record",
+      "required": ["schema_version", "task_type", "id", "text", "trait_annotations", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "enum": ["2.0"]
+        },
+        "task_type": {
+          "type": "string",
+          "enum": ["trait_classification"]
+        },
+        "id": {"type": "string"},
+        "text": {"type": "string", "minLength": 1},
+        "context": {"type": "string"},
+        "domain_id": {"type": "string"},
+        "trait_annotations": {
+          "type": "object",
+          "required": ["contradictory", "overriding_suspicion", "nefarious_intent", 
+                      "something_must_be_wrong", "persecuted_victim", 
+                      "immune_to_evidence", "reinterpreting_randomness"],
+          "additionalProperties": false,
+          "properties": {
+            "contradictory": {"type": "string", "enum": ["present", "absent", "unannotated"]},
+            "overriding_suspicion": {"type": "string", "enum": ["present", "absent", "unannotated"]},
+            "nefarious_intent": {"type": "string", "enum": ["present", "absent", "unannotated"]},
+            "something_must_be_wrong": {"type": "string", "enum": ["present", "absent", "unannotated"]},
+            "persecuted_victim": {"type": "string", "enum": ["present", "absent", "unannotated"]},
+            "immune_to_evidence": {"type": "string", "enum": ["present", "absent", "unannotated"]},
+            "reinterpreting_randomness": {"type": "string", "enum": ["present", "absent", "unannotated"]}
+          }
+        },
+        "dominant_trait": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "enum": ["contradictory", "overriding_suspicion", "nefarious_intent", 
+                                        "something_must_be_wrong", "persecuted_victim", 
+                                        "immune_to_evidence", "reinterpreting_randomness"]}
+          ]
+        },
+        "present_traits": {"type": "array", "items": {"type": "string"}},
+        "known_traits": {"type": "array", "items": {"type": "string"}},
+        "source": {
+          "type": "object",
+          "required": ["dataset"],
+          "properties": {
+            "dataset": {"type": "string"},
+            "dataset_revision": {"type": "string"},
+            "source_row_id": {"type": "string"},
+            "document_id": {"type": "string"},
+            "upstream_split": {"type": "string"},
+            "license": {"type": "string"},
+            "url": {"type": "string"}
+          }
+        },
+        "metadata": {"type": "object"}
+      }
+    },
+    "responseRobustnessRecord": {
+      "type": "object",
+      "title": "Response robustness record",
+      "required": ["schema_version", "task_type", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {"type": "string", "enum": ["2.0"]},
+        "task_type": {"type": "string", "enum": ["response_robustness"]},
+        "id": {"type": "string"},
+        "question": {"type": "string"},
+        "ground_truth_answer": {"type": "string"},
+        "factual_alignment": {"type": "string", "enum": ["matches", "contradicts", "does_not_answer"]},
+        "conspiracy_endorsement": {"type": "string", "enum": ["endorses", "does_not_endorse", "ambiguous"]},
+        "abstention": {"type": "boolean"}
+      }
+    }
+  }
+}

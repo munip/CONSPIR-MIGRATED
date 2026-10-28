@@ -1,0 +1,11 @@
+{
+  "traits": [
+    {"id": "contradictory", "name": "Contradictory"},
+    {"id": "overriding_suspicion", "name": "Overriding suspicion"},
+    {"id": "nefarious_intent", "name": "Nefarious intent"},
+    {"id": "something_must_be_wrong", "name": "Something must be wrong"},
+    {"id": "persecuted_victim", "name": "Persecuted victim"},
+    {"id": "immune_to_evidence", "name": "Immune to evidence"},
+    {"id": "reinterpreting_randomness", "name": "Re-interpreting randomness"}
+  ]
+}
