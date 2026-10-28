@@ -95,6 +95,41 @@ if [ "$RUN_PR_SCRIPTS" = 1 ]; then
   run_checks "$WT" "PR's copy, on the PR as submitted"
 fi
 
+# Experiment requests: main's check_design.py on each EXPERIMENT.md this PR adds or edits. It reads
+# files only (stdlib, no venv), so it's safe to run on the PR's copy of the request.
+REQUESTS=()
+while IFS= read -r f; do [ -n "$f" ] && REQUESTS+=("$f"); done < <(
+  git -C "$REPO" diff --name-only --diff-filter=AM "$RANGE" -- 'experiment_requests/' | grep -v '^experiment_requests/[^/]*\.md$' || true)
+if [ ${#REQUESTS[@]} -gt 0 ]; then
+  echo; echo "== Experiment request design (main's check_design.py)"
+  # Each changed file's nearest EXPERIMENT.md in the PR's tree, so a results PR against an existing
+  # request re-checks that request's design instead of reporting it missing.
+  DESIGNS=(); NODESIGN=()
+  for f in "${REQUESTS[@]}"; do
+    d=$(dirname "$f"); found=""
+    while [ "$d" != "experiment_requests" ] && [ "$d" != "." ]; do
+      if [ -f "$WT/$d/EXPERIMENT.md" ]; then found="$d/EXPERIMENT.md"; break; fi
+      d=$(dirname "$d")
+    done
+    if [ -z "$found" ]; then NODESIGN+=("$f")
+    else case " ${DESIGNS[*]-} " in *" $found "*) ;; *) DESIGNS+=("$found");; esac; fi
+  done
+  if [ ! -f "$BASE/scripts/check_design.py" ]; then
+    echo "main has no scripts/check_design.py yet; check the six design stages by hand (CONTRIBUTING.md)."
+  else
+    for f in ${DESIGNS[@]+"${DESIGNS[@]}"}; do
+      if (cd "$WT" && python3 -I "$BASE/scripts/check_design.py" "$f"); then :; else
+        echo "!! DESIGN CHECK FAILED for $f: a request isn't merged until this passes; recommend don't merge yet."
+      fi
+    done
+    if [ ${#NODESIGN[@]} -gt 0 ]; then
+      echo "!! DESIGN MISSING: no EXPERIMENT.md in the request folder for:"
+      printf '!!   %s\n' "${NODESIGN[@]}"
+      echo "!! A request isn't merged without one; recommend don't merge until it's added."
+    fi
+  fi
+fi
+
 echo; echo "== Pending item(s) added or edited by this PR, pretty-printed"
 [ ${#PENDING[@]} -gt 0 ] || echo "(none)"
 for f in ${PENDING[@]+"${PENDING[@]}"}; do

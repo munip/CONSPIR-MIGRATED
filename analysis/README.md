@@ -27,6 +27,10 @@ analysis/<short-slug>/
 
 3. Link the draft PR from your discussion, then publish the PR when it's ready for review.
 
+If the analysis compares groups or claims an effect, settle its design first: what you're comparing
+against, how many items each number rests on, and what would count as noise. See
+[Designing an experiment](../CONTRIBUTING.md#designing-an-experiment).
+
 Someone else should be able to rerun your code and get the same numbers. Large outputs that are
 already in the repo should be referenced by path, not copied.
 

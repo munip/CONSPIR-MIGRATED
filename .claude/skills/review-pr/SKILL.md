@@ -37,6 +37,7 @@ The script does the following:
 - Prints the PR description and any existing reviews. Read them, so the notes don't repeat points someone already made.
 - Checks out `refs/pr/<N>` into a throwaway worktree. **Don't check out or pull in the user's own clone.** It may hold their unsubmitted pending files.
 - Runs **main's** `scripts/validate_questions.py` and `scripts/check_duplicates.py`, in a separate venv, against main's schema and corpus plus only the pending items this PR adds or edits. That runs in a second throwaway worktree of main.
+- For an experiment request (files under `experiment_requests/`), runs **main's** `scripts/check_design.py` on each `EXPERIMENT.md` the PR adds or edits, and prints `!! DESIGN CHECK FAILED` or `!! DESIGN MISSING` when it doesn't pass.
 - Prints a `!! WARNING` if the PR changes any code (`scripts/`, `*.py`, `*.sh`), with the diff command to read it.
 - Prints the PR's pending item(s).
 
@@ -47,6 +48,8 @@ bash .claude/skills/review-pr/scripts/prep_pr.sh --run-pr-scripts <N> [path to c
 ```
 
 PR descriptions sometimes say the validation scripts weren't run. If so, the results are a useful, concrete point for the review.
+
+For an experiment request, also read `EXPERIMENT.md` against "Designing an experiment" in CONTRIBUTING.md. The design check only proves each stage is filled in. Judge whether the controls, the split and the readout actually hold up, and note the strongest alternative explanation.
 
 For schema or code PRs, read the full diff (`git diff origin/main...origin/pr/<N>` in the clone), not only the item printout.
 
@@ -112,7 +115,7 @@ Use this structure, in terse bullets and fragments, not paste-ready sentences:
 1. **What it does:** 1 or 2 bullets of fact, so the reviewer can phrase the "show you understood the change" part themselves.
 2. **Checks run:** validation result, duplicate-check result, and the source mapping with short quotes.
 3. **Need / Correctness / Style:** pass or concern under each. Make every concern specific enough to act on: field, current value, suggested change.
-4. **Recommendation options:** merge as-is, merge after the listed changes, or don't merge. Give the reasoning for each plausible option and say which way the evidence points. The decision belongs to the reviewer.
+4. **Recommendation options:** merge as-is, merge after the listed changes, or don't merge. An experiment request whose design check failed or is missing can't be "merge as-is": list the failing stages as required changes. Give the reasoning for each plausible option and say which way the evidence points. The decision belongs to the reviewer.
 
 Then *offer* (don't write unprompted) an optional 🤖 follow-up comment. It should contain only the mechanical results (validation, duplicates, source quotes), start with 🤖, and be clearly separate from the reviewer's own review.
 

@@ -11,9 +11,14 @@ existing task folder from here or from [`completed_experiments/`](../completed_e
 when one fits. Otherwise create a new one, or put the experiment directly in
 `experiment_requests/`.
 
+Start `EXPERIMENT.md` from [`TEMPLATE.md`](./TEMPLATE.md). A request isn't merged until
+`python scripts/check_design.py <its EXPERIMENT.md>` passes. See
+[Designing an experiment](../CONTRIBUTING.md#designing-an-experiment) for the controls and traps to
+think through first.
+
 ```
 experiment_requests/[<task>/]<short-slug>/
-  EXPERIMENT.md   research question, parameters, how to run it, what counts as a result
+  EXPERIMENT.md   claim, unit and metric, controls, data, noise, readout, how to run it
   ...             code, configs and any small input files the run needs
 ```
 

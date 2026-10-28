@@ -147,6 +147,74 @@ it will ask you to run `login` yourself and only claims a task once you agree. C
 before claiming so you can coordinate with anyone already on the task. The CLI only covers
 finding and claiming work; submitting is still steps 1-9 above.
 
+## Designing an experiment
+
+Most experiments that go wrong were set up wrong, not run wrong: a fine-tune that beat nothing
+because nobody ran the base model, two arms that differed in more than the thing being tested, a
+difference smaller than the run-to-run noise. Settle the design before you run anything, write it
+into `EXPERIMENT.md`, and have someone check it. This applies to analyses in
+[`analysis/`](./analysis/) too whenever they compare groups or claim an effect.
+
+Start from [`experiment_requests/TEMPLATE.md`](./experiment_requests/TEMPLATE.md). It has six stages,
+in this order:
+
+1. **Claim.** One falsifiable sentence: "If X, then <metric> on <which items> moves by at least Δ
+   compared with Y." If you can't write it, the experiment isn't ready.
+2. **Unit and metric.** Say what one data point is (an item, a claim, a turn, a judge verdict),
+   how many there are, and how the metric is aggregated. Name the judge and rubric that grade it.
+   Check what the metric gives a constant answer: an always-hold model can look good on some
+   metrics.
+3. **Controls.** Every experiment needs at least one trivial baseline: the base or unmodified model,
+   a constant policy (always hold, always diverge), or the majority label. It also needs one matched
+   control that differs from the treatment in exactly one thing.
+4. **Data.** Give the corpus commit, the SHA-256 of any fixture, and the reference labels you use.
+   List every filter, with the row count after it. Keep the evaluation set apart, and split by
+   `claim_id`, never by item.
+5. **Noise.** Give the samples per item and the seeds, and say how you'll measure the noise:
+   rerun, or bootstrap over claims. Name the smallest difference you'd treat as real. Run a small
+   pilot first to check the plumbing. Pilot numbers don't count.
+6. **Readout.** Before the run, write the numbers you'll report, the pass rule, and the result that
+   would refute the claim. Null and negative results get a `RESULTS.md` too.
+
+What you changed after the run goes under `## Deviations`; leave the six stages as they were.
+
+### What goes wrong on ConspiracyBench
+
+- **The judge is part of the measurement.** Grade with the default judge and rubric
+  (pplx-decider, rubric v2 with context), validated against the reference labels in
+  [`completed_experiments/judge_reliability/`](./completed_experiments/judge_reliability/). If your
+  change alters how answers read, for example a fine-tune that writes longer or hedgier answers,
+  hand-check 20 to 30 verdicts against the rubric before trusting the judge on them.
+- **Arms leak through the text.** In [Experiment 005](./completed_experiments/judge_injection/experiments/005-injection-resistance/),
+  the length padding in the v1 fixture wrote to the grader about the dataset, so "clean" and
+  "attack" answers differed in more than the injection. Compare your arms side by side: length,
+  format, quoted text, and anything that talks to the grader.
+- **Framings of one claim aren't independent.** Items that share a `claim_id` test the same claim.
+  Split, bootstrap and count by claim. If training or prompt-writing data mentions corpus claims,
+  say so: that's contamination, not a result.
+- **Small differences are often noise.** With a few hundred items and k=5 samples, a gap of a few
+  points can come from sampling alone. Rerun or bootstrap before you call it.
+- **Filters change the population.** For each filter (length, language, slurs, dedup), record the
+  count before and after, and read 20 random dropped rows and 20 random kept ones.
+- **Categories are uneven.** Per-category numbers rest on very different sample sizes (see
+  [`analysis/category-sensitivity/`](./analysis/category-sensitivity/)). Report the count next to
+  every rate.
+
+### Tools
+
+```bash
+pip install git+https://github.com/likelytobelaura/stationhouse-cli
+stationhouse design new experiment_requests/<task>/<short-slug>/EXPERIMENT.md   # the template
+stationhouse design check experiment_requests/<task>/<short-slug>/EXPERIMENT.md # missing pieces (no model)
+stationhouse design review experiment_requests/<task>/<short-slug>/EXPERIMENT.md  # a critique from the Station House assistant
+```
+
+`check` and `scripts/check_design.py` apply the same rules, and passing one is required before a
+request is merged. They only find missing pieces, not bad ideas. For the thinking, ask a reviewer on the
+Discussions, use `design review`, or use a coding agent: Claude Code, Codex and Cursor read
+[`AGENTS.md`](./AGENTS.md) in this repo. The agent walks you through the stages one at a time,
+asks before it fills anything in, and red-teams the design before you run it.
+
 ## Contributing an experiment
 
 Experiments go in [`experiment_requests/`](./experiment_requests/), whether you will run them
@@ -160,13 +228,24 @@ needs, you don't need to run it yourself: write it up, and a maintainer can run 
    [`completed_experiments/`](./completed_experiments/) (for example `judge_reliability/`,
    `judge_injection/`, `stage2_pilot/`), create one for a new task, or leave out `<task>/`
    if the experiment doesn't belong to a task.
-2. **Write `EXPERIMENT.md`.** State a clear research question and the parameters: what
-   you're trying to find out, and the models, datasets, sample sizes, seeds, hardware and
-   anything else needed to reproduce the run. Say what result would answer the question.
-3. **Add the code.** The code, config or scripts needed to run it, plus the exact commands.
+2. **Write `EXPERIMENT.md`** from [`experiment_requests/TEMPLATE.md`](./experiment_requests/TEMPLATE.md),
+   following [Designing an experiment](#designing-an-experiment): the claim, unit and metric,
+   controls, data, noise and readout, then the models, datasets, sample sizes, seeds, hardware and
+   anything else needed to reproduce the run.
+3. **Check the design. This is required.** A request isn't merged until this passes:
+
+   ```bash
+   python scripts/check_design.py experiment_requests/<task>/<short-slug>/EXPERIMENT.md
+   ```
+
+   It fails if any of the six stages is missing or empty, or if Controls names no baseline. It
+   prints warnings for gaps a reviewer will ask about. Fix every error, and keep a warning only if
+   `EXPERIMENT.md` says why. Paste its output into your PR description. Reviewers run the same
+   check on your PR. `stationhouse design check` applies the same rules.
+4. **Add the code.** The code, config or scripts needed to run it, plus the exact commands.
    Reference large inputs that are already in the repo by path rather than copying them.
-4. **Open a pull request** with the folder. Write and check your description as in step 8
-   above, then upload the whole folder:
+5. **Open a pull request** with the folder. Write and check your description as in step 8
+   above (include the design check output), then upload the whole folder:
 
    ```bash
    hf upload Station-house/ConspiracyBench experiment_requests/<task>/<short-slug> experiment_requests/<task>/<short-slug> \
@@ -174,7 +253,7 @@ needs, you don't need to run it yourself: write it up, and a maintainer can run 
      --commit-description "$(cat pr_description.md)"
    ```
 
-5. **If you need compute, tag @stationhouse** in the pull request description and say what
+6. **If you need compute, tag @stationhouse** in the pull request description and say what
    you need.
 
 A maintainer will review the experiment and, if it's a good fit, run it or give you what you
@@ -222,7 +301,9 @@ use `other` for now and open a separate PR adding the new value to the `category
 `schema.json` and to the table in [`SCHEMA.md`](./SCHEMA.md). Keep that PR small, just the
 new category, so it's easy to review on its own.
 
-**For maintainers:** merge a PR that added a file to `questions/pending/` as it is, then run
+**For maintainers:** don't merge or run an experiment request until
+`python scripts/check_design.py` passes on its `EXPERIMENT.md`. The review-pr skill's `prep_pr.sh` runs
+it for you. Then merge a PR that added a file to `questions/pending/` as it is, then run
 `python scripts/assign_ids.py` on `main`. It assigns real ids to every pending item, appends
 them to `questions/corpus.jsonl`, and deletes the pending files. Then run
 `python scripts/validate_questions.py` to confirm the corpus is still clean, and commit the
@@ -277,5 +358,8 @@ If you are an agent working in this repository:
   corpus. Leave `id` as `cb-pending`, and never run `scripts/assign_ids.py` on a pull request branch.
 - Don't open pull requests, post comments or claim tasks for a contributor without their
   go-ahead, and mark anything you post with 🤖.
+- For experiments and analyses, follow [`AGENTS.md`](./AGENTS.md) and [Designing an experiment](#designing-an-experiment).
+  Help the contributor make the design choices; don't make them yourself, and don't run anything before
+  the Readout is written.
 - Don't ask for or handle a contributor's passwords or tokens. `hf auth login` and
   `stationhouse login` are for the contributor to run.
