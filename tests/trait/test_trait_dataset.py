@@ -1,5 +1,6 @@
 import json
 import asyncio
+import math
 from types import SimpleNamespace
 
 import pytest
@@ -74,9 +75,51 @@ def test_inspect_metrics_mask_unknown_traits_and_count_invalid_outputs():
     )
 
     summary = _metric_summary([score, invalid])
-    assert summary["per_trait"]["nefarious_intent"]["f1"] == pytest.approx(2 / 3)
-    assert summary["exact_match"] == 0.5
+    assert summary["per_trait"]["nefarious_intent"]["f1"] == 1.0
+    assert summary["per_trait"]["nefarious_intent"]["reference_known_count"] == 2
+    assert summary["per_trait"]["nefarious_intent"]["reference_positive_support"] == 2
+    assert math.isnan(summary["exact_match"])
     assert summary["invalid_output_rate"] == 0.5
+    assert summary["valid_output_count"] == 1
+
+
+def test_inspect_exact_match_requires_fully_annotated_rows_and_reports_domain_source():
+    rows = [
+        {
+            "predicted": ["nefarious_intent"],
+            "target": ["nefarious_intent"],
+            "known": ["nefarious_intent"],
+            "invalid": False,
+            "domain_id": "health_medicine",
+            "source_dataset": "StationHouse",
+            "cluster_id": "claim-1",
+        },
+        {
+            "predicted": ["nefarious_intent"],
+            "target": ["nefarious_intent"],
+            "known": [
+                "contradictory", "overriding_suspicion", "nefarious_intent",
+                "something_must_be_wrong", "persecuted_victim",
+                "immune_to_evidence", "reinterpreting_randomness",
+            ],
+            "invalid": False,
+            "domain_id": "health_medicine",
+            "source_dataset": "StationHouse",
+            "cluster_id": "claim-2",
+            "dominant_trait": "nefarious_intent",
+        },
+    ]
+    scores = [
+        SampleScore(sample_id=str(index), score=Score(value=json.dumps(row)))
+        for index, row in enumerate(rows)
+    ]
+
+    summary = _metric_summary(scores)
+    assert summary["exact_match"] == 1.0
+    assert summary["dominant_trait_support"] == 1
+    assert summary["dominant_trait_hit_rate"] == 1.0
+    assert summary["by_domain"]["health_medicine"]["per_trait"]["nefarious_intent"]["known_count"] == 2
+    assert summary["by_source"]["StationHouse"]["per_trait"]["nefarious_intent"]["positive_support"] == 2
 
 
 def test_inspect_scorer_ignores_unannotated_predictions_and_flags_unknown_ids():
@@ -93,3 +136,19 @@ def test_inspect_scorer_ignores_unannotated_predictions_and_flags_unknown_ids():
     state.output.completion = '["not_a_trait"]'
     invalid_score = asyncio.run(score_fn(state, Target("[]")))
     assert json.loads(invalid_score.value)["invalid"] is True
+
+
+def test_inspect_metrics_mark_traits_without_positive_reference_support_unsupported():
+    score = SampleScore(
+        sample_id="all-negative",
+        score=Score(value=json.dumps({
+            "predicted": [],
+            "target": [],
+            "known": ["something_must_be_wrong"],
+            "invalid": False,
+        })),
+    )
+    summary = _metric_summary([score])
+    assert summary["per_trait"]["something_must_be_wrong"]["known_count"] == 1
+    assert summary["per_trait"]["something_must_be_wrong"]["positive_support"] == 0
+    assert math.isnan(summary["per_trait"]["something_must_be_wrong"]["f1"])

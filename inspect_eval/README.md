@@ -147,15 +147,42 @@ inspect eval inspect_eval/trait/trait_classification.py `
 This task reports per-trait and aggregate precision, recall, F1, exact match, and invalid
 output rate against the six known CONSPIRed labels. It does not score
 `something_must_be_wrong`, which is unannotated in this dataset. Use the same test file,
-prompt, model revision, and generation settings when comparing another classifier. LOCO
-cannot be used for these accuracy metrics until reviewed labels are added to its frozen
-holdout.
+prompt, model revision, and generation settings when comparing another classifier.
 
-The trait-classification task selects one dataset split explicitly and filters fully
-unannotated rows. Run it on the upstream CONSPIRed test split with
-`-T dataset_name=conspired -T split=test`. LOCO records are not eligible until reviewed
-trait labels exist; after labeling, use `-T dataset_name=loco -T split=test` with a
-`frozen_holdout_labeled.jsonl` file.
+LOCO and Station House can be run before labels exist, but cannot produce accuracy metrics
+until human-reviewed reference annotations are available. Use the prediction-only task to
+collect outputs on unannotated text. It does not expose ground-truth answers, source split,
+or source metadata to the model, and does not score predictions as correct or incorrect:
+
+```powershell
+inspect eval inspect_eval/trait/trait_prediction.py `
+  -T dataset_name=loco -T split=holdout `
+  --model hf/Qwen/Qwen2.5-3B-Instruct
+inspect eval inspect_eval/trait/trait_prediction.py `
+  -T dataset_name=stationhouse -T split=holdout -T seed=42 `
+  --model hf/Qwen/Qwen2.5-3B-Instruct
+```
+
+The Station House split is deterministic by `claim_id`, with an item-ID fallback when
+claim grouping is absent. Use the prediction outputs to prepare blinded human
+adjudication; never treat model outputs as gold labels.
+
+The supervised trait task reports per-trait precision, recall, F1, known-label counts,
+and positive support; deterministic document/claim-clustered 95% bootstrap intervals for
+per-trait F1; exact-set accuracy only for fully annotated rows; and dominant-trait hit
+rate/support where the reference provides a dominant trait. Malformed model outputs are
+counted separately and excluded from label metrics. Micro-F1 and support are also
+available by reviewed domain and source dataset. Dominant-trait hit rate means the
+predicted set contains the reference dominant trait; it is not a ranked-choice measure.
+Traits with no positive reference examples, and exact-set accuracy with no fully annotated
+rows, appear as `nan` (unsupported) rather than a misleading zero. F1 intervals are
+reported only when at least five independent clusters contain a positive reference label.
+For compact nested domain/source breakdowns, write a report from the Inspect log:
+
+```powershell
+python inspect_eval/trait/trait_report.py logs/trait-classification.eval `
+  --output results/trait-classification-report.json
+```
 
 ### Run configuration
 

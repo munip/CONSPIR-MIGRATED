@@ -143,6 +143,8 @@ python scripts/import_loco.py datasets/source/loco/LOCO.json `
   --source-license unverified `
   --topic-description datasets/source/loco/topic_description.json `
   --website-metadata datasets/source/loco/website_metadata.json
+python scripts/propose_loco_domains.py datasets/source/loco/topic_description.json `
+  --output datasets/loco/domain_mapping.json
 ```
 
 LOCO has no CONSPIR trait labels. The two candidate-label methods below learn from the
@@ -188,6 +190,40 @@ to require the configured threshold of windows to agree. Compare disagreement an
 prevalence, then human-review a sample before
 using candidate labels as annotations. The frozen LOCO holdout must remain unlabeled until
 independent human adjudication; pseudo-label agreement is not an accuracy measure.
+
+The domain proposal command uses the reviewed broad registry in
+`schemas/conspir/domains.json`. Keyword suggestions are explicitly `pending_review` and
+leave imported `domain_id` as `unmapped`. Review `datasets/loco/domain_mapping.json`, set
+each accepted entry's `status` to `approved` and `domain_id` to a registry ID, then rerun
+the importer with `--domain-mapping datasets/loco/domain_mapping.json`. The importer
+rejects unregistered IDs and duplicate topic keys and records mapping coverage in its
+manifest. Suggestions are not ground-truth labels; ties and topics without a cue remain
+unmapped for human review.
+
+To collect model predictions on unannotated LOCO or Station House text before human
+adjudication, use the prediction-only Inspect task. It does not report trait accuracy or
+expose ground-truth answers to the model. Station House uses `question` text only and
+assigns an approximately 30% deterministic holdout by `claim_id` (falling back to item ID):
+
+```powershell
+inspect eval inspect_eval/trait/trait_prediction.py `
+  -T dataset_name=loco -T split=holdout `
+  --model hf/Qwen/Qwen2.5-3B-Instruct
+inspect eval inspect_eval/trait/trait_prediction.py `
+  -T dataset_name=stationhouse -T split=holdout -T seed=42 `
+  --model hf/Qwen/Qwen2.5-3B-Instruct
+```
+
+These are prediction runs, not human-reference evaluations. Keep model predictions
+separate from adjudicated trait labels. The supervised trait metrics below require known
+reference labels. Inspect output now reports invalid-output rate, label support, clustered
+per-trait F1 intervals, dominant-trait hit rate when available, and source/domain
+breakdowns.
+
+The response-robustness judge also needs independent validation. Follow
+[`eval/trait/README.md`](./eval/trait/README.md) to compare its per-turn outputs with a
+human-adjudicated reference set. The repository does not include fabricated human labels;
+the comparison should be run once that reference set has been collected.
 
 ### Dataset redistribution
 

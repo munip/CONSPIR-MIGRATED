@@ -22,6 +22,7 @@ except ImportError:
     raise SystemExit("Missing dependency: python -m pip install ijson")
 
 ROOT = Path(__file__).resolve().parent.parent
+DOMAIN_REGISTRY_PATH = ROOT / "schemas" / "conspir" / "domains.json"
 TRAIT_IDS = (
     "contradictory", "overriding_suspicion", "nefarious_intent",
     "something_must_be_wrong", "persecuted_victim", "immune_to_evidence",
@@ -54,8 +55,55 @@ def _load_sidecar(path: Path | None, key: str) -> dict[str, dict]:
     for row in rows:
         if not isinstance(row, dict) or row.get(key) in (None, ""):
             continue
-        index[str(row[key])] = row
+        value = str(row[key])
+        if value in index:
+            raise ValueError(f"LOCO sidecar {path} has duplicate {key} {value!r}")
+        index[value] = row
     return index
+
+
+def _load_domain_mapping(path: Path | None,
+                         topic_description_path: Path | None = None) -> tuple[dict[str, dict], set[str]]:
+    registry = json.loads(DOMAIN_REGISTRY_PATH.read_text(encoding="utf-8"))
+    allowed = {domain["id"] for domain in registry["domains"]}
+    if path is None:
+        return {}, allowed
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or not isinstance(data.get("topics"), list):
+        raise ValueError(f"LOCO domain mapping {path} must contain a topics array")
+    registry_hash = data.get("registry_sha256")
+    if registry_hash is not None and registry_hash != sha256_file(DOMAIN_REGISTRY_PATH):
+        raise ValueError(f"LOCO domain mapping {path} was created for a different domain registry")
+    topic_hash = data.get("topic_description_sha256")
+    if topic_hash is not None:
+        if topic_description_path is None:
+            raise ValueError(
+                f"LOCO domain mapping {path} requires its --topic-description source file"
+            )
+        if topic_hash != sha256_file(Path(topic_description_path)):
+            raise ValueError(f"LOCO domain mapping {path} was created for different topic descriptions")
+    index = {}
+    for row in data["topics"]:
+        if not isinstance(row, dict) or not row.get("topic_id"):
+            raise ValueError(f"LOCO domain mapping {path} contains an entry without topic_id")
+        topic_id = str(row["topic_id"])
+        if topic_id in index:
+            raise ValueError(f"LOCO domain mapping {path} has duplicate topic_id {topic_id!r}")
+        status = row.get("status")
+        if not isinstance(status, str) or status not in {"approved", "pending_review", "rejected"}:
+            raise ValueError(f"LOCO domain mapping for {topic_id!r} has invalid status")
+        suggested_domain = row.get("suggested_domain_id")
+        if (suggested_domain is not None
+                and (not isinstance(suggested_domain, str) or suggested_domain not in allowed)):
+            raise ValueError(f"LOCO domain mapping for {topic_id!r} has invalid suggested_domain_id")
+        if status == "approved":
+            domain_id = row.get("domain_id")
+            if not isinstance(domain_id, str) or domain_id not in allowed:
+                raise ValueError(f"Approved LOCO domain mapping for {topic_id!r} has invalid domain_id")
+        elif row.get("domain_id") is not None:
+            raise ValueError(f"Unapproved LOCO domain mapping for {topic_id!r} must not set domain_id")
+        index[topic_id] = row
+    return index, allowed
 
 
 def json_compatible(value):
@@ -109,18 +157,21 @@ def _doc_id(row: dict) -> str:
 
 def _normalized_record(row: dict, source_revision: str, split: str, group: str,
                       source_license: str, website_info: dict | None = None,
-                      topic_info: dict | None = None) -> dict:
+                      topic_info: dict | None = None,
+                      domain_mapping: dict | None = None) -> dict:
     doc_id = _doc_id(row)
     text = row.get("txt")
     if not isinstance(text, str) or not text.strip():
         raise ValueError(f"LOCO document {doc_id!r} has empty or invalid txt")
     url = row.get("URL", row.get("url"))
+    mapping = domain_mapping or {}
+    approved_domain = mapping.get("domain_id") if mapping.get("status") == "approved" else None
     return {
         "schema_version": "2.0",
         "task_type": "trait_classification",
         "id": f"loco-{doc_id}",
         "text": text,
-        "domain_id": "unmapped",
+        "domain_id": approved_domain or "unmapped",
         "trait_annotations": {trait: "unannotated" for trait in TRAIT_IDS},
         "source": {
             "dataset": "LOCO",
@@ -143,6 +194,9 @@ def _normalized_record(row: dict, source_revision: str, split: str, group: str,
             "split_group_key": "topic_k100",
             "split_group": group,
             "label_status": "unannotated",
+            "domain_mapping_status": mapping.get("status", "unmapped"),
+            **({"suggested_domain_id": mapping["suggested_domain_id"]}
+               if mapping.get("suggested_domain_id") else {}),
             "source_metadata": {key: value for key, value in row.items() if key not in ("txt", "URL", "url")},
             **({"website_metadata": website_info} if website_info else {}),
             **({"topic_description": topic_info} if topic_info else {}),
@@ -153,10 +207,14 @@ def _normalized_record(row: dict, source_revision: str, split: str, group: str,
 def import_loco(input_path: Path, output_dir: Path, seed: int = 42,
                 holdout_fraction: float = 0.30, source_revision: str = "unspecified",
                 source_license: str = "unverified", topic_description_path: Path | None = None,
-                website_metadata_path: Path | None = None) -> dict:
+                website_metadata_path: Path | None = None,
+                domain_mapping_path: Path | None = None) -> dict:
     input_path, output_dir = Path(input_path), Path(output_dir)
     topic_descriptions = _load_sidecar(topic_description_path, "Topic_ID")
     website_metadata = _load_sidecar(website_metadata_path, "website")
+    domain_mappings, _allowed_domains = _load_domain_mapping(
+        domain_mapping_path, topic_description_path
+    )
     group_counts = Counter()
     seen_ids = set()
     for index, row in enumerate(iter_documents(input_path), start=1):
@@ -184,9 +242,14 @@ def import_loco(input_path: Path, output_dir: Path, seed: int = 42,
                 row, source_revision, split, group, source_license,
                 website_info=website_metadata.get(str(row.get("website", ""))),
                 topic_info=topic_descriptions.get(str(row.get("topic_k100", ""))),
+                domain_mapping=domain_mappings.get(str(row.get("topic_k100", ""))),
             )
             counts["website_metadata_joined"] += int("website_metadata" in record["metadata"])
             counts["topic_description_joined"] += int("topic_description" in record["metadata"])
+            counts["domain_mapped"] += int(record["domain_id"] != "unmapped")
+            counts["domain_suggested"] += int("suggested_domain_id" in record["metadata"])
+            mapping_status = record["metadata"]["domain_mapping_status"]
+            counts[f"domain_status_{mapping_status}"] += 1
             destination = holdout_file if split == "holdout" else train_file
             destination.write(json.dumps(json_compatible(record), ensure_ascii=False) + "\n")
             counts[split] += 1
@@ -213,6 +276,17 @@ def import_loco(input_path: Path, output_dir: Path, seed: int = 42,
         "website_metadata_sha256": sha256_file(Path(website_metadata_path)) if website_metadata_path else None,
         "documents_with_topic_description": counts["topic_description_joined"],
         "documents_with_website_metadata": counts["website_metadata_joined"],
+        "documents_with_approved_domain_mapping": counts["domain_mapped"],
+        "documents_with_domain_suggestion": counts["domain_suggested"],
+        "domain_mapping_file": str(Path(domain_mapping_path).resolve()) if domain_mapping_path else None,
+        "domain_mapping_sha256": sha256_file(Path(domain_mapping_path)) if domain_mapping_path else None,
+        "domain_mapping_status_counts": {
+            "approved": counts["domain_mapped"],
+            "pending_review": counts["domain_status_pending_review"],
+            "rejected": counts["domain_status_rejected"],
+            "unmapped": total_documents - counts["domain_mapped"]
+                - counts["domain_status_pending_review"] - counts["domain_status_rejected"],
+        },
         "train_groups": sorted(set(group_counts) - holdout_groups),
         "holdout_groups": sorted(holdout_groups),
         "annotations": "all seven traits unannotated; no source-status labels converted to traits",
@@ -234,11 +308,13 @@ def main(argv=None) -> int:
     parser.add_argument("--source-license", default="unverified")
     parser.add_argument("--topic-description", type=Path)
     parser.add_argument("--website-metadata", type=Path)
+    parser.add_argument("--domain-mapping", type=Path,
+                        help="Reviewed mapping from topic_k100 to approved domain registry IDs")
     args = parser.parse_args(argv)
     try:
         manifest = import_loco(args.input, args.output_dir, args.seed,
                                args.holdout_fraction, args.source_revision, args.source_license,
-                               args.topic_description, args.website_metadata)
+                               args.topic_description, args.website_metadata, args.domain_mapping)
     except (OSError, ValueError) as exc:
         parser.error(str(exc))
     print(json.dumps(manifest, indent=2, ensure_ascii=False))

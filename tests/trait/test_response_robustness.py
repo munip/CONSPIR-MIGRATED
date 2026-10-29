@@ -57,4 +57,7 @@ def test_response_scorer_uses_a_grader_and_records_all_dimensions():
         "factual_alignment": "matches",
         "conspiracy_endorsement": "ambiguous",
         "abstention": False,
+        "sample_id": "unknown",
+        "epoch": 1,
+        "turn_index": 0,
     }]

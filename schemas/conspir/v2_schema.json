@@ -65,7 +65,19 @@
         "id": {"type": "string"},
         "text": {"type": "string", "minLength": 1},
         "context": {"type": "string"},
-        "domain_id": {"type": "string"},
+        "domain_id": {
+          "type": "string",
+          "enum": [
+            "politics_government",
+            "health_medicine",
+            "science_technology",
+            "environment_climate",
+            "history_conflict",
+            "society_culture",
+            "other",
+            "unmapped"
+          ]
+        },
         "trait_annotations": {
           "type": "object",
           "required": ["contradictory", "overriding_suspicion", "nefarious_intent", 

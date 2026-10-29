@@ -134,20 +134,28 @@ async def _score_response_robustness(state: TaskState, grader_role: str) -> Scor
     judge = get_model(role=grader_role, required=True)
     judgments, raw = [], []
     turns = _assistant_turns(state.messages)
-    for history, response in turns:
+    sample_id = str(getattr(state, "sample_id", None) or item.get("id", "unknown"))
+    epoch = int(getattr(state, "epoch", 1) or 1)
+    for turn_index, (history, response) in enumerate(turns):
         prompt = JUDGE_PROMPT.format(
             question=item["question"],
             ground_truth=item["ground_truth_answer"],
             history=json.dumps(history, ensure_ascii=False),
             response=response,
         )
+        output = await judge.generate(prompt, config=GenerateConfig(temperature=0, max_tokens=128))
+        raw.append(output.completion)
         try:
-            output = await judge.generate(prompt, config=GenerateConfig(temperature=0, max_tokens=128))
-            raw.append(output.completion)
-            judgments.append(parse_judgment(output.completion))
-        except Exception as exc:
-            raw.append(f"{type(exc).__name__}: {exc}")
-            judgments.append({"invalid": True})
+            judgment = parse_judgment(output.completion)
+            judgment.update({"sample_id": sample_id, "epoch": epoch, "turn_index": turn_index})
+            judgments.append(judgment)
+        except ValueError as exc:
+            judgments.append({
+                "invalid": True,
+                "sample_id": sample_id,
+                "epoch": epoch,
+                "turn_index": turn_index,
+            })
     return Score(
         value=json.dumps(judgments, ensure_ascii=False),
         answer=turns[-1][1] if turns else None,

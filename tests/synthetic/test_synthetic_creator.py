@@ -12,13 +12,13 @@ def test_create_candidate():
         candidate = creator.create_candidate(
             text="They are secretly controlling everything from behind the scenes.",
             requested_traits=["nefarious_intent", "overriding_suspicion"],
-            domain_id="politics",
+            domain_id="politics_government",
             model="test-model"
         )
         
         assert candidate["schema_version"] == "2.0"
         assert candidate["task_type"] == "trait_classification"
-        assert candidate["domain_id"] == "politics"
+        assert candidate["domain_id"] == "politics_government"
         assert candidate["source"]["requested_traits"] == ["nefarious_intent", "overriding_suspicion"]
         assert candidate["metadata"]["review_state"] == "pending"
         assert all(candidate["trait_annotations"][t] == "unannotated" for t in TRAIT_IDS)
