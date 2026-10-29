@@ -1,0 +1,12 @@
+{
+  "domains": [
+    {"id": "politics_government", "name": "Politics and government"},
+    {"id": "health_medicine", "name": "Health and medicine"},
+    {"id": "science_technology", "name": "Science and technology"},
+    {"id": "environment_climate", "name": "Environment and climate"},
+    {"id": "history_conflict", "name": "History and conflict"},
+    {"id": "society_culture", "name": "Society and culture"},
+    {"id": "other", "name": "Other"}
+  ],
+  "unmapped_id": "unmapped"
+}

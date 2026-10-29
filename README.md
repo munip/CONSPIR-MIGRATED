@@ -123,3 +123,115 @@ general knowledge, and abstaining isn't scored as a free pass.
 - **Inspect pilot:** [`inspect_eval/`](./inspect_eval/)
 
 Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+
+## CONSPIR migration: phases 1–5
+
+The migration code maps the official CONSPIRed train/test workbooks into schema-v2 trait
+records and imports LOCO into topic-grouped training and frozen-holdout partitions. The
+source corpus and normalized full-text files stay under the ignored `datasets/` directory.
+They are downloaded or supplied locally; this repository does not distribute LOCO text.
+
+Install the migration dependencies and import the source files:
+
+```powershell
+python -m pip install -r requirements-migration.txt
+python scripts/import_conspired.py `
+  --train-xlsx datasets/source/conspired/context_training.xlsx `
+  --test-xlsx datasets/source/conspired/context_testing.xlsx
+python scripts/import_loco.py datasets/source/loco/LOCO.json `
+  --source-revision osfstorage:60b4ecdfcb2a5e015768cbe3 `
+  --source-license unverified `
+  --topic-description datasets/source/loco/topic_description.json `
+  --website-metadata datasets/source/loco/website_metadata.json
+python scripts/propose_loco_domains.py datasets/source/loco/topic_description.json `
+  --output datasets/loco/domain_mapping.json
+```
+
+LOCO has no CONSPIR trait labels. The two candidate-label methods below learn from the
+CONSPIRed training split and process only `train_pool.jsonl`. They write machine-generated
+labels with provenance and `gold_label: false`; invalid Qwen outputs remain unannotated.
+The seven-trait schema's `something_must_be_wrong` label stays unannotated because
+CONSPIRed does not provide it.
+
+Install the optional local model/classifier dependencies:
+
+```powershell
+python -m pip install -r requirements-loco-labeling.txt
+```
+
+Compare both methods against the same official CONSPIRed test split before labeling LOCO:
+
+```powershell
+python scripts/evaluate_trait_labeler.py --method supervised `
+  --output results/conspired-supervised.json
+python scripts/evaluate_trait_labeler.py --method qwen `
+  --model Qwen/Qwen2.5-3B-Instruct `
+  --output results/conspired-qwen.json
+```
+
+The evaluator reports per-trait precision/recall/F1, macro and micro F1, exact match,
+invalid-output count, and input hashes. It rejects any training/evaluation document overlap.
+Do not tune the threshold or prompt on the reported test results; treat this comparison as
+exploratory unless the choice is fixed in advance.
+
+Generate two separate candidate-label files for the LOCO training pool:
+
+```powershell
+python scripts/label_loco.py --method supervised `
+  --output datasets/loco/imported/candidates/train-supervised.jsonl
+python scripts/label_loco.py --method qwen `
+  --model Qwen/Qwen2.5-3B-Instruct `
+  --output datasets/loco/imported/candidates/train-qwen.jsonl
+```
+
+Both methods classify overlapping 140-word windows and aggregate per-trait scores per
+article. The Qwen method defaults to an any-window rule; use `--qwen-aggregation majority`
+to require the configured threshold of windows to agree. Compare disagreement and class
+prevalence, then human-review a sample before
+using candidate labels as annotations. The frozen LOCO holdout must remain unlabeled until
+independent human adjudication; pseudo-label agreement is not an accuracy measure.
+
+The domain proposal command uses the reviewed broad registry in
+`schemas/conspir/domains.json`. Keyword suggestions are explicitly `pending_review` and
+leave imported `domain_id` as `unmapped`. Review `datasets/loco/domain_mapping.json`, set
+each accepted entry's `status` to `approved` and `domain_id` to a registry ID, then rerun
+the importer with `--domain-mapping datasets/loco/domain_mapping.json`. The importer
+rejects unregistered IDs and duplicate topic keys and records mapping coverage in its
+manifest. Suggestions are not ground-truth labels; ties and topics without a cue remain
+unmapped for human review.
+
+To collect model predictions on unannotated LOCO or Station House text before human
+adjudication, use the prediction-only Inspect task. It does not report trait accuracy or
+expose ground-truth answers to the model. Station House uses `question` text only and
+assigns an approximately 30% deterministic holdout by `claim_id` (falling back to item ID):
+
+```powershell
+inspect eval inspect_eval/trait/trait_prediction.py `
+  -T dataset_name=loco -T split=holdout `
+  --model hf/Qwen/Qwen2.5-3B-Instruct
+inspect eval inspect_eval/trait/trait_prediction.py `
+  -T dataset_name=stationhouse -T split=holdout -T seed=42 `
+  --model hf/Qwen/Qwen2.5-3B-Instruct
+```
+
+These are prediction runs, not human-reference evaluations. Keep model predictions
+separate from adjudicated trait labels. The supervised trait metrics below require known
+reference labels. Inspect output now reports invalid-output rate, label support, clustered
+per-trait F1 intervals, dominant-trait hit rate when available, and source/domain
+breakdowns.
+
+The response-robustness judge also needs independent validation. Follow
+[`eval/trait/README.md`](./eval/trait/README.md) to compare its per-turn outputs with a
+human-adjudicated reference set. The repository does not include fabricated human labels;
+the comparison should be run once that reference set has been collected.
+
+### Dataset redistribution
+
+The CONSPIRed project documents its data as CC BY 4.0. The LOCO paper is open access and
+describes the corpus as downloadable, but LOCO consists of full text collected from third
+party websites and the current import manifest records the corpus license as unverified.
+Keep raw and normalized LOCO files, and all candidate-label outputs containing article text,
+out of Git until the OSF artifact's redistribution terms and any source-text restrictions
+are confirmed. The paper license alone does not establish the rights for every article in
+the corpus. See the [CONSPIRed data and licensing notes](https://github.com/UKPLab/conspired)
+and the [LOCO paper and data availability statement](https://pmc.ncbi.nlm.nih.gov/articles/PMC8545361/).

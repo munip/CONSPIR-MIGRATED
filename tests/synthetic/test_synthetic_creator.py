@@ -12,16 +12,20 @@ def test_create_candidate():
         candidate = creator.create_candidate(
             text="They are secretly controlling everything from behind the scenes.",
             requested_traits=["nefarious_intent", "overriding_suspicion"],
-            domain_id="politics",
+            domain_id="politics_government",
             model="test-model"
         )
         
         assert candidate["schema_version"] == "2.0"
         assert candidate["task_type"] == "trait_classification"
-        assert candidate["domain_id"] == "politics"
-        assert candidate["requested_traits"] == ["nefarious_intent", "overriding_suspicion"]
-        assert candidate["review_state"] == "pending"
+        assert candidate["domain_id"] == "politics_government"
+        assert candidate["source"]["requested_traits"] == ["nefarious_intent", "overriding_suspicion"]
+        assert candidate["metadata"]["review_state"] == "pending"
         assert all(candidate["trait_annotations"][t] == "unannotated" for t in TRAIT_IDS)
+
+        import jsonschema
+        schema = json.loads((Path(__file__).resolve().parents[2] / "schemas" / "conspir" / "v2_schema.json").read_text())
+        jsonschema.validate(candidate, schema)
 
 
 def test_review_process():
@@ -42,9 +46,9 @@ def test_review_process():
             notes="Good example"
         )
         
-        assert candidate["review_state"] == "approved"
+        assert candidate["metadata"]["review_state"] == "approved"
         assert candidate["trait_annotations"]["persecuted_victim"] == "present"
-        assert len(candidate["review_trail"]) == 1
+        assert len(candidate["metadata"]["review_trail"]) == 1
 
 
 def test_save_candidates():
@@ -62,4 +66,3 @@ def test_save_candidates():
         with open(batch_dir / "manifest.json") as f:
             manifest = json.load(f)
         assert manifest["count"] == 2
-```
