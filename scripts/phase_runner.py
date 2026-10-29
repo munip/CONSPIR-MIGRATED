@@ -43,4 +43,3 @@ if __name__ == "__main__":
     for phase in [1, 2, 3, 4, 5]:
         runner.run_phase(phase)
         runner.complete_phase(phase)
-```

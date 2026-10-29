@@ -49,6 +49,114 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python inspect-
 - For a local run on Ollama, see [`roster.md`](./roster.md). The context length needs raising
   from Ollama's 4096 default.
 
+## CONSPIR migration tasks
+
+The trait and response-robustness tasks are experimental and remain separate from the
+legacy `conspiracybench.py` task.
+
+### Importing LOCO
+
+Install the migration dependencies, then download the official LOCO JSON and its small
+topic and website sidecars. (The OSF whole-project download can fail; these are the direct
+file links returned by its public file listing.)
+
+```powershell
+python -m pip install -r requirements-migration.txt
+New-Item -ItemType Directory -Force datasets/source/loco | Out-Null
+Invoke-WebRequest https://osf.io/download/qfjc4/ -OutFile datasets/source/loco/LOCO.json
+Invoke-WebRequest https://osf.io/download/ksrcx/ -OutFile datasets/source/loco/topic_description.json
+Invoke-WebRequest https://osf.io/download/y6hfj/ -OutFile datasets/source/loco/website_metadata.json
+python scripts/import_loco.py datasets/source/loco/LOCO.json `
+  --output-dir datasets/loco/imported `
+  --source-revision "osfstorage:60b4ecdfcb2a5e015768cbe3" `
+  --topic-description datasets/source/loco/topic_description.json `
+  --website-metadata datasets/source/loco/website_metadata.json
+python scripts/validate_records.py datasets/loco/imported
+```
+
+`datasets/` is Git-ignored because raw and derived corpus data should not be committed by
+default. The importer creates `train_pool.jsonl`, `frozen_holdout.jsonl`, and a manifest
+with input/output hashes, group assignments, and counts. It joins website-level factuality
+metadata and topic descriptions into metadata when supplied. Topics and the upstream
+`conspiracy` / `mainstream` subcorpus are provenance and analysis fields; they are not
+converted into CONSPIR traits. All seven traits remain `unannotated` until a separate
+reviewed labeling step writes labeled records. The downloaded `LOCO.json` contains 96,743
+rows; the paper's data-availability section reports 96,746, so the manifest's source hash
+and observed count identify this exact file. The public OSF listing does not provide a
+license identifier, so the manifest defaults to `unverified` rather than asserting
+redistribution rights.
+
+### Importing CONSPIRed
+
+The importer uses the upstream Excel train/test files and preserves those splits. It maps
+the documented six-bit `labels` vector to six trait annotations and derives the dominant
+trait from `single_dominant_one_hot_dm`. `something_must_be_wrong` remains `unannotated`,
+because this dataset does not label that seventh trait. The numeric
+`ConspiracyTheoryorMainstream` field is preserved as raw metadata; its codes are not mapped
+without documented semantics. The script also retains confidence, justification, source
+document IDs, offsets, both context windows, annotated text, and the original label columns
+for audit. In the inspected release, five rows disagree between `dominant_consol_trait` and
+the one-hot dominant label; the importer records those disagreements rather than forcing
+the two fields to agree.
+
+```powershell
+New-Item -ItemType Directory -Force datasets/source/conspired | Out-Null
+Invoke-WebRequest https://raw.githubusercontent.com/UKPLab/conspired/main/data/context_training.xlsx `
+  -OutFile datasets/source/conspired/context_training.xlsx
+Invoke-WebRequest https://raw.githubusercontent.com/UKPLab/conspired/main/data/context_testing.xlsx `
+  -OutFile datasets/source/conspired/context_testing.xlsx
+python scripts/import_conspired.py `
+  --train-xlsx datasets/source/conspired/context_training.xlsx `
+  --test-xlsx datasets/source/conspired/context_testing.xlsx `
+  --output-dir datasets/conspired `
+  --source-revision main
+python scripts/validate_records.py datasets/conspired
+```
+
+The default trait evaluation reads `datasets/conspired/test.jsonl`. Pass
+`--context-column context500` or `--context-column context1000` to the importer to include
+one context window in the model input; both source windows remain in metadata either way.
+The expected source split is 1,305 training and 669 testing rows (subject to upstream
+updates), with a check that source documents do not cross the split boundary.
+
+### Running the response-robustness task
+
+The new scorer asks an independent grader to return factual alignment, conspiracy
+endorsement, and abstention as separate labels. It grades every answer in a pressure
+sequence and reports separate rates; it does not add a coaching system prompt to the model
+under test. Use a distinct grader for substantive results.
+
+```powershell
+inspect eval inspect_eval/trait/response_robustness.py `
+  --model hf/Qwen/Qwen2.5-3B-Instruct `
+  --model-role grader=<independent-judge-model> `
+  --limit 3
+```
+
+### Running trait classification on CONSPIRed
+
+The importer keeps the upstream training and testing files separate. For the initial
+unmodified-model baseline, score only the official test split:
+
+```powershell
+inspect eval inspect_eval/trait/trait_classification.py `
+  -T dataset_name=conspired -T split=test `
+  --model hf/Qwen/Qwen2.5-3B-Instruct
+```
+
+This task reports per-trait and aggregate precision, recall, F1, exact match, and invalid
+output rate against the six known CONSPIRed labels. It does not score
+`something_must_be_wrong`, which is unannotated in this dataset. Use the same test file,
+prompt, model revision, and generation settings when comparing another classifier. LOCO
+cannot be used for these accuracy metrics until reviewed labels are added to its frozen
+holdout.
+
+The trait-classification task selects one dataset split explicitly and filters fully
+unannotated rows. Run it on the upstream CONSPIRed test split with
+`-T dataset_name=conspired -T split=test`. LOCO records are not eligible until reviewed
+trait labels exist; after labeling, use `-T dataset_name=loco -T split=test` with a
+`frozen_holdout_labeled.jsonl` file.
+
 ### Run configuration
 
 These task arguments are recorded in the log, as are the model, the judge, and the git commit:

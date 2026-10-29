@@ -1,0 +1,5 @@
+# Optional dependencies for candidate-label generation; base migration stays lightweight.
+scikit-learn>=1.4,<2
+torch>=2.3
+transformers>=4.45,<5
+accelerate>=0.33

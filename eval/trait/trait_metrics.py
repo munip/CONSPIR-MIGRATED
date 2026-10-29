@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from typing import Dict, List, Set, Any
-from collections import defaultdict
 
 
 TRAIT_IDS = [
@@ -23,6 +22,8 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
     
     if total_outputs is None:
         total_outputs = len(predictions)
+    if invalid_outputs < 0 or total_outputs < 0 or invalid_outputs > total_outputs:
+        raise ValueError("invalid_outputs and total_outputs must satisfy 0 <= invalid_outputs <= total_outputs")
     
     results = {
         "per_trait": {},
@@ -38,7 +39,7 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
     fn_total = 0
     
     for trait in TRAIT_IDS:
-        tp = fp = fn = tn = 0
+        tp = fp = fn = tn = known_count = 0
         for pid in predictions:
             pred_has = trait in predictions[pid]
             ref_ann = references.get(pid, {}).get(trait, "unannotated")
@@ -48,6 +49,7 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
                 continue
             if ref_ann == "unannotated":
                 continue  # Don't score unannotated labels as negatives
+            known_count += 1
             
             ref_has = (ref_ann == "present")
             
@@ -69,6 +71,7 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
             "recall": rec,
             "f1": f1,
             "support": tp + fn,
+            "known_count": known_count,
             "tp": tp, "fp": fp, "fn": fn
         }
         
@@ -77,10 +80,11 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
         fn_total += fn
     
     # Macro averages
-    if results["per_trait"]:
-        results["macro"]["precision"] = sum(v["precision"] for v in results["per_trait"].values()) / len(results["per_trait"])
-        results["macro"]["recall"] = sum(v["recall"] for v in results["per_trait"].values()) / len(results["per_trait"])
-        results["macro"]["f1"] = sum(v["f1"] for v in results["per_trait"].values()) / len(results["per_trait"])
+    measured_traits = [v for v in results["per_trait"].values() if v["known_count"] > 0]
+    if measured_traits:
+        results["macro"]["precision"] = sum(v["precision"] for v in measured_traits) / len(measured_traits)
+        results["macro"]["recall"] = sum(v["recall"] for v in measured_traits) / len(measured_traits)
+        results["macro"]["f1"] = sum(v["f1"] for v in measured_traits) / len(measured_traits)
     
     # Micro averages
     results["micro"]["precision"] = tp_total / (tp_total + fp_total) if (tp_total + fp_total) > 0 else 0.0
@@ -91,18 +95,19 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
     
     # Exact match
     exact_matches = 0
+    exact_match_rows = 0
     for pid in predictions:
-        pred_set = set(predictions[pid])
-        # Get target set (only present among known)
         ref = references.get(pid, {})
-        target_set = set()
-        known = known_label_mask.get(pid, set(TRAIT_IDS))
-        for t in known:
-            if ref.get(t) == "present":
-                target_set.add(t)
+        known = set(known_label_mask.get(pid, set(TRAIT_IDS)))
+        # References marked unknown override a caller's broader mask.
+        scored_traits = {t for t in known if ref.get(t, "unannotated") in ("present", "absent")}
+        if not scored_traits:
+            continue
+        pred_set = set(predictions[pid]) & scored_traits
+        target_set = {t for t in scored_traits if ref.get(t) == "present"}
+        exact_match_rows += 1
         if pred_set == target_set:
             exact_matches += 1
-    results["exact_match"] = exact_matches / len(predictions) if predictions else 0.0
+    results["exact_match"] = exact_matches / exact_match_rows if exact_match_rows else 0.0
     
     return results
-```

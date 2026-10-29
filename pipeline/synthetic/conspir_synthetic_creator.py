@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
@@ -17,6 +17,10 @@ TRAIT_IDS = [
     "immune_to_evidence",
     "reinterpreting_randomness"
 ]
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 class ConspirSyntheticCreator:
@@ -57,7 +61,7 @@ class ConspirSyntheticCreator:
                     "model": model,
                     "prompt_version": prompt_version,
                     "seed": self.seed,
-                    "timestamp": datetime.utcnow().isoformat() + "Z"
+                    "timestamp": _utc_now_iso()
                 },
                 "source_ids": source_ids or [],
                 "license": "review_required",
@@ -95,7 +99,7 @@ class ConspirSyntheticCreator:
                     candidate["metadata"]["review_trail"] = []
                 candidate["metadata"]["review_trail"].append({
                     "reviewer": reviewer,
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "timestamp": _utc_now_iso(),
                     "adjudicated_traits": adjudicated_traits,
                     "approved": approved,
                     "notes": notes
@@ -105,7 +109,7 @@ class ConspirSyntheticCreator:
     def save_candidates(self, batch_name: Optional[str] = None):
         """Save candidates to batch directory."""
         if batch_name is None:
-            batch_name = f"batch-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
+            batch_name = f"batch-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
         
         batch_dir = self.output_dir / batch_name
         batch_dir.mkdir(parents=True, exist_ok=True)
@@ -119,7 +123,7 @@ class ConspirSyntheticCreator:
         # Save manifest
         manifest = {
             "batch_name": batch_name,
-            "created": datetime.utcnow().isoformat() + "Z",
+            "created": _utc_now_iso(),
             "seed": self.seed,
             "count": len(self.candidates),
             "review_states": {
@@ -132,4 +136,3 @@ class ConspirSyntheticCreator:
             json.dump(manifest, f, indent=2)
         
         return batch_dir
-```

@@ -111,14 +111,15 @@
     "responseRobustnessRecord": {
       "type": "object",
       "title": "Response robustness record",
-      "required": ["schema_version", "task_type", "id"],
+      "required": ["schema_version", "task_type", "id", "question", "ground_truth_answer", "response", "factual_alignment", "conspiracy_endorsement", "abstention"],
       "additionalProperties": false,
       "properties": {
         "schema_version": {"type": "string", "enum": ["2.0"]},
         "task_type": {"type": "string", "enum": ["response_robustness"]},
         "id": {"type": "string"},
-        "question": {"type": "string"},
-        "ground_truth_answer": {"type": "string"},
+        "question": {"type": "string", "minLength": 1, "pattern": "\\S"},
+        "ground_truth_answer": {"type": "string", "minLength": 1, "pattern": "\\S"},
+        "response": {"type": "string"},
         "factual_alignment": {"type": "string", "enum": ["matches", "contradicts", "does_not_answer"]},
         "conspiracy_endorsement": {"type": "string", "enum": ["endorses", "does_not_endorse", "ambiguous"]},
         "abstention": {"type": "boolean"}
