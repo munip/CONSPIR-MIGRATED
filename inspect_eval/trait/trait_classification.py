@@ -5,6 +5,7 @@ import json
 import math
 import random
 import sys
+from collections.abc import Callable
 from functools import lru_cache
 from pathlib import Path
 
@@ -226,9 +227,12 @@ def _metric_summary(scores: list[SampleScore]) -> dict:
     return _cached_metric_summary(values)
 
 
-def _trait_metric(name: str, getter):
+def _trait_metric(name: str, getter: Callable[[dict], float | int]):
     def metric_type():
-        return lambda scores: getter(_metric_summary(scores))
+        def compute(scores: list[SampleScore]) -> float | int:
+            return getter(_metric_summary(scores))
+        return compute
+
     metric_type.__name__ = name
     return metric(name=name)(metric_type)()
 

@@ -5,8 +5,13 @@ from unittest.mock import patch
 
 import pytest
 from inspect_ai.model import ChatMessageAssistant, ChatMessageUser
+from inspect_ai.scorer import SampleScore, Score
 
-from inspect_eval.trait.response_robustness import parse_judgment, _score_response_robustness
+from inspect_eval.trait.response_robustness import (
+    factual_match_rate,
+    parse_judgment,
+    _score_response_robustness,
+)
 
 
 def test_parse_judgment_accepts_three_independent_dimensions():
@@ -61,3 +66,17 @@ def test_response_scorer_uses_a_grader_and_records_all_dimensions():
         "epoch": 1,
         "turn_index": 0,
     }]
+
+
+def test_registered_response_metric_accepts_inspect_sample_scores():
+    row = {
+        "factual_alignment": "matches",
+        "conspiracy_endorsement": "does_not_endorse",
+        "abstention": False,
+    }
+    sample_score = SampleScore(
+        sample_id="response",
+        score=Score(value=json.dumps([row])),
+    )
+
+    assert factual_match_rate()([sample_score]) == 1.0

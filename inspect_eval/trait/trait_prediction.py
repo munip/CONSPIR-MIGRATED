@@ -9,7 +9,7 @@ from pathlib import Path
 
 from inspect_ai import Task, task
 from inspect_ai.dataset import MemoryDataset, Sample
-from inspect_ai.scorer import Score, metric, scorer
+from inspect_ai.scorer import SampleScore, Score, metric, scorer
 from inspect_ai.solver import generate, system_message
 
 HERE = Path(__file__).resolve().parent
@@ -119,7 +119,7 @@ def prediction_dataset(dataset_name: str, split: str, root: Path = ROOT,
 
 @metric
 def prediction_invalid_output_rate():
-    def compute(scores):
+    def compute(scores: list[SampleScore]) -> float:
         rows = []
         for sample_score in scores:
             try:

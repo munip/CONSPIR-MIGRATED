@@ -7,7 +7,12 @@ import pytest
 from inspect_ai.scorer import Score, SampleScore, Target
 
 from inspect_eval.trait.trait_dataset import trait_to_sample, trait_dataset
-from inspect_eval.trait.trait_classification import parse_trait_prediction, _metric_summary, trait_scorer
+from inspect_eval.trait.trait_classification import (
+    TRAIT_METRICS,
+    parse_trait_prediction,
+    _metric_summary,
+    trait_scorer,
+)
 
 
 def test_missing_upstream_trait_is_unannotated_not_absent():
@@ -81,6 +86,20 @@ def test_inspect_metrics_mask_unknown_traits_and_count_invalid_outputs():
     assert math.isnan(summary["exact_match"])
     assert summary["invalid_output_rate"] == 0.5
     assert summary["valid_output_count"] == 1
+
+
+def test_registered_trait_metric_accepts_inspect_sample_scores():
+    score = SampleScore(
+        sample_id="metric",
+        score=Score(value=json.dumps({
+            "predicted": ["nefarious_intent"],
+            "target": ["nefarious_intent"],
+            "known": ["nefarious_intent"],
+            "invalid": False,
+        })),
+    )
+
+    assert TRAIT_METRICS[0]([score]) == 1.0
 
 
 def test_inspect_exact_match_requires_fully_annotated_rows_and_reports_domain_source():

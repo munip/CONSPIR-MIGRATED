@@ -1,10 +1,12 @@
 import json
 
 import pytest
+from inspect_ai.scorer import SampleScore, Score
 
 from inspect_eval.trait.trait_prediction import (
     _stationhouse_split,
     load_prediction_items,
+    prediction_invalid_output_rate,
     prediction_dataset,
 )
 
@@ -60,3 +62,12 @@ def test_stationhouse_prediction_loader_rejects_bad_split(tmp_path):
     (tmp_path / "questions" / "corpus.jsonl").write_text("", encoding="utf-8")
     with pytest.raises(ValueError, match="split must be all"):
         load_prediction_items("stationhouse", "test", tmp_path)
+
+
+def test_prediction_metric_accepts_inspect_sample_scores():
+    sample_score = SampleScore(
+        sample_id="prediction",
+        score=Score(value=json.dumps({"valid": False})),
+    )
+
+    assert prediction_invalid_output_rate()([sample_score]) == 1.0
