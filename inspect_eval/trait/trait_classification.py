@@ -234,7 +234,7 @@ def _trait_metric(name: str, getter: Callable[[dict], float | int]):
         return compute
 
     metric_type.__name__ = name
-    return metric(name=name)(metric_type)()
+    return metric(name=name, scores="unreduced")(metric_type)()
 
 
 TRAIT_METRICS = [

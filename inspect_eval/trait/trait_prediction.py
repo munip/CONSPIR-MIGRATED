@@ -117,7 +117,7 @@ def prediction_dataset(dataset_name: str, split: str, root: Path = ROOT,
     return MemoryDataset(samples, name=f"conspir_trait_predictions_{dataset_name}_{split}")
 
 
-@metric
+@metric(scores="unreduced")
 def prediction_invalid_output_rate():
     def compute(scores: list[SampleScore]) -> float:
         rows = []
