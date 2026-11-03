@@ -21,6 +21,10 @@ The machine-readable definitions are in
 | `trait_classification` | Classify a supplied text for zero or more CONSPIR traits | `trait_annotations` and source provenance |
 | `response_robustness` | Score a model response on separate behavior dimensions | Factual alignment, conspiracy endorsement, and abstention |
 
+The v2 `question_answer` record preserves the legacy question/answer fields,
+including optional `consensus_as_of`; it adds version and task metadata without
+changing the evaluation target.
+
 ### Trait classification records
 
 The seven canonical traits are `contradictory`, `overriding_suspicion`,
