@@ -24,7 +24,7 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
         total_outputs = len(predictions)
     if invalid_outputs < 0 or total_outputs < 0 or invalid_outputs > total_outputs:
         raise ValueError("invalid_outputs and total_outputs must satisfy 0 <= invalid_outputs <= total_outputs")
-    
+
     results = {
         "per_trait": {},
         "macro": {"precision": 0, "recall": 0, "f1": 0},
@@ -109,5 +109,5 @@ def compute_trait_metrics(predictions: Dict[str, List[str]],
         if pred_set == target_set:
             exact_matches += 1
     results["exact_match"] = exact_matches / exact_match_rows if exact_match_rows else 0.0
-    
+
     return results
