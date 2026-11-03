@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
@@ -17,6 +17,10 @@ TRAIT_IDS = [
     "immune_to_evidence",
     "reinterpreting_randomness"
 ]
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 class ConspirSyntheticCreator:
@@ -50,8 +54,6 @@ class ConspirSyntheticCreator:
             "id": candidate_id,
             "text": text,
             "domain_id": domain_id,
-            "requested_traits": requested_traits,
-            "is_counterexample": is_counterexample,
             "trait_annotations": {t: "unannotated" for t in TRAIT_IDS},
             "source": {
                 "dataset": "synthetic",
@@ -59,13 +61,17 @@ class ConspirSyntheticCreator:
                     "model": model,
                     "prompt_version": prompt_version,
                     "seed": self.seed,
-                    "timestamp": datetime.utcnow().isoformat() + "Z"
+                    "timestamp": _utc_now_iso()
                 },
                 "source_ids": source_ids or [],
-                "license": "review_required"
+                "license": "review_required",
+                "requested_traits": requested_traits,
+                "is_counterexample": is_counterexample
             },
-            "review_state": "pending",
-            "review_trail": []
+            "metadata": {
+                "review_state": "pending",
+                "review_trail": []
+            }
         }
         
         self.candidates.append(candidate)
@@ -86,10 +92,14 @@ class ConspirSyntheticCreator:
                         else:
                             candidate["trait_annotations"][trait] = "absent"
                     candidate["dominant_trait"] = adjudicated_traits[0] if adjudicated_traits else None
-                candidate["review_state"] = "approved" if approved else "rejected"
-                candidate["review_trail"].append({
+                if "metadata" not in candidate:
+                    candidate["metadata"] = {}
+                candidate["metadata"]["review_state"] = "approved" if approved else "rejected"
+                if "review_trail" not in candidate["metadata"]:
+                    candidate["metadata"]["review_trail"] = []
+                candidate["metadata"]["review_trail"].append({
                     "reviewer": reviewer,
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "timestamp": _utc_now_iso(),
                     "adjudicated_traits": adjudicated_traits,
                     "approved": approved,
                     "notes": notes
@@ -99,7 +109,7 @@ class ConspirSyntheticCreator:
     def save_candidates(self, batch_name: Optional[str] = None):
         """Save candidates to batch directory."""
         if batch_name is None:
-            batch_name = f"batch-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}"
+            batch_name = f"batch-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}"
         
         batch_dir = self.output_dir / batch_name
         batch_dir.mkdir(parents=True, exist_ok=True)
@@ -113,17 +123,16 @@ class ConspirSyntheticCreator:
         # Save manifest
         manifest = {
             "batch_name": batch_name,
-            "created": datetime.utcnow().isoformat() + "Z",
+            "created": _utc_now_iso(),
             "seed": self.seed,
             "count": len(self.candidates),
             "review_states": {
-                "pending": sum(1 for c in self.candidates if c["review_state"] == "pending"),
-                "approved": sum(1 for c in self.candidates if c["review_state"] == "approved"),
-                "rejected": sum(1 for c in self.candidates if c["review_state"] == "rejected")
+                "pending": sum(1 for c in self.candidates if c.get("metadata", {}).get("review_state") == "pending"),
+                "approved": sum(1 for c in self.candidates if c.get("metadata", {}).get("review_state") == "approved"),
+                "rejected": sum(1 for c in self.candidates if c.get("metadata", {}).get("review_state") == "rejected")
             }
         }
         with open(batch_dir / "manifest.json", 'w', encoding='utf-8') as f:
             json.dump(manifest, f, indent=2)
         
         return batch_dir
-```

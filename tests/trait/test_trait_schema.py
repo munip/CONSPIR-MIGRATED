@@ -23,6 +23,14 @@ def test_trait_ids_defined():
     assert sorted(trait_ids) == sorted(expected)
 
 
+def test_domain_registry_matches_v2_trait_schema():
+    registry = json.loads((ROOT / "schemas" / "conspir" / "domains.json").read_text())
+    schema = json.loads((ROOT / "schemas" / "conspir" / "v2_schema.json").read_text())
+    expected = {domain["id"] for domain in registry["domains"]} | {registry["unmapped_id"]}
+    actual = set(schema["definitions"]["traitRecord"]["properties"]["domain_id"]["enum"])
+    assert actual == expected
+
+
 def test_v2_schema_valid():
     """Test that v2 schema is valid JSON Schema."""
     schema_file = ROOT / "schemas" / "conspir" / "v2_schema.json"

@@ -5,3 +5,4 @@ results/
 .env
 /docs/CONSPIR_MIGRATION_PLAN.md
 /docs/CONSPIR_ARCHITECTURE.md
+/datasets/

@@ -1,13 +1,13 @@
 {
   "phase": 0,
-  "status": "completed",
+  "status": "pending_source_review",
   "timestamp": "2026-10-28T00:00:00Z",
   "description": "Freeze starting point and resolve contract for CONSPIR migration",
   "source_locks": {
     "conspiracybench_repo": {
       "commit": "afad201",
-      "schema_hash": "to_be_computed",
-      "corpus_hash": "to_be_computed"
+      "schema_hash": "sha256:3e3a074f70d6c15e53fe9f879055960b860fdefec6aca4aaa81dd0693b57fc70",
+      "corpus_hash": "sha256:22c21ee342796bb1a007be943ddff60ed7d9ece68ed06f381e72411e97fe027b"
     },
     "conspired": {
       "repo_url": "https://github.com/UKPLab/conspired",
