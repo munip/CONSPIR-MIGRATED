@@ -43,6 +43,32 @@ def test_v2_schema_valid():
     jsonschema.Draft7Validator.check_schema(schema)
 
 
+def test_legacy_question_records_validate_as_v2_question_records():
+    """V2 question records preserve every field in the current legacy corpus."""
+    schema_file = ROOT / "schemas" / "conspir" / "v2_schema.json"
+    schema = json.loads(schema_file.read_text(encoding="utf-8"))
+    validator = jsonschema.Draft7Validator(
+        schema, format_checker=jsonschema.FormatChecker()
+    )
+    corpus_file = ROOT / "questions" / "corpus.jsonl"
+    records = [
+        json.loads(line)
+        for line in corpus_file.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+
+    assert records
+    assert any("consensus_as_of" in record for record in records)
+    for record in records:
+        converted = {
+            **record,
+            "schema_version": "2.0",
+            "task_type": "question_answer",
+        }
+        errors = list(validator.iter_errors(converted))
+        assert not errors, f"V2 validation failed for {record['id']}: {errors}"
+
+
 def test_trait_record_validation():
     """Test trait record validates against schema."""
     schema_file = ROOT / "schemas" / "conspir" / "v2_schema.json"

@@ -35,6 +35,7 @@
         "question": {"type": "string", "minLength": 1},
         "ground_truth_answer": {"type": "string", "minLength": 1},
         "ground_truth_source": {"oneOf": [{"type": "string"}, {"type": "array"}]},
+        "consensus_as_of": {"type": "string", "format": "date"},
         "difficulty": {"type": "object"},
         "framing": {"type": "string"},
         "pressure_turns": {"type": "array"},
